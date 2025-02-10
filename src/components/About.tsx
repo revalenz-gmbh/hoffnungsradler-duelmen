@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,7 +6,7 @@ const About = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section id="wir-über-uns" className="py-20 bg-snow">
+    <section id="wir-über-uns" className="py-32 bg-snow">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Mobile: Logo next to heading */}
@@ -24,7 +23,9 @@ const About = () => {
 
           {/* Desktop: Only heading */}
           <div className="hidden md:block mb-12">
-            <h2 className="font-anton text-4xl text-prussian text-center">Über Uns</h2>
+            <h2 className="font-anton text-4xl text-prussian text-center">
+              Über Uns
+            </h2>
           </div>
 
           <div className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
@@ -32,8 +33,8 @@ const About = () => {
               {/* Mobile: Show only first paragraph and toggle button */}
               <div className="md:hidden">
                 <p>
-                  Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003 durch Josef
-                  Friedag und Carlo Hüwe ins Leben gerufen worden.
+                  Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003
+                  durch Josef Friedag und Carlo Hüwe ins Leben gerufen worden.
                 </p>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
@@ -49,22 +50,23 @@ const About = () => {
                 {isExpanded && (
                   <div className="mt-2 space-y-4 animate-fade-in">
                     <p>
-                      Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte
-                      Rennradtouren durch die münsterländische Parklandschaft auf
-                      verkehrsarmen Wegen organisiert.
+                      Seit mittlerweile 21 Jahren werden jährlich sieben bis
+                      acht geführte Rennradtouren durch die münsterländische
+                      Parklandschaft auf verkehrsarmen Wegen organisiert.
                     </p>
 
                     <p>
                       Das von den Teilnehmern freiwillig und in eigenem Ermessen
-                      entrichtete Startgeld wird von den Initiatoren gesammelt und nach
-                      Saisonabschluss der Kinderkrebshilfe gespendet. Von Beginn an
-                      spenden nicht nur die aktiven Radsportler, sondern auch immer wieder
-                      diverse Firmen und Unternehmen, siehe Sponsorenseite.
+                      entrichtete Startgeld wird von den Initiatoren gesammelt
+                      und nach Saisonabschluss der Kinderkrebshilfe gespendet.
+                      Von Beginn an spenden nicht nur die aktiven Radsportler,
+                      sondern auch immer wieder diverse Firmen und Unternehmen,
+                      siehe Sponsorenseite.
                     </p>
 
                     <p className="font-semibold text-prussian">
-                      Insgesamt konnten durch die Dülmener Hoffnungsradler über 80.000
-                      Euro Spenden gesammelt werden!
+                      Insgesamt konnten durch die Dülmener Hoffnungsradler über
+                      80.000 Euro Spenden gesammelt werden!
                     </p>
                   </div>
                 )}
@@ -81,27 +83,28 @@ const About = () => {
                 </div>
                 <div className="space-y-4">
                   <p>
-                    Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003 durch Josef
-                    Friedag und Carlo Hüwe ins Leben gerufen worden.
+                    Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003
+                    durch Josef Friedag und Carlo Hüwe ins Leben gerufen worden.
                   </p>
 
                   <p>
-                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte
-                    Rennradtouren durch die münsterländische Parklandschaft auf
-                    verkehrsarmen Wegen organisiert.
+                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht
+                    geführte Rennradtouren durch die münsterländische
+                    Parklandschaft auf verkehrsarmen Wegen organisiert.
                   </p>
 
                   <p>
                     Das von den Teilnehmern freiwillig und in eigenem Ermessen
-                    entrichtete Startgeld wird von den Initiatoren gesammelt und nach
-                    Saisonabschluss der Kinderkrebshilfe gespendet. Von Beginn an
-                    spenden nicht nur die aktiven Radsportler, sondern auch immer wieder
-                    diverse Firmen und Unternehmen, siehe Sponsorenseite.
+                    entrichtete Startgeld wird von den Initiatoren gesammelt und
+                    nach Saisonabschluss der Kinderkrebshilfe gespendet. Von
+                    Beginn an spenden nicht nur die aktiven Radsportler, sondern
+                    auch immer wieder diverse Firmen und Unternehmen, siehe
+                    Sponsorenseite.
                   </p>
 
-                  <p className="font-semibold text-prussian">
-                    Insgesamt konnten durch die Dülmener Hoffnungsradler über 80.000
-                    Euro Spenden gesammelt werden!
+                  <p className="font-semibold">
+                    Insgesamt konnten durch die Dülmener Hoffnungsradler über
+                    80.000 Euro Spenden gesammelt werden!
                   </p>
                 </div>
               </div>
@@ -109,9 +112,10 @@ const About = () => {
             <div className="mt-8 text-center">
               <Link
                 to="/ueber-uns"
-                className="inline-flex items-center justify-center gap-2 text-forest hover:text-forest/80 font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-forest hover:text-forest/80 transition-colors"
+                aria-label="Wir über uns"
               >
-                Mehr über uns erfahren
+                Wir über uns
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

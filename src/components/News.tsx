@@ -1,4 +1,3 @@
-
 import { CalendarIcon } from "lucide-react";
 import {
   Carousel,
@@ -7,11 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 
 const News = () => {
@@ -21,9 +16,7 @@ const News = () => {
   const newsItems = [
     {
       date: "23.01.2025",
-      images: [
-        "/lovable-uploads/8b8afb96-cd97-488e-a597-7119e154af07.png",
-      ],
+      images: ["/lovable-uploads/8b8afb96-cd97-488e-a597-7119e154af07.png"],
     },
     {
       date: "12.01.2025",
@@ -35,7 +28,7 @@ const News = () => {
   ];
 
   return (
-    <section className="py-20 bg-[#F2FCE2]">
+    <section className="py-32 bg-forestLight">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="font-anton text-4xl text-prussian text-center mb-12">
@@ -51,8 +44,8 @@ const News = () => {
               <div
                 key={index}
                 className={`relative flex flex-col md:flex-row ${
-                  index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
-                } group mb-12 ${index > 0 ? '-mt-48' : ''}`}
+                  index % 2 === 0 ? "md:justify-start" : "md:justify-end"
+                } group mb-12 ${index > 0 ? "-mt-48" : ""}`}
               >
                 {/* Date bubble */}
                 <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
@@ -60,10 +53,12 @@ const News = () => {
                 </div>
 
                 {/* Content card */}
-                <div className={`ml-16 md:ml-0 md:w-5/12 bg-white rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl border border-forest/10 ${
-                  index % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'
-                }`}>
-                  <div className={`${index % 2 === 1 ? 'md:ml-8' : 'md:mr-8'}`}>
+                <div
+                  className={`ml-16 md:ml-0 md:w-5/12 bg-white rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl border border-forest/10 ${
+                    index % 2 === 0 ? "md:mr-auto" : "md:ml-auto"
+                  }`}
+                >
+                  <div className={`${index % 2 === 1 ? "md:ml-8" : "md:mr-8"}`}>
                     <time className="text-sm text-forest/70 mb-2 block">
                       {item.date}
                     </time>

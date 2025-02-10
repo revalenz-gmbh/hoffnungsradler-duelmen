@@ -1,10 +1,5 @@
-
 import { ImagePlus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const PhotoGallery = () => {
   const images = [
@@ -23,16 +18,11 @@ const PhotoGallery = () => {
   ];
 
   return (
-    <section className="py-20 bg-snow">
+    <section className="py-32 bg-snow">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-12">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-forest/10 text-forest">
-              <ImagePlus className="w-6 h-6" />
-            </div>
-            <h2 className="font-anton text-4xl text-prussian">
-              Impressionen
-            </h2>
+          <div className="flex items-center justify-center mb-12">
+            <h2 className="font-anton text-4xl text-prussian">Impressionen</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

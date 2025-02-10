@@ -1,17 +1,16 @@
-
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Building2, AtSign } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-prussian text-white py-16">
+    <footer className="bg-forestDark text-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_2.5fr] gap-12 mb-8">
           {/* Bank Account Details */}
           <div className="space-y-2">
             <h3 className="font-anton text-xl mb-4">Spendenkonto</h3>
             <p className="font-inter">Sparkasse Westmünsterland</p>
-            <p className="font-inter">Hoffnungsradler Dülmen</p>
+            <p className="font-inter">Hoffnungsradler Dülmen e.V.</p>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-white/80">IBAN:</span>
@@ -32,7 +31,7 @@ const Footer = () => {
                 href="mailto:info@hoffnungsradler.de"
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
-                <Mail className="w-4 h-4" />
+                <AtSign className="w-4 h-4" />
                 <span>info@hoffnungsradler.de</span>
               </a>
               <a
@@ -42,9 +41,12 @@ const Footer = () => {
                 <Phone className="w-4 h-4" />
                 <span>+49 1234 567890</span>
               </a>
-              <div className="flex items-center gap-2 justify-center md:justify-start">
-                <MapPin className="w-4 h-4" />
-                <span>48249 Dülmen</span>
+              <div className="flex items-start gap-2 justify-center md:justify-start">
+                <Mail className="w-4 h-4 shrink-0 mt-1" />
+                <div className="flex flex-col">
+                  <span>Dülmener Str. 42</span>
+                  <span className="ml-0">48249 Dülmen</span>
+                </div>
               </div>
             </div>
           </div>
@@ -53,13 +55,22 @@ const Footer = () => {
           <div className="space-y-2">
             <h3 className="font-anton text-xl mb-4">Links</h3>
             <div className="space-y-2 font-inter">
-              <Link to="/spenden" className="block hover:text-white/80 transition-colors">
+              <Link
+                to="/spenden"
+                className="block hover:text-white/80 transition-colors"
+              >
                 Spenden
               </Link>
-              <Link to="/presse" className="block hover:text-white/80 transition-colors">
+              <Link
+                to="/presse"
+                className="block hover:text-white/80 transition-colors"
+              >
                 Presse
               </Link>
-              <Link to="/sponsoren" className="block hover:text-white/80 transition-colors">
+              <Link
+                to="/sponsoren"
+                className="block hover:text-white/80 transition-colors"
+              >
                 Sponsoren
               </Link>
             </div>
@@ -68,29 +79,29 @@ const Footer = () => {
           {/* Radsportfreunde */}
           <div className="space-y-2">
             <h3 className="font-anton text-xl mb-4">Radsportfreunde</h3>
-            <div className="flex flex-row items-center justify-center md:justify-start gap-8">
-              <a 
+            <div className="flex flex-row items-center justify-center md:justify-start gap-12">
+              <a
                 href="https://djk-radsport.de/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition-opacity"
               >
-                <img 
-                  src="/lovable-uploads/b0799038-8c76-42b1-b74b-96c4ea20285e.png" 
-                  alt="DJK Logo" 
-                  className="h-16 w-auto"
+                <img
+                  src="/lovable-uploads/b0799038-8c76-42b1-b74b-96c4ea20285e.png"
+                  alt="DJK Logo"
+                  className="h-28 w-auto"
                 />
               </a>
-              <a 
+              <a
                 href="https://www.djk-adler-buldern.de/radsport/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition-opacity"
               >
-                <img 
-                  src="/lovable-uploads/a05f6440-d361-4236-ace4-32d06e932465.png" 
-                  alt="DJK Adler Buldern Logo" 
-                  className="h-16 w-auto"
+                <img
+                  src="/lovable-uploads/a05f6440-d361-4236-ace4-32d06e932465.png"
+                  alt="DJK Adler Buldern Logo"
+                  className="h-28 w-28 object-cover rounded-full bg-white"
                 />
               </a>
             </div>
@@ -103,11 +114,17 @@ const Footer = () => {
             <div className="flex items-center gap-8">
               <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
               <span className="hidden md:inline-block text-white/40">|</span>
-              <Link to="/impressum" className="hover:text-white transition-colors">
+              <Link
+                to="/impressum"
+                className="hover:text-white transition-colors"
+              >
                 Impressum
               </Link>
               <span className="hidden md:inline-block text-white/40">|</span>
-              <Link to="/datenschutz" className="hover:text-white transition-colors">
+              <Link
+                to="/datenschutz"
+                className="hover:text-white transition-colors"
+              >
                 Datenschutz
               </Link>
             </div>

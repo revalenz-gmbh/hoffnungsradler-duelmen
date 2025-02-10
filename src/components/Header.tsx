@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Menu, X, Bike } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -20,7 +19,10 @@ const Header = () => {
     <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-20">
-          <Link to="/" className="font-anton text-2xl text-prussian flex items-center gap-2">
+          <Link
+            to="/"
+            className="font-anton text-2xl text-forestDark flex items-center gap-2"
+          >
             <Bike className="w-6 h-6" />
             Hoffnungsradler
           </Link>

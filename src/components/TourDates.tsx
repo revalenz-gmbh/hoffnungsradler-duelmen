@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -70,7 +69,7 @@ const TourDates = () => {
   ];
 
   return (
-    <section className="py-12 bg-snow">
+    <section className="py-32 bg-snow">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-anton text-4xl text-prussian text-center mb-12">
@@ -81,11 +80,21 @@ const TourDates = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="w-[180px] font-medium text-prussian">Datum</TableHead>
-                    <TableHead className="w-[200px] font-medium text-prussian">Tour</TableHead>
-                    <TableHead className="w-[120px] font-medium text-prussian">Distanz</TableHead>
-                    <TableHead className="w-[100px] font-medium text-prussian">Start</TableHead>
-                    <TableHead className="min-w-[220px] font-medium text-prussian">Treffpunkt</TableHead>
+                    <TableHead className="w-[180px] font-medium text-prussian">
+                      Datum
+                    </TableHead>
+                    <TableHead className="w-[200px] font-medium text-prussian">
+                      Tour
+                    </TableHead>
+                    <TableHead className="w-[120px] font-medium text-prussian">
+                      Distanz
+                    </TableHead>
+                    <TableHead className="w-[100px] font-medium text-prussian">
+                      Start
+                    </TableHead>
+                    <TableHead className="min-w-[220px] font-medium text-prussian">
+                      Treffpunkt
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -94,10 +103,18 @@ const TourDates = () => {
                       <TableCell className="font-medium whitespace-nowrap">
                         {tour.day}, {tour.date}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap">{tour.name}</TableCell>
-                      <TableCell className="whitespace-nowrap">{tour.distance}</TableCell>
-                      <TableCell className="whitespace-nowrap">{tour.time}</TableCell>
-                      <TableCell className="whitespace-nowrap">{tour.location}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {tour.name}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {tour.distance}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {tour.time}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {tour.location}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -105,8 +122,8 @@ const TourDates = () => {
             </div>
           </div>
           <div className="mt-8 text-center">
-            <Link 
-              to="/unsere-touren" 
+            <Link
+              to="/unsere-touren"
               className="inline-flex items-center justify-center bg-forest text-white px-6 py-3 rounded-lg hover:bg-forest/90 transition-colors font-medium"
             >
               GPS-Dateien der Touren

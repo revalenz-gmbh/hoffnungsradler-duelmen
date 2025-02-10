@@ -1,9 +1,8 @@
-
 import { CalendarPlus } from "lucide-react";
 
 const TourSignup = () => {
   return (
-    <section className="py-20 bg-[#F2FCE2]">
+    <section className="py-24 bg-forestLight">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white rounded-lg p-8 md:p-12 shadow-lg border border-forest/10">
@@ -14,8 +13,9 @@ const TourSignup = () => {
               Jetzt für die nächste Tour anmelden
             </h2>
             <p className="text-text mb-8 max-w-2xl mx-auto">
-              Melden Sie sich für unsere nächste Tour an und werden Sie Teil einer wunderbaren Gemeinschaft. 
-              Jeder Kilometer zählt im Kampf gegen Kinderkrebs.
+              Melden Sie sich für unsere nächste Tour an und werden Sie Teil
+              einer wunderbaren Gemeinschaft. Jeder Kilometer zählt im Kampf
+              gegen Kinderkrebs.
             </p>
             <a
               href="mailto:info@hoffnungsradler-duelmen.de?subject=Tour-Anmeldung"

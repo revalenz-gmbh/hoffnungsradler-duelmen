@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -17,8 +16,10 @@ export default {
       colors: {
         snow: "#F8FAFA",
         prussian: "#003366",
-        forest: "#4F6D54",
-        text: "#2C2C2C",
+        forest: "hsl(130, 16%, 37%)",
+        forestLight: "hsl(130, 16%, 90%)",
+        forestDark: "hsl(130, 16%, 30%)",
+        text: "#000000",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
