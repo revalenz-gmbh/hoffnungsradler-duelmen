@@ -1,5 +1,7 @@
+
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const About = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -103,6 +105,15 @@ const About = () => {
                   </p>
                 </div>
               </div>
+            </div>
+            <div className="mt-8 text-center">
+              <Link
+                to="/ueber-uns"
+                className="inline-flex items-center justify-center gap-2 text-forest hover:text-forest/80 font-medium transition-colors"
+              >
+                Mehr über uns erfahren
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
