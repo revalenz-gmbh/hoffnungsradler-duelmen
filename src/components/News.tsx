@@ -20,6 +20,12 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "23.01.2025",
+      images: [
+        "/lovable-uploads/8b8afb96-cd97-488e-a597-7119e154af07.png",
+      ],
+    },
+    {
       date: "12.01.2025",
       images: [
         "/lovable-uploads/afec76a7-7703-49d3-b34a-1ddc9eaf8763.png",
@@ -44,17 +50,20 @@ const News = () => {
             {newsItems.map((item, index) => (
               <div
                 key={index}
-                className="relative flex flex-col md:flex-row md:justify-between group mb-12"
+                className={`relative flex flex-col md:flex-row ${
+                  index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
+                } group mb-12 ${index > 0 ? 'mt-16' : ''}`}
               >
-                {/* Date bubble - Adjusted positioning for mobile */}
+                {/* Date bubble */}
                 <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
                   <CalendarIcon className="w-6 h-6 text-forest" />
                 </div>
 
                 {/* Content card */}
-                <div className="ml-16 md:ml-0 md:w-5/12 bg-white rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl border border-forest/10">
-                  {/* If it's on the right side (odd items) */}
-                  <div className={`${index % 2 === 1 ? "md:ml-8" : "md:mr-8"}`}>
+                <div className={`ml-16 md:ml-0 md:w-5/12 bg-white rounded-lg shadow-lg p-6 transition-all duration-300 hover:shadow-xl border border-forest/10 ${
+                  index % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'
+                }`}>
+                  <div className={`${index % 2 === 1 ? 'md:ml-8' : 'md:mr-8'}`}>
                     <time className="text-sm text-forest/70 mb-2 block">
                       {item.date}
                     </time>
@@ -65,7 +74,7 @@ const News = () => {
                       >
                         <img
                           src={item.images[0]}
-                          alt="News - Seite 1"
+                          alt={`News vom ${item.date}`}
                           className="w-full rounded-lg shadow-md"
                         />
                       </DialogTrigger>

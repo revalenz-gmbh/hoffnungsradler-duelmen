@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -102,6 +103,14 @@ const TourDates = () => {
                 </TableBody>
               </Table>
             </div>
+          </div>
+          <div className="mt-8 text-center">
+            <Link 
+              to="/unsere-touren" 
+              className="inline-flex items-center justify-center bg-forest text-white px-6 py-3 rounded-lg hover:bg-forest/90 transition-colors font-medium"
+            >
+              GPS-Dateien der Touren
+            </Link>
           </div>
         </div>
       </div>
