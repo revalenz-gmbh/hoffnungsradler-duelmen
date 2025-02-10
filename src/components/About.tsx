@@ -7,35 +7,55 @@ const About = () => {
           <h2 className="font-anton text-4xl text-prussian mb-6">Über Uns</h2>
           <p className="font-inter text-lg text-text leading-relaxed">
             Wir sind eine Gemeinschaft von begeisterten Radfahrern, die sich für
-            nachhaltigen Sport und soziales Engagement einsetzen. Gemeinsam
-            erkunden wir die schönsten Routen um Dülmen und schaffen dabei
-            bleibende Erinnerungen.
+            nachhaltigen Sport und soziales Engagement einsetzen.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <img
-              src="/lovable-uploads/bd60a530-eb66-4c55-a5d7-85937bf178c2.png"
-              alt="Diverse group of cyclists"
-              className="w-full h-[400px] object-cover"
-            />
-          </div>
-          <div className="space-y-6">
-            <h3 className="font-playfair text-2xl text-prussian">
-              Unsere Mission
-            </h3>
-            <p className="font-inter text-text">
-              Als Hoffnungsradler Dülmen verbinden wir Radsport mit
-              gesellschaftlichem Engagement. Jede Tour ist eine Gelegenheit, unsere
-              Gemeinschaft zu stärken und einen positiven Beitrag zu leisten.
-            </p>
-            <a
-              href="#tour-termine"
-              className="inline-block bg-forest text-white font-inter px-6 py-3 rounded-lg transition-transform hover:scale-105"
-            >
-              Mitmachen
-            </a>
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-[#FEF7CD]/30 rounded-lg p-8 shadow-lg border border-forest/10 relative">
+            {/* Letter Header with Logo */}
+            <div className="absolute -top-8 right-8 bg-white rounded-lg p-2 shadow-md">
+              <img
+                src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                alt="Hoffnungsradler Logo"
+                className="w-24 h-auto"
+              />
+            </div>
+
+            <div className="space-y-4 font-inter text-text leading-relaxed">
+              <p>
+                Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003 durch Josef
+                Friedag und Carlo Hüwe ins Leben gerufen worden.
+              </p>
+
+              <p>
+                Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte
+                Rennradtouren durch die münsterländische Parklandschaft auf
+                verkehrsarmen Wegen organisiert.
+              </p>
+
+              <p>
+                Das von den Teilnehmern freiwillig und in eigenem Ermessen
+                entrichtete Startgeld wird von den Initiatoren gesammelt und nach
+                Saisonabschluss der Kinderkrebshilfe gespendet. Von Beginn an
+                spenden nicht nur die aktiven Radsportler, sondern auch immer wieder
+                diverse Firmen und Unternehmen, siehe Sponsorenseite.
+              </p>
+
+              <p className="font-semibold text-prussian mt-6">
+                Insgesamt konnten durch die Dülmener Hoffnungsradler über 80.000
+                Euro Spenden gesammelt werden!
+              </p>
+            </div>
+
+            <div className="mt-8 text-center">
+              <a
+                href="#tour-termine"
+                className="inline-block bg-forest text-white font-inter px-6 py-3 rounded-lg transition-transform hover:scale-105"
+              >
+                Mitmachen
+              </a>
+            </div>
           </div>
         </div>
       </div>
