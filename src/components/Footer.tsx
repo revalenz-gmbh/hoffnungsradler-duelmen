@@ -69,11 +69,13 @@ const Footer = () => {
         {/* Copyright and Legal Links */}
         <div className="pt-8 border-t border-white/10 text-sm text-white/80">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
-            <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
             <div className="flex items-center gap-8">
+              <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
+              <span className="hidden md:inline-block text-white/40">|</span>
               <Link to="/impressum" className="hover:text-white transition-colors">
                 Impressum
               </Link>
+              <span className="hidden md:inline-block text-white/40">|</span>
               <Link to="/datenschutz" className="hover:text-white transition-colors">
                 Datenschutz
               </Link>
