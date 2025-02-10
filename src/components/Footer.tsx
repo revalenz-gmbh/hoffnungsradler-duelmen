@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="bg-prussian text-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto mb-12">
           {/* Bank Account Details */}
           <div className="space-y-2">
             <h3 className="font-anton text-xl mb-4">Spendenkonto</h3>
@@ -62,6 +62,37 @@ const Footer = () => {
               <Link to="/sponsoren" className="block hover:text-white/80 transition-colors">
                 Sponsoren
               </Link>
+            </div>
+          </div>
+
+          {/* Radsportfreunde */}
+          <div className="space-y-2">
+            <h3 className="font-anton text-xl mb-4">Radsportfreunde</h3>
+            <div className="flex flex-col items-center md:items-start gap-4">
+              <a 
+                href="https://djk-radsport.de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:opacity-80 transition-opacity"
+              >
+                <img 
+                  src="/lovable-uploads/b0799038-8c76-42b1-b74b-96c4ea20285e.png" 
+                  alt="DJK Logo" 
+                  className="h-16 w-auto"
+                />
+              </a>
+              <a 
+                href="https://www.djk-adler-buldern.de/radsport/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:opacity-80 transition-opacity"
+              >
+                <img 
+                  src="/lovable-uploads/a05f6440-d361-4236-ace4-32d06e932465.png" 
+                  alt="DJK Adler Buldern Logo" 
+                  className="h-16 w-auto"
+                />
+              </a>
             </div>
           </div>
         </div>
