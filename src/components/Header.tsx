@@ -1,18 +1,9 @@
 
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { Menu, X, Bike } from "lucide-react";
 
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const menuItems = [
     "Wir über uns",
@@ -25,16 +16,11 @@ const Header = () => {
   ];
 
   return (
-    <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-snow/80 backdrop-blur-lg shadow-sm"
-          : "bg-transparent"
-      }`}
-    >
+    <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-20">
-          <a href="/" className="font-anton text-2xl text-prussian">
+          <a href="/" className="font-anton text-2xl text-prussian flex items-center gap-2">
+            <Bike className="w-6 h-6" />
             Hoffnungsradler
           </a>
 
