@@ -7,8 +7,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const News = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const newsItems = [
     {
       date: "12.01.2025",
@@ -55,7 +58,12 @@ const News = () => {
                     <h3 className="text-xl font-semibold text-prussian mb-4">
                       {item.title}
                     </h3>
-                    <Carousel className="w-full mb-4">
+                    <Carousel 
+                      className="w-full mb-4"
+                      onSelect={(api) => {
+                        setCurrentIndex(api.selectedScrollSnap());
+                      }}
+                    >
                       <CarouselContent>
                         {item.images.map((image, imageIndex) => (
                           <CarouselItem key={imageIndex}>
@@ -67,8 +75,18 @@ const News = () => {
                           </CarouselItem>
                         ))}
                       </CarouselContent>
-                      <CarouselPrevious />
-                      <CarouselNext />
+                      <CarouselPrevious 
+                        className={cn(
+                          "absolute left-2",
+                          currentIndex === 0 && "hidden"
+                        )}
+                      />
+                      <CarouselNext 
+                        className={cn(
+                          "absolute right-2",
+                          currentIndex === item.images.length - 1 && "hidden"
+                        )}
+                      />
                     </Carousel>
                     <p className="text-text/80">{item.description}</p>
                   </div>
@@ -83,4 +101,3 @@ const News = () => {
 };
 
 export default News;
-
