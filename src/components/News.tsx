@@ -6,23 +6,16 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  type CarouselApi,
 } from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 
 const News = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const newsItems = [
     {
       date: "12.01.2025",
-      title: "7000 Euro für krebskranke Kinder erstrampelt",
       images: [
         "/lovable-uploads/afec76a7-7703-49d3-b34a-1ddc9eaf8763.png",
         "/lovable-uploads/62f4385a-1bae-480c-855c-4f9b8222d1b6.png",
       ],
-      description:
-        "Die Hoffnungsradler Dülmen übergaben am Mittwochabend eine Spende in Höhe von 7000 Euro an die Elterninitiative krebskranker Kinder an der Vestischen Kinderklinik Datteln.",
     },
   ];
 
@@ -56,40 +49,23 @@ const News = () => {
                     <time className="text-sm text-forest/70 mb-2 block">
                       {item.date}
                     </time>
-                    <h3 className="text-xl font-semibold text-prussian mb-4">
-                      {item.title}
-                    </h3>
-                    <Carousel 
-                      className="w-full mb-4"
-                      onSelect={(api: CarouselApi) => {
-                        setCurrentIndex(api.selectedScrollSnap());
-                      }}
-                    >
+                    <Carousel className="w-full">
                       <CarouselContent>
                         {item.images.map((image, imageIndex) => (
                           <CarouselItem key={imageIndex}>
-                            <img
-                              src={image}
-                              alt={`${item.title} - Seite ${imageIndex + 1}`}
-                              className="w-full rounded-lg shadow-md"
-                            />
+                            <div className="flex justify-center items-center">
+                              <img
+                                src={image}
+                                alt={`News - Seite ${imageIndex + 1}`}
+                                className="w-full rounded-lg shadow-md"
+                              />
+                            </div>
                           </CarouselItem>
                         ))}
                       </CarouselContent>
-                      <CarouselPrevious 
-                        className={cn(
-                          "absolute left-2",
-                          currentIndex === 0 && "hidden"
-                        )}
-                      />
-                      <CarouselNext 
-                        className={cn(
-                          "absolute right-2",
-                          currentIndex === item.images.length - 1 && "hidden"
-                        )}
-                      />
+                      <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
+                      <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
                     </Carousel>
-                    <p className="text-text/80">{item.description}</p>
                   </div>
                 </div>
               </div>
