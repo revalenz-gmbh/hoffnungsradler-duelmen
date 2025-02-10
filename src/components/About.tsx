@@ -9,7 +9,7 @@ const About = () => {
     <section id="wir-über-uns" className="py-20 bg-snow">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-center gap-8 mb-12">
             <h2 className="font-anton text-4xl text-prussian">Über Uns</h2>
             <div className="bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
               <img
@@ -101,3 +101,4 @@ const About = () => {
 };
 
 export default About;
+
