@@ -25,50 +25,46 @@ const Footer = () => {
           </div>
 
           {/* Links */}
-          <div className="space-y-4">
-            <h3 className="font-anton text-xl mb-4">Links</h3>
+          <div className="space-y-2 mt-6">
             <div className="space-y-2 font-inter">
-              <Link to="/spenden" className="block hover:text-white/80 transition-colors">
-                Spenden
-              </Link>
-              <Link to="/presse" className="block hover:text-white/80 transition-colors">
-                Presse
-              </Link>
-              <Link to="/sponsoren" className="block hover:text-white/80 transition-colors">
-                Sponsoren
-              </Link>
-              <div className="space-y-2">
-                <a
-                  href="mailto:info@hoffnungsradler.de"
-                  className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>info@hoffnungsradler.de</span>
-                </a>
-                <a
-                  href="https://youtube.com/@hoffnungsradler"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
-                >
-                  <Youtube className="w-4 h-4" />
-                  <span>YouTube</span>
-                </a>
+              <a
+                href="mailto:info@hoffnungsradler.de"
+                className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
+              >
+                <Mail className="w-4 h-4" />
+                <span>info@hoffnungsradler.de</span>
+              </a>
+              <a
+                href="https://youtube.com/@hoffnungsradler"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
+              >
+                <Youtube className="w-4 h-4" />
+                <span>YouTube</span>
+              </a>
+              <div className="space-y-2 mt-6">
+                <Link to="/spenden" className="block hover:text-white/80 transition-colors">
+                  Spenden
+                </Link>
+                <Link to="/presse" className="block hover:text-white/80 transition-colors">
+                  Presse
+                </Link>
+                <Link to="/sponsoren" className="block hover:text-white/80 transition-colors">
+                  Sponsoren
+                </Link>
               </div>
             </div>
           </div>
 
           {/* Legal */}
-          <div className="space-y-4">
-            <h3 className="font-anton text-xl mb-4">Rechtliches</h3>
-            <div className="space-y-2 font-inter">
-              <Link to="/impressum" className="block hover:text-white/80 transition-colors">
-                Impressum
-              </Link>
-              <Link to="/datenschutz" className="block hover:text-white/80 transition-colors">
-                Datenschutz
-              </Link>
-            </div>
+          <div className="space-y-2 mt-6 font-inter">
+            <Link to="/impressum" className="block hover:text-white/80 transition-colors">
+              Impressum
+            </Link>
+            <Link to="/datenschutz" className="block hover:text-white/80 transition-colors">
+              Datenschutz
+            </Link>
           </div>
         </div>
 
