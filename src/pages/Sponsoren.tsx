@@ -1,5 +1,4 @@
-
-import { ArrowLeft, Handshake } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Sponsoren = () => {
@@ -7,37 +6,44 @@ const Sponsoren = () => {
     {
       name: "DÜMO Reisemobile",
       logo: "/lovable-uploads/40a11938-1150-4706-9454-5cbe35d8b8dd.png",
-      website: "#",
+      website: "https://www.duemo-duelmen.de/",
     },
     {
       name: "Kes Thiel & Co",
       logo: "/lovable-uploads/a0371457-045a-4dd5-9f40-ac475a36ef3b.png",
-      website: "#",
+      website: "https://www.kesthiel-co.de/",
     },
     {
       name: "Fahrrad XXL Hürter",
       logo: "/lovable-uploads/c8eeff6b-1d45-4b78-8780-07ac23bdfa0e.png",
-      website: "#",
+      website:
+        "https://www.fahrrad-xxl.de/filiale/muenster/?filiale=006_MS&gclid=EAIaIQobChMI1JixkIiP2QIVCPEbCh0olwhvEAAYASAAEgIYkPD_BwE",
     },
     {
       name: "Laumann Druck & Verlag",
       logo: "/lovable-uploads/cab5fd4d-2b5d-4af9-9499-04423c7de1eb.png",
-      website: "#",
+      website: "https://laumann-verlag.de/",
     },
     {
       name: "Stadtwerke Dülmen GmbH",
-      logo: "/lovable-uploads/50f80957-1d08-4ecb-bcd8-83d0bd0aaa00.png",
-      website: "#",
+      logo: "/lovable-uploads/Stw_Logo_transparent_NEU_10_12__Original.gif",
+      website:
+        "http://www.stadtwerke-duelmen.de/privatkunden/service/online-portal/",
     },
     {
       name: "Baumschule Rüskamp",
       logo: "/lovable-uploads/68952004-e13e-4290-a8a9-440e9cc4918f.png",
-      website: "#",
+      website: "https://www.rueskamp-welte.de/",
     },
     {
       name: "A&R Münsterland",
       logo: "/lovable-uploads/373bd578-37cc-42bf-b984-e8359e6a41e8.png",
-      website: "#",
+      website: "http://www.schrotthandel-muensterland.de/",
+    },
+    {
+      name: "Vette Repro & Bürobedarfscenter GmbH",
+      logo: "/lovable-uploads/Vette_Logo.gif",
+      website: "http://www.repro-vette.de/",
     },
   ];
 
@@ -64,14 +70,19 @@ const Sponsoren = () => {
           <div className="max-w-6xl mx-auto">
             {/* Title Section */}
             <div className="flex flex-col items-center mb-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-forest/10 text-forest mb-6">
-                <Handshake className="w-8 h-8" />
+              <div className="w-48 h-48 mb-8 bg-forest/5 rounded-full p-4 rotate-3 transition-transform hover:rotate-6">
+                <img
+                  src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                  alt="Hoffnungsradler Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <h1 className="font-anton text-4xl md:text-5xl text-prussian mb-4">
                 Unsere Sponsoren
               </h1>
-              <p className="text-text text-lg max-w-2xl text-center">
-                Wir danken unseren Sponsoren für ihre großzügige Unterstützung.
+              <p className="text-text text-xl max-w-3xl text-center">
+                Wir unterstützen die Tour der Hoffnung zugunsten krebskranker
+                Kinder.
               </p>
             </div>
 

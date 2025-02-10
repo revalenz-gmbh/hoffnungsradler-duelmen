@@ -8,11 +8,14 @@ const Header = () => {
   const menuItems = [
     { name: "Wir über uns", path: "/ueber-uns" },
     { name: "Tour Termine", path: "/tour-termine" },
-    { name: "Unsere Touren", path: "#unsere-touren" },
+    { name: "Unsere Touren", path: "/unsere-touren" },
     { name: "Presse", path: "#presse" },
-    { name: "Sponsoren", path: "#sponsoren" },
-    { name: "Spenden", path: "#spenden" },
-    { name: "Fotogalerie", path: "#fotogalerie" },
+    { name: "Sponsoren", path: "/sponsoren" },
+    { name: "Spenden", path: "/spenden" },
+    {
+      name: "Fotogalerie",
+      path: "http://bilder.xn--hoffnungs-radler-dlmen-9lc.de/",
+    },
   ];
 
   return (
@@ -24,7 +27,7 @@ const Header = () => {
             className="font-anton text-2xl text-forestDark flex items-center gap-2"
           >
             <Bike className="w-6 h-6" />
-            Hoffnungsradler
+            Hoffnungsradler Dülmen
           </Link>
 
           {/* Desktop Menu */}
@@ -33,7 +36,7 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className="font-inter text-text hover:text-prussian transition-colors"
+                className="font-inter text-forestDark hover:text-forest transition-colors"
               >
                 {item.name}
               </Link>

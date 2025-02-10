@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Building2, AtSign } from "lucide-react";
+import { Mail, Phone, AtSign } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {

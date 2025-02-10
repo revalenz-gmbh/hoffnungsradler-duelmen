@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -59,42 +58,37 @@ const UnsereTouren = () => {
         <div className="container mx-auto px-4">
           <nav className="flex items-center h-20">
             <Link
-              to="/tour-termine"
+              to="/"
               className="flex items-center gap-2 text-prussian hover:text-prussian/80 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
-              Zurück zu Tour-Termine
+              Zurück
             </Link>
           </nav>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="pt-32 pb-20">
+      <main className="pt-40 pb-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Hero Section */}
             <div className="mb-12 text-center">
-              <div className="w-full h-48 mb-8 bg-forest/5 rounded-lg overflow-hidden">
-                <img
-                  src="/lovable-uploads/12146fb3-1b91-4a98-b4e3-6f0455d76083.png"
-                  alt="Hoffnungsradler Dülmen Header"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h1 className="font-anton text-4xl md:text-5xl text-prussian mb-6">
+              <h1 className="font-anton text-4xl md:text-5xl text-prussian mb-12">
                 GPS-Dateien unserer Touren
               </h1>
-              <p className="text-text text-lg max-w-2xl mx-auto mb-4">
-                Hier können Sie sich kostenlos die GPS-Daten der Hoffnungs-Radler-Dülmen herunterladen.
+              <p className="text-text text-lg max-w-4xl mx-auto mb-6">
+                Hier können Sie sich kostenlos die GPS-Daten der
+                Hoffnungsradler-Dülmen herunterladen.
               </p>
-              <p className="text-text text-lg max-w-2xl mx-auto">
-                Wir stellen Ihnen den Track der Hoffnungs-Radler in den Formaten .gpx zur Verfügung.
+              <p className="text-text text-lg max-w-4xl mx-auto">
+                Wir stellen Ihnen den Track der Hoffnungsradler in den Formaten
+                .gpx zur Verfügung.
               </p>
             </div>
 
             {/* Downloads Section */}
-            <div className="bg-white rounded-lg p-6 md:p-8 shadow-lg border border-forest/10">
+            <div className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
               <div className="space-y-4">
                 {tours.map((tour, index) => (
                   <div key={index}>
@@ -125,7 +119,8 @@ const UnsereTouren = () => {
                 Zusatzinformation für die Tour nach Arnheim
               </h2>
               <p className="text-text">
-                <strong>Issel-Fähre Brummen - Bronkhorst:</strong> bei ca. 151 km (Autofahre)
+                <strong>Issel-Fähre Brummen - Bronkhorst:</strong> bei ca. 151
+                km (Autofahre)
                 <br />
                 Mobil: 06-15020976
                 <br />
@@ -135,7 +130,8 @@ const UnsereTouren = () => {
                 <br />
                 1.10.-30.4.: mo-fr 7.30-17.30 h; sa+so 10.00–17.00 h
                 <br />
-                Keine Fahrt bei Eisgang, mehr als Windstärke 7 und bei Hochwasser.
+                Keine Fahrt bei Eisgang, mehr als Windstärke 7 und bei
+                Hochwasser.
               </p>
             </div>
           </div>

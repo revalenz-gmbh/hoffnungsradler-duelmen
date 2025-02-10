@@ -1,4 +1,3 @@
-
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -47,19 +46,34 @@ const UeberUns = () => {
                 </h2>
                 <div className="space-y-4 leading-relaxed">
                   <p>
-                    Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003 durch Josef Friedag und Carlo Hüwe ins Leben gerufen worden.
+                    Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003
+                    durch Josef Friedag und Carlo Hüwe ins Leben gerufen worden.
                   </p>
                   <p>
-                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte Rennradtouren durch die münsterländische Parklandschaft auf verkehrsarmen Wegen organisiert.
+                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht
+                    geführte Rennradtouren durch die münsterländische
+                    Parklandschaft auf verkehrsarmen Wegen organisiert.
                   </p>
                   <p>
-                    Das von den Teilnehmern freiwillig und in eigenem Ermessen entrichtete Startgeld wird von den Initiatoren gesammelt und nach Saisonabschluss der Kinderkrebshilfe gespendet.
+                    Das von den Teilnehmern freiwillig und in eigenem Ermessen
+                    entrichtete Startgeld wird von den Initiatoren gesammelt und
+                    nach Saisonabschluss der Kinderkrebshilfe gespendet.
                   </p>
                   <p>
-                    Von Beginn an spenden nicht nur die aktiven Radsportler, sondern auch immer wieder diverse Firmen und Unternehmen, siehe Sponsorenseite.
+                    Von Beginn an spenden nicht nur die aktiven Radsportler,
+                    sondern auch immer wieder diverse Firmen und Unternehmen –
+                    siehe{" "}
+                    <Link
+                      to="/sponsoren"
+                      className="font-semibold text-forestDark hover:text-forest transition-colors underline"
+                    >
+                      Sponsorenseite
+                    </Link>
+                    .
                   </p>
                   <p className="text-forest font-semibold">
-                    Insgesamt konnten durch die Dülmener Hoffnungsradler über 80.000 Euro Spenden gesammelt werden!
+                    Insgesamt konnten durch die Dülmener Hoffnungsradler über
+                    80.000 Euro Spenden gesammelt werden!
                   </p>
                 </div>
               </section>
@@ -71,10 +85,19 @@ const UeberUns = () => {
                 </h2>
                 <div className="space-y-4 leading-relaxed">
                   <p>
-                    Bis 2013 wurden die Spenden der Dülmener Hoffnungsradler an die überregionale Institution "Tour der Hoffnung" weiter geleitet. Seit dem Zeitpunkt werden die gesammelten Spenden nach dem Motto "aus der Region - für die Region" hier im Umkreis überreicht, wie die Elterninitiative krebskranker Kinder in Datteln und im vergangenen Jahr die Kinder- u. Jugendliche-Krebsberatungsstelle Münster.
+                    Bis 2013 wurden die Spenden der Dülmener Hoffnungsradler an
+                    die überregionale Institution "Tour der Hoffnung" weiter
+                    geleitet. Seit dem Zeitpunkt werden die gesammelten Spenden
+                    nach dem Motto "aus der Region - für die Region" hier im
+                    Umkreis überreicht, wie die Elterninitiative krebskranker
+                    Kinder in Datteln und im vergangenen Jahr die Kinder- u.
+                    Jugendliche-Krebsberatungsstelle Münster.
                   </p>
                   <p>
-                    Die Spenden werden für psychosoziale Maßnahmen, Kinderfreizeiten, Übernachtungsmöglichkeiten für Eltern von erkrankten Kindern etc. verwendet, zumal Krankenkassen nur für die medizinische Versorgung leisten können.
+                    Die Spenden werden für psychosoziale Maßnahmen,
+                    Kinderfreizeiten, Übernachtungsmöglichkeiten für Eltern von
+                    erkrankten Kindern etc. verwendet, zumal Krankenkassen nur
+                    für die medizinische Versorgung leisten können.
                   </p>
                 </div>
               </section>
@@ -85,7 +108,9 @@ const UeberUns = () => {
                   In Memoriam
                 </h2>
                 <p className="leading-relaxed">
-                  Ein schwerer Schicksalsschlag traf die Dülmener Hoffnungsradler, als im November 2015 Carlo Hüwe im Alter von 66 Jahren an einer Tumorerkrankung viel zu früh verstarb.
+                  Ein schwerer Schicksalsschlag traf die Dülmener
+                  Hoffnungsradler, als im November 2015 Carlo Hüwe im Alter von
+                  66 Jahren an einer Tumorerkrankung viel zu früh verstarb.
                 </p>
               </section>
 
@@ -95,11 +120,15 @@ const UeberUns = () => {
                   Aktuelles Orgateam
                 </h2>
                 <p className="mb-4">
-                  Zum aktuellen Orgateam der Dülmener Hoffnungsradler gehören seit 2023:
+                  Zum aktuellen Orgateam der Dülmener Hoffnungsradler gehören
+                  seit 2023:
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>Josef Friedag als Hauptinitiator und Tourguide</li>
-                  <li>Ludger Dey zur Pflege der Internetseite, Tourguide, Öffentlichkeitsarbeit</li>
+                  <li>
+                    Ludger Dey zur Pflege der Internetseite, Tourguide,
+                    Öffentlichkeitsarbeit
+                  </li>
                   <li>Martin Stolz als Tourguide, Öffentlichkeitsarbeit</li>
                 </ul>
               </section>
@@ -110,12 +139,13 @@ const UeberUns = () => {
                   Internetseite
                 </h2>
                 <p className="leading-relaxed">
-                  Seit 2017 haben die Dülmener Hoffnungsradler wieder eine eigene neue Internetseite:{" "}
+                  Seit 2017 haben die Dülmener Hoffnungsradler wieder eine
+                  eigene neue Internetseite:{" "}
                   <a
                     href="https://www.hoffnungs-radler-duelmen.de"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-forest hover:text-forest/80 transition-colors"
+                    className="font-semibold text-forestDark hover:text-forest transition-colors underline"
                   >
                     www.hoffnungs-radler-duelmen.de
                   </a>

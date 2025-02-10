@@ -1,4 +1,3 @@
-
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import TourDates from "@/components/TourDates";
@@ -34,26 +33,21 @@ const TourTermine = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <h1 className="font-anton text-4xl md:text-5xl text-prussian mb-4">
-                Tour-Termine 2024
-              </h1>
-              <p className="text-text text-center max-w-2xl mb-8">
-                rollen für krebskranke Kinder
-              </p>
             </div>
-
             {/* Tour Dates Section */}
-            <div className="space-y-12">
+            <div className="-mt-32">
               <TourDates />
-              
+
               {/* Legal Notice */}
-              <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
+              <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10 -mt-16">
                 <div className="space-y-4 text-text text-center">
                   <p className="italic">
-                    Die Baumberger-Touren sind nicht ausgeschildert und nur als GPS Track veröffentlicht.
+                    Die Baumberger-Touren sind nicht ausgeschildert und nur als
+                    GPS-Track veröffentlicht.
                   </p>
                   <p className="font-medium">
-                    Die Bestimmungen der StVO sind einzuhalten. Jeder Teilnehmer fährt auf eigene Gefahr.
+                    Die Bestimmungen der StVO sind einzuhalten. Jeder Teilnehmer
+                    fährt auf eigene Gefahr.
                   </p>
                   <p className="font-medium">
                     Für Unfälle wird keine Haftung übernommen.

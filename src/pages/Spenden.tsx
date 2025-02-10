@@ -1,5 +1,4 @@
-
-import { ArrowLeft, PiggyBank } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -12,31 +11,74 @@ import {
 
 const Spenden = () => {
   const donations = [
-    { year: 2024, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 7000.00 },
-    { year: 2023, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 13000.00 },
-    { year: 2022, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 4000.00 },
-    { year: 2021, recipient: "Kinderkrebshilfe Münster E.V.", amount: 4500.00 },
-    { year: 2020, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5600.00 },
-    { year: 2019, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5500.00 },
-    { year: 2018, recipient: "Kinderkrebshilfe Münster E.V.", amount: 5000.00 },
-    { year: 2017, recipient: "Kinder u. Jugendliche-Krebsberatung-Münster", amount: 5000.00 },
-    { year: 2016, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 7000.00 },
-    { year: 2015, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5600.00 },
-    { year: 2014, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5555.00 },
-    { year: 2013, recipient: "Tour der Hoffnung", amount: 3000.00 },
-    { year: 2013, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 2000.00 },
-    { year: 2012, recipient: "Tour der Hoffnung", amount: 4000.00 },
-    { year: 2011, recipient: "Tour der Hoffnung", amount: 4000.00 },
-    { year: 2010, recipient: "Tour der Hoffnung", amount: 3000.00 },
-    { year: 2009, recipient: "Tour der Hoffnung", amount: 2500.00 },
-    { year: 2008, recipient: "Tour der Hoffnung", amount: 1700.00 },
-    { year: 2007, recipient: "Tour der Hoffnung", amount: 1300.00 },
-    { year: 2006, recipient: "Tour der Hoffnung", amount: 1200.00 },
-    { year: 2005, recipient: "Tour der Hoffnung", amount: 500.00 },
-    { year: 2004, recipient: "Tour der Hoffnung", amount: 100.00 },
+    { year: 2004, recipient: "Tour der Hoffnung", amount: 100.0 },
+    { year: 2005, recipient: "Tour der Hoffnung", amount: 500.0 },
+    { year: 2006, recipient: "Tour der Hoffnung", amount: 1200.0 },
+    { year: 2007, recipient: "Tour der Hoffnung", amount: 1300.0 },
+    { year: 2008, recipient: "Tour der Hoffnung", amount: 1700.0 },
+    { year: 2009, recipient: "Tour der Hoffnung", amount: 2500.0 },
+    { year: 2010, recipient: "Tour der Hoffnung", amount: 3000.0 },
+    { year: 2011, recipient: "Tour der Hoffnung", amount: 4000.0 },
+    { year: 2012, recipient: "Tour der Hoffnung", amount: 4000.0 },
+    { year: 2013, recipient: "Tour der Hoffnung", amount: 3000.0 },
+    {
+      year: 2013,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 2000.0,
+    },
+    {
+      year: 2014,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 5555.0,
+    },
+    {
+      year: 2015,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 5600.0,
+    },
+    {
+      year: 2016,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 7000.0,
+    },
+    {
+      year: 2017,
+      recipient: "Kinder u. Jugendliche-Krebsberatung-Münster",
+      amount: 5000.0,
+    },
+    { year: 2018, recipient: "Kinderkrebshilfe Münster E.V.", amount: 5000.0 },
+    {
+      year: 2019,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 5500.0,
+    },
+    {
+      year: 2020,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 5600.0,
+    },
+    { year: 2021, recipient: "Kinderkrebshilfe Münster E.V.", amount: 4500.0 },
+    {
+      year: 2022,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 4000.0,
+    },
+    {
+      year: 2023,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 13000.0,
+    },
+    {
+      year: 2024,
+      recipient: "Datteln Elterninitiative krebskranker Kinder",
+      amount: 7000.0,
+    },
   ];
 
-  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
+  const totalDonations = donations.reduce(
+    (sum, donation) => sum + donation.amount,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-snow">
@@ -61,14 +103,23 @@ const Spenden = () => {
           <div className="max-w-6xl mx-auto">
             {/* Title Section */}
             <div className="flex flex-col items-center mb-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-forest/10 text-forest mb-6">
-                <PiggyBank className="w-8 h-8" />
+              <div className="w-48 h-48 mb-8 bg-forest/5 rounded-full p-4 rotate-3 transition-transform hover:rotate-6">
+                <img
+                  src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                  alt="Hoffnungsradler Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <h1 className="font-anton text-4xl md:text-5xl text-prussian mb-4">
                 Spenden
               </h1>
               <p className="text-text text-lg max-w-2xl text-center mb-8">
-                Seit 2004 haben wir insgesamt {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(totalDonations)} an verschiedene Organisationen gespendet.
+                Seit 2004 haben wir insgesamt{" "}
+                {new Intl.NumberFormat("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(totalDonations)}{" "}
+                an verschiedene Organisationen gespendet.
               </p>
             </div>
 
@@ -78,17 +129,24 @@ const Spenden = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-24">Jahr</TableHead>
-                    <TableHead className="min-w-[300px]">Organisation</TableHead>
+                    <TableHead className="min-w-[300px]">
+                      Organisation
+                    </TableHead>
                     <TableHead className="text-right w-32">Betrag</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {donations.map((donation, index) => (
                     <TableRow key={`${donation.year}-${index}`}>
-                      <TableCell className="font-medium">{donation.year}</TableCell>
+                      <TableCell className="font-medium">
+                        {donation.year}
+                      </TableCell>
                       <TableCell>{donation.recipient}</TableCell>
                       <TableCell className="text-right">
-                        {new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(donation.amount)}
+                        {new Intl.NumberFormat("de-DE", {
+                          style: "currency",
+                          currency: "EUR",
+                        }).format(donation.amount)}
                       </TableCell>
                     </TableRow>
                   ))}
