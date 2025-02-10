@@ -9,7 +9,8 @@ const About = () => {
     <section id="wir-über-uns" className="py-20 bg-snow">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center gap-8 mb-12">
+          {/* Mobile: Logo next to heading */}
+          <div className="md:hidden flex items-center justify-center gap-4 mb-8">
             <h2 className="font-anton text-4xl text-prussian">Über Uns</h2>
             <div className="bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
               <img
@@ -18,6 +19,11 @@ const About = () => {
                 className="w-24 h-auto"
               />
             </div>
+          </div>
+
+          {/* Desktop: Only heading */}
+          <div className="hidden md:block mb-12">
+            <h2 className="font-anton text-4xl text-prussian text-center">Über Uns</h2>
           </div>
 
           <div className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
@@ -66,31 +72,40 @@ const About = () => {
                 )}
               </div>
 
-              {/* Desktop: Show all content */}
-              <div className="hidden md:block space-y-4">
-                <p>
-                  Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003 durch Josef
-                  Friedag und Carlo Hüwe ins Leben gerufen worden.
-                </p>
+              {/* Desktop: Show all content with logo floated right */}
+              <div className="hidden md:block">
+                <div className="float-right ml-8 mb-8 bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
+                  <img
+                    src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                    alt="Hoffnungsradler Logo"
+                    className="w-24 h-auto"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <p>
+                    Die Initiative "Dülmener Hoffnungsradler" ist im Jahr 2003 durch Josef
+                    Friedag und Carlo Hüwe ins Leben gerufen worden.
+                  </p>
 
-                <p>
-                  Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte
-                  Rennradtouren durch die münsterländische Parklandschaft auf
-                  verkehrsarmen Wegen organisiert.
-                </p>
+                  <p>
+                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte
+                    Rennradtouren durch die münsterländische Parklandschaft auf
+                    verkehrsarmen Wegen organisiert.
+                  </p>
 
-                <p>
-                  Das von den Teilnehmern freiwillig und in eigenem Ermessen
-                  entrichtete Startgeld wird von den Initiatoren gesammelt und nach
-                  Saisonabschluss der Kinderkrebshilfe gespendet. Von Beginn an
-                  spenden nicht nur die aktiven Radsportler, sondern auch immer wieder
-                  diverse Firmen und Unternehmen, siehe Sponsorenseite.
-                </p>
+                  <p>
+                    Das von den Teilnehmern freiwillig und in eigenem Ermessen
+                    entrichtete Startgeld wird von den Initiatoren gesammelt und nach
+                    Saisonabschluss der Kinderkrebshilfe gespendet. Von Beginn an
+                    spenden nicht nur die aktiven Radsportler, sondern auch immer wieder
+                    diverse Firmen und Unternehmen, siehe Sponsorenseite.
+                  </p>
 
-                <p className="font-semibold text-prussian">
-                  Insgesamt konnten durch die Dülmener Hoffnungsradler über 80.000
-                  Euro Spenden gesammelt werden!
-                </p>
+                  <p className="font-semibold text-prussian">
+                    Insgesamt konnten durch die Dülmener Hoffnungsradler über 80.000
+                    Euro Spenden gesammelt werden!
+                  </p>
+                </div>
               </div>
             </div>
           </div>
