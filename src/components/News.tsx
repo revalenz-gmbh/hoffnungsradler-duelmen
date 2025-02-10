@@ -1,12 +1,22 @@
 
 import { CalendarIcon } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const News = () => {
   const newsItems = [
     {
       date: "12.01.2025",
       title: "7000 Euro für krebskranke Kinder erstrampelt",
-      image: "/lovable-uploads/afec76a7-7703-49d3-b34a-1ddc9eaf8763.png",
+      images: [
+        "/lovable-uploads/afec76a7-7703-49d3-b34a-1ddc9eaf8763.png",
+        "/lovable-uploads/62f4385a-1bae-480c-855c-4f9b8222d1b6.png",
+      ],
       description:
         "Die Hoffnungsradler Dülmen übergaben am Mittwochabend eine Spende in Höhe von 7000 Euro an die Elterninitiative krebskranker Kinder an der Vestischen Kinderklinik Datteln.",
     },
@@ -45,11 +55,21 @@ const News = () => {
                     <h3 className="text-xl font-semibold text-prussian mb-4">
                       {item.title}
                     </h3>
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full rounded-lg mb-4 shadow-md"
-                    />
+                    <Carousel className="w-full mb-4">
+                      <CarouselContent>
+                        {item.images.map((image, imageIndex) => (
+                          <CarouselItem key={imageIndex}>
+                            <img
+                              src={image}
+                              alt={`${item.title} - Seite ${imageIndex + 1}`}
+                              className="w-full rounded-lg shadow-md"
+                            />
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious />
+                      <CarouselNext />
+                    </Carousel>
                     <p className="text-text/80">{item.description}</p>
                   </div>
                 </div>
@@ -63,3 +83,4 @@ const News = () => {
 };
 
 export default News;
+
