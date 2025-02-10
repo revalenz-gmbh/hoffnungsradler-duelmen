@@ -7,8 +7,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
 
 const News = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
+
   const newsItems = [
     {
       date: "12.01.2025",
@@ -49,23 +58,42 @@ const News = () => {
                     <time className="text-sm text-forest/70 mb-2 block">
                       {item.date}
                     </time>
-                    <Carousel className="w-full">
-                      <CarouselContent>
+                    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                      <div className="grid grid-cols-2 gap-4">
                         {item.images.map((image, imageIndex) => (
-                          <CarouselItem key={imageIndex}>
-                            <div className="flex justify-center items-center">
-                              <img
-                                src={image}
-                                alt={`News - Seite ${imageIndex + 1}`}
-                                className="w-full rounded-lg shadow-md"
-                              />
-                            </div>
-                          </CarouselItem>
+                          <DialogTrigger
+                            key={imageIndex}
+                            onClick={() => setStartIndex(imageIndex)}
+                            className="cursor-pointer hover:opacity-90 transition-opacity"
+                          >
+                            <img
+                              src={image}
+                              alt={`News - Seite ${imageIndex + 1}`}
+                              className="w-full rounded-lg shadow-md"
+                            />
+                          </DialogTrigger>
                         ))}
-                      </CarouselContent>
-                      <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2" />
-                      <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2" />
-                    </Carousel>
+                      </div>
+                      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0">
+                        <Carousel className="w-full h-full" defaultIndex={startIndex}>
+                          <CarouselContent className="h-full">
+                            {item.images.map((image, imageIndex) => (
+                              <CarouselItem key={imageIndex} className="h-full">
+                                <div className="flex items-center justify-center h-full p-4">
+                                  <img
+                                    src={image}
+                                    alt={`News - Seite ${imageIndex + 1}`}
+                                    className="max-h-full max-w-full object-contain rounded-lg"
+                                  />
+                                </div>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          <CarouselPrevious className="left-4" />
+                          <CarouselNext className="right-4" />
+                        </Carousel>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               </div>
