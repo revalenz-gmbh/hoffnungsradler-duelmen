@@ -24,7 +24,7 @@ const News = () => {
     <section className="py-20 bg-[#F2FCE2]">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="relative flex justify-end">
+          <div className="relative">
             <div className="w-full md:w-1/2">
               <Carousel className="w-full">
                 <CarouselContent>
