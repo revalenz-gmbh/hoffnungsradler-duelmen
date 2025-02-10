@@ -47,7 +47,7 @@ const News = () => {
                 className="relative flex flex-col md:flex-row md:justify-between group mb-12"
               >
                 {/* Date bubble */}
-                <div className="absolute left-0 md:left-1/2 -translate-x-4 md:-translate-x-6 flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
+                <div className="absolute left-0 md:left-1/2 -translate-x-4 md:-translate-x-6 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
                   <CalendarIcon className="w-6 h-6 text-forest" />
                 </div>
 
@@ -69,7 +69,7 @@ const News = () => {
                           className="w-full rounded-lg shadow-md"
                         />
                       </DialogTrigger>
-                      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-y-auto">
+                      <DialogContent className="max-w-4xl w-[95vw] h-auto p-0 overflow-y-auto">
                         <Carousel className="w-full h-full">
                           <CarouselContent className="h-full">
                             {item.images.map((image, imageIndex) => (
