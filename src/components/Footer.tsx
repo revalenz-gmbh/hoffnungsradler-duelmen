@@ -24,8 +24,9 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
-          <div className="space-y-2 mt-6">
+          {/* Contact/Social Media */}
+          <div className="space-y-2">
+            <h3 className="font-anton text-xl mb-4">Kontakt/Soziale Medien</h3>
             <div className="space-y-2 font-inter">
               <a
                 href="mailto:info@hoffnungsradler.de"
@@ -43,34 +44,39 @@ const Footer = () => {
                 <Youtube className="w-4 h-4" />
                 <span>YouTube</span>
               </a>
-              <div className="space-y-2 mt-6">
-                <Link to="/spenden" className="block hover:text-white/80 transition-colors">
-                  Spenden
-                </Link>
-                <Link to="/presse" className="block hover:text-white/80 transition-colors">
-                  Presse
-                </Link>
-                <Link to="/sponsoren" className="block hover:text-white/80 transition-colors">
-                  Sponsoren
-                </Link>
-              </div>
             </div>
           </div>
 
-          {/* Legal */}
-          <div className="space-y-2 mt-6 font-inter">
-            <Link to="/impressum" className="block hover:text-white/80 transition-colors">
-              Impressum
-            </Link>
-            <Link to="/datenschutz" className="block hover:text-white/80 transition-colors">
-              Datenschutz
-            </Link>
+          {/* Links */}
+          <div className="space-y-2">
+            <h3 className="font-anton text-xl mb-4">Links</h3>
+            <div className="space-y-2 font-inter">
+              <Link to="/spenden" className="block hover:text-white/80 transition-colors">
+                Spenden
+              </Link>
+              <Link to="/presse" className="block hover:text-white/80 transition-colors">
+                Presse
+              </Link>
+              <Link to="/sponsoren" className="block hover:text-white/80 transition-colors">
+                Sponsoren
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="pt-8 border-t border-white/10 text-center text-sm text-white/80">
-          <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
+        {/* Copyright and Legal Links */}
+        <div className="pt-8 border-t border-white/10 text-sm text-white/80">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
+            <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
+            <div className="flex items-center gap-8">
+              <Link to="/impressum" className="hover:text-white transition-colors">
+                Impressum
+              </Link>
+              <Link to="/datenschutz" className="hover:text-white transition-colors">
+                Datenschutz
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
