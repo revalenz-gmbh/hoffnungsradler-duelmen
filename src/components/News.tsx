@@ -46,8 +46,8 @@ const News = () => {
                 key={index}
                 className="relative flex flex-col md:flex-row md:justify-between group mb-12"
               >
-                {/* Date bubble */}
-                <div className="absolute left-0 md:left-1/2 -translate-x-4 md:-translate-x-6 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
+                {/* Date bubble - Adjusted positioning for mobile */}
+                <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
                   <CalendarIcon className="w-6 h-6 text-forest" />
                 </div>
 
@@ -101,4 +101,3 @@ const News = () => {
 };
 
 export default News;
-
