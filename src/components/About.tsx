@@ -3,16 +3,10 @@ const About = () => {
   return (
     <section id="wir-über-uns" className="py-20 bg-snow">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="font-anton text-4xl text-prussian mb-6">Über Uns</h2>
-          <p className="font-inter text-lg text-text leading-relaxed">
-            Wir sind eine Gemeinschaft von begeisterten Radfahrern, die sich für
-            nachhaltigen Sport und soziales Engagement einsetzen.
-          </p>
-        </div>
-
         <div className="max-w-4xl mx-auto">
-          <div className="bg-[#FEF7CD]/30 rounded-lg p-8 shadow-lg border border-forest/10 relative">
+          <h2 className="font-anton text-4xl text-prussian mb-12 text-center">Über Uns</h2>
+
+          <div className="bg-white rounded-lg p-8 shadow-lg border border-forest/10 relative">
             {/* Letter Header with Logo */}
             <div className="absolute -top-8 right-8 bg-white rounded-lg p-2 shadow-md">
               <img
@@ -47,15 +41,6 @@ const About = () => {
                 Euro Spenden gesammelt werden!
               </p>
             </div>
-
-            <div className="mt-8 text-center">
-              <a
-                href="#tour-termine"
-                className="inline-block bg-forest text-white font-inter px-6 py-3 rounded-lg transition-transform hover:scale-105"
-              >
-                Mitmachen
-              </a>
-            </div>
           </div>
         </div>
       </div>
@@ -64,3 +49,4 @@ const About = () => {
 };
 
 export default About;
+
