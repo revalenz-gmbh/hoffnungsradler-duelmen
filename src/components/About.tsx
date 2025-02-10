@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
@@ -10,13 +9,13 @@ const About = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Mobile: Logo next to heading */}
-          <div className="md:hidden flex items-center justify-center gap-4 mb-8">
+          <div className="md:hidden flex items-center justify-center gap-4 mb-6">
             <h2 className="font-anton text-4xl text-prussian">Über Uns</h2>
             <div className="bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
               <img
                 src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                 alt="Hoffnungsradler Logo"
-                className="w-20 h-auto" // Reduced from w-24 to w-20
+                className="w-20 h-auto"
               />
             </div>
           </div>
@@ -36,17 +35,17 @@ const About = () => {
                 </p>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="flex items-center justify-center w-full mt-4 text-prussian"
+                  className="flex items-center justify-center w-full mt-2 mb-1 text-prussian"
                   aria-label={isExpanded ? "Weniger anzeigen" : "Mehr anzeigen"}
                 >
                   {isExpanded ? (
-                    <ChevronUp className="w-6 h-6" />
+                    <ChevronUp className="w-5 h-5" />
                   ) : (
-                    <ChevronDown className="w-6 h-6" />
+                    <ChevronDown className="w-5 h-5" />
                   )}
                 </button>
                 {isExpanded && (
-                  <div className="mt-4 space-y-4 animate-fade-in">
+                  <div className="mt-2 space-y-4 animate-fade-in">
                     <p>
                       Seit mittlerweile 21 Jahren werden jährlich sieben bis acht geführte
                       Rennradtouren durch die münsterländische Parklandschaft auf
