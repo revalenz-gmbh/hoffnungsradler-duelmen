@@ -5,6 +5,7 @@ import About from "@/components/About";
 import News from "@/components/News";
 import TourDates from "@/components/TourDates";
 import TourSignup from "@/components/TourSignup";
+import PhotoGallery from "@/components/PhotoGallery";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -16,6 +17,7 @@ const Index = () => {
       <News />
       <TourDates />
       <TourSignup />
+      <PhotoGallery />
       <Footer />
     </div>
   );
