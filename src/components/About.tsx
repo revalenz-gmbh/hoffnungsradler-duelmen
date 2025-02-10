@@ -9,18 +9,18 @@ const About = () => {
     <section id="wir-über-uns" className="py-20 bg-snow">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-anton text-4xl text-prussian mb-12 text-center">Über Uns</h2>
-
-          <div className="bg-white rounded-lg p-8 shadow-lg border border-forest/10 relative">
-            {/* Logo/Stamp positioned top-right */}
-            <div className="absolute -top-8 right-8 bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="font-anton text-4xl text-prussian">Über Uns</h2>
+            <div className="bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
               <img
                 src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                 alt="Hoffnungsradler Logo"
                 className="w-24 h-auto"
               />
             </div>
+          </div>
 
+          <div className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
             <div className="space-y-4 font-inter text-text leading-relaxed">
               {/* Mobile: Show only first paragraph and toggle button */}
               <div className="md:hidden">
@@ -101,4 +101,3 @@ const About = () => {
 };
 
 export default About;
-
