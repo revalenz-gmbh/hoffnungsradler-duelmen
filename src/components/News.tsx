@@ -6,6 +6,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -60,7 +61,7 @@ const News = () => {
                     </h3>
                     <Carousel 
                       className="w-full mb-4"
-                      onSelect={(api) => {
+                      onSelect={(api: CarouselApi) => {
                         setCurrentIndex(api.selectedScrollSnap());
                       }}
                     >
