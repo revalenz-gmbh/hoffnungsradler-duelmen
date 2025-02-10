@@ -68,7 +68,7 @@ const Footer = () => {
           {/* Radsportfreunde */}
           <div className="space-y-2">
             <h3 className="font-anton text-xl mb-4">Radsportfreunde</h3>
-            <div className="flex flex-col items-center md:items-start gap-4">
+            <div className="flex flex-row items-center justify-center md:justify-start gap-8">
               <a 
                 href="https://djk-radsport.de/"
                 target="_blank"
