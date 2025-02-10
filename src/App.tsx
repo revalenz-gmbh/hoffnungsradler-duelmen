@@ -9,6 +9,7 @@ import UeberUns from "./pages/UeberUns";
 import TourTermine from "./pages/TourTermine";
 import UnsereTouren from "./pages/UnsereTouren";
 import Sponsoren from "./pages/Sponsoren";
+import Spenden from "./pages/Spenden";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/tour-termine" element={<TourTermine />} />
           <Route path="/unsere-touren" element={<UnsereTouren />} />
           <Route path="/sponsoren" element={<Sponsoren />} />
+          <Route path="/spenden" element={<Spenden />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
