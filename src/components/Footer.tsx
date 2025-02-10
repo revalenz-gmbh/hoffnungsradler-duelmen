@@ -1,5 +1,5 @@
 
-import { Mail, Youtube } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -24,9 +24,9 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Contact/Social Media */}
+          {/* Contact */}
           <div className="space-y-2">
-            <h3 className="font-anton text-xl mb-4">Kontakt/Soziale Medien</h3>
+            <h3 className="font-anton text-xl mb-4">Kontakt</h3>
             <div className="space-y-2 font-inter">
               <a
                 href="mailto:info@hoffnungsradler.de"
@@ -36,14 +36,16 @@ const Footer = () => {
                 <span>info@hoffnungsradler.de</span>
               </a>
               <a
-                href="https://youtube.com/@hoffnungsradler"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="tel:+491234567890"
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
-                <Youtube className="w-4 h-4" />
-                <span>YouTube</span>
+                <Phone className="w-4 h-4" />
+                <span>+49 1234 567890</span>
               </a>
+              <div className="flex items-center gap-2 justify-center md:justify-start">
+                <MapPin className="w-4 h-4" />
+                <span>48249 Dülmen</span>
+              </div>
             </div>
           </div>
 
