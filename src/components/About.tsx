@@ -16,7 +16,7 @@ const About = () => {
               <img
                 src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                 alt="Hoffnungsradler Logo"
-                className="w-24 h-auto"
+                className="w-20 h-auto" // Reduced from w-24 to w-20
               />
             </div>
           </div>
@@ -37,15 +37,12 @@ const About = () => {
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="flex items-center justify-center w-full mt-4 text-prussian"
+                  aria-label={isExpanded ? "Weniger anzeigen" : "Mehr anzeigen"}
                 >
                   {isExpanded ? (
-                    <>
-                      Weniger anzeigen <ChevronUp className="ml-2 w-4 h-4" />
-                    </>
+                    <ChevronUp className="w-6 h-6" />
                   ) : (
-                    <>
-                      Mehr anzeigen <ChevronDown className="ml-2 w-4 h-4" />
-                    </>
+                    <ChevronDown className="w-6 h-6" />
                   )}
                 </button>
                 {isExpanded && (
@@ -116,4 +113,3 @@ const About = () => {
 };
 
 export default About;
-
