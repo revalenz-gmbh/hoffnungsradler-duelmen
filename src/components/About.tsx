@@ -115,7 +115,7 @@ const About = () => {
                 className="inline-flex items-center gap-2 text-forest hover:text-forest/80 transition-colors"
                 aria-label="Wir über uns"
               >
-                Wir über uns
+                Mehr lesen
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

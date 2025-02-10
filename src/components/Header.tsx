@@ -7,7 +7,7 @@ const Header = () => {
 
   const menuItems = [
     { name: "Wir über uns", path: "/ueber-uns" },
-    { name: "Tour Termine", path: "/tour-termine" },
+    { name: "Tour-Termine", path: "/tour-termine" },
     { name: "Unsere Touren", path: "/unsere-touren" },
     { name: "Presse", path: "#presse" },
     { name: "Sponsoren", path: "/sponsoren" },

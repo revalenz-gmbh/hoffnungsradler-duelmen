@@ -45,10 +45,14 @@ const News = () => {
                 key={index}
                 className={`relative flex flex-col md:flex-row ${
                   index % 2 === 0 ? "md:justify-start" : "md:justify-end"
-                } group mb-12 ${index > 0 ? "-mt-48" : ""}`}
+                } group mb-12 ${index > 0 ? "-mt-[30%]" : ""}`}
               >
                 {/* Date bubble */}
-                <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
+                <div
+                  className={`absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10 ${
+                    index === 0 ? "top-0" : "top-1/2 -translate-y-1/2"
+                  }`}
+                >
                   <CalendarIcon className="w-6 h-6 text-forest" />
                 </div>
 

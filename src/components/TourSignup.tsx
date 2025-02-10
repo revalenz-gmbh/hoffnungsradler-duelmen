@@ -13,9 +13,8 @@ const TourSignup = () => {
               Jetzt für die nächste Tour anmelden
             </h2>
             <p className="text-text mb-8 max-w-2xl mx-auto">
-              Melden Sie sich für unsere nächste Tour an und werden Sie Teil
-              einer wunderbaren Gemeinschaft. Jeder Kilometer zählt im Kampf
-              gegen Kinderkrebs.
+              Hier können Sie sich für eine Tour der Hoffnung anmelden. Füllen
+              Sie dazu bitte das verlinkte Anmeldeformular aus.
             </p>
             <a
               href="mailto:info@hoffnungsradler-duelmen.de?subject=Tour-Anmeldung"
