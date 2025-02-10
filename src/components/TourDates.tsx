@@ -70,9 +70,9 @@ const TourDates = () => {
   ];
 
   return (
-    <section className="py-20 bg-snow">
+    <section className="py-12 bg-snow">
       <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <h2 className="font-anton text-4xl text-prussian text-center mb-12">
             Tour-Termine 2024
           </h2>
@@ -80,24 +80,24 @@ const TourDates = () => {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Datum</TableHead>
-                    <TableHead>Tour</TableHead>
-                    <TableHead>Distanz</TableHead>
-                    <TableHead>Start</TableHead>
-                    <TableHead>Treffpunkt</TableHead>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="w-[180px] font-medium text-prussian">Datum</TableHead>
+                    <TableHead className="w-[200px] font-medium text-prussian">Tour</TableHead>
+                    <TableHead className="w-[120px] font-medium text-prussian">Distanz</TableHead>
+                    <TableHead className="w-[100px] font-medium text-prussian">Start</TableHead>
+                    <TableHead className="min-w-[220px] font-medium text-prussian">Treffpunkt</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tours.map((tour, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
+                    <TableRow key={index} className="hover:bg-forest/5">
+                      <TableCell className="font-medium whitespace-nowrap">
                         {tour.day}, {tour.date}
                       </TableCell>
-                      <TableCell>{tour.name}</TableCell>
-                      <TableCell>{tour.distance}</TableCell>
-                      <TableCell>{tour.time}</TableCell>
-                      <TableCell>{tour.location}</TableCell>
+                      <TableCell className="whitespace-nowrap">{tour.name}</TableCell>
+                      <TableCell className="whitespace-nowrap">{tour.distance}</TableCell>
+                      <TableCell className="whitespace-nowrap">{tour.time}</TableCell>
+                      <TableCell className="whitespace-nowrap">{tour.location}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
