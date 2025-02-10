@@ -52,7 +52,7 @@ const News = () => {
                 key={index}
                 className={`relative flex flex-col md:flex-row ${
                   index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
-                } group mb-12 ${index > 0 ? 'mt-16' : ''}`}
+                } group mb-12 ${index > 0 ? '-mt-24' : ''}`}
               >
                 {/* Date bubble */}
                 <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg border-2 border-forest/20 z-10">
@@ -110,3 +110,4 @@ const News = () => {
 };
 
 export default News;
+
