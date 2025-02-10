@@ -59,23 +59,18 @@ const News = () => {
                       {item.date}
                     </time>
                     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                      <div className="grid grid-cols-2 gap-4">
-                        {item.images.map((image, imageIndex) => (
-                          <DialogTrigger
-                            key={imageIndex}
-                            onClick={() => setStartIndex(imageIndex)}
-                            className="cursor-pointer hover:opacity-90 transition-opacity"
-                          >
-                            <img
-                              src={image}
-                              alt={`News - Seite ${imageIndex + 1}`}
-                              className="w-full rounded-lg shadow-md"
-                            />
-                          </DialogTrigger>
-                        ))}
-                      </div>
-                      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0">
-                        <Carousel className="w-full h-full" defaultIndex={startIndex}>
+                      <DialogTrigger
+                        onClick={() => setStartIndex(0)}
+                        className="cursor-pointer hover:opacity-90 transition-opacity"
+                      >
+                        <img
+                          src={item.images[0]}
+                          alt="News - Seite 1"
+                          className="w-full rounded-lg shadow-md"
+                        />
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-y-auto">
+                        <Carousel className="w-full h-full">
                           <CarouselContent className="h-full">
                             {item.images.map((image, imageIndex) => (
                               <CarouselItem key={imageIndex} className="h-full">
@@ -83,7 +78,7 @@ const News = () => {
                                   <img
                                     src={image}
                                     alt={`News - Seite ${imageIndex + 1}`}
-                                    className="max-h-full max-w-full object-contain rounded-lg"
+                                    className="max-h-[85vh] w-auto object-contain rounded-lg"
                                   />
                                 </div>
                               </CarouselItem>
@@ -106,3 +101,4 @@ const News = () => {
 };
 
 export default News;
+
