@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +10,8 @@ import UnsereTouren from "./pages/UnsereTouren";
 import Sponsoren from "./pages/Sponsoren";
 import Spenden from "./pages/Spenden";
 import NotFound from "./pages/NotFound";
-
+import Datenschutz from "./pages/Datenschutz";
+import Impressum from "./pages/Impressum";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -27,6 +27,8 @@ const App = () => (
           <Route path="/unsere-touren" element={<UnsereTouren />} />
           <Route path="/sponsoren" element={<Sponsoren />} />
           <Route path="/spenden" element={<Spenden />} />
+          <Route path="/datenschutz" element={<Datenschutz />} />
+          <Route path="/impressum" element={<Impressum />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
