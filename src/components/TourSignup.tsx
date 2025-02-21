@@ -20,7 +20,7 @@ const TourSignup = () => {
               href="mailto:info@hoffnungsradler-duelmen.de?subject=Tour-Anmeldung"
               className="inline-flex items-center justify-center bg-forest text-white px-6 py-3 rounded-lg hover:bg-forest/90 transition-colors font-medium"
             >
-              Zur Tour anmelden
+              Für Tour anmelden
             </a>
           </div>
         </div>
