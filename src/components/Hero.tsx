@@ -1,4 +1,3 @@
-
 const Hero = () => {
   return (
     <div className="relative h-screen">

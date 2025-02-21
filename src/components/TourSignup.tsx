@@ -10,7 +10,7 @@ const TourSignup = () => {
               <CalendarPlus className="w-8 h-8" />
             </div>
             <h2 className="font-anton text-3xl text-prussian mb-4">
-              Jetzt für die nächste Tour anmelden
+              Jetzt für die nächste Tour anmelden!
             </h2>
             <p className="text-text mb-8 max-w-2xl mx-auto">
               Hier können Sie sich für eine Tour der Hoffnung anmelden. Füllen

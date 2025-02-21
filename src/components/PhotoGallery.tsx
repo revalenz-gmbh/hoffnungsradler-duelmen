@@ -1,4 +1,3 @@
-import { ImagePlus } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const PhotoGallery = () => {
