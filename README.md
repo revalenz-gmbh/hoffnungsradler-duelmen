@@ -90,6 +90,6 @@ Das Projekt wurde mit folgenden modernen Webtechnologien entwickelt:
 
 ## Wie kann ich dieses Projekt deployen?
 
-Das Projekt wird über [Vercel](https://vercel.com/) deployed.
+Das Projekt wird automatisch über [Vercel](https://vercel.com/) gehostet. Jeder Push auf den main-Branch führt automatisch zu einem neuen Deployment.
 
-Alternativ kann auch der [Lovable-Agent](https://lovable.dev/projects/4ddb9728-827f-457a-8cc3-d033e6dc1719) verwendet werden – dafür öffnen und auf "Freigeben -> Veröffentlichen" klicken.
+Die Live-Version ist unter [URL-HIER] erreichbar.
