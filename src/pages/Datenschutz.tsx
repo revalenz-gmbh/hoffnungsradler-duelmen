@@ -60,6 +60,30 @@ const Datenschutz = () => {
             Cookies helfen uns dabei, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen.
           </p>
 
+          <h2 className="text-xl font-semibold mt-6 mb-2">4. Hosting und Content Delivery Networks (CDN)</h2>
+          <h3 className="text-lg font-semibold mt-4 mb-2">Externes Hosting durch Vercel</h3>
+          <p className="mb-4">
+            Diese Website wird bei Vercel gehostet. Vercel ist ein Dienst der Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, USA.
+            Die Datenverarbeitung durch Vercel erfolgt auf Grundlage unserer berechtigten Interessen an einer effizienten und sicheren 
+            Bereitstellung unseres Onlineangebotes (Art. 6 Abs. 1 lit. f DSGVO).
+          </p>
+          <p className="mb-4">
+            Vercel verarbeitet Daten von Besuchern unserer Website in den USA. Wir haben mit Vercel einen 
+            Auftragsverarbeitungsvertrag geschlossen, der den Anforderungen von Art. 28 DSGVO entspricht.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-6 mb-2">5. SSL/TLS-Verschlüsselung</h2>
+          <p className="mb-4">
+            Diese Seite nutzt aus Sicherheitsgründen eine SSL/TLS-Verschlüsselung. Eine verschlüsselte Verbindung 
+            erkennen Sie daran, dass die Adresszeile des Browsers von "http://" auf "https://" wechselt.
+          </p>
+
+          <h2 className="text-xl font-semibold mt-6 mb-2">6. Speicherdauer</h2>
+          <p className="mb-4">
+            Sofern nicht spezifisch angegeben, speichern wir personenbezogene Daten nur so lange, wie es zur Erfüllung der 
+            verfolgten Zwecke notwendig ist oder es gesetzlich vorgeschrieben ist.
+          </p>
+
           <p className="mt-8 text-sm">
             Stand: 21.02.2025
           </p>
