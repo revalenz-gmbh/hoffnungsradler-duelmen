@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="space-y-2">
             <h3 className="font-anton text-xl mb-4">Spendenkonto</h3>
             <p className="font-inter">Sparkasse Westmünsterland</p>
-            <p className="font-inter">Hoffnungsradler Dülmen e.V.</p>
+            <p className="font-inter">Hoffnungsradler Dülmen e.V. idG</p>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-white/80">IBAN:</span>
@@ -34,18 +34,12 @@ const Footer = () => {
                 <AtSign className="w-4 h-4" />
                 <span>hoffnungsradlerinfo@gmail.com</span>
               </a>
-              <a
-                href="tel:+491234567890"
-                className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
-              >
-                <Phone className="w-4 h-4" />
-                <span>+49 1234 567890</span>
-              </a>
               <div className="flex items-start gap-2 justify-center md:justify-start">
                 <Mail className="w-4 h-4 shrink-0 mt-1" />
                 <div className="flex flex-col">
-                  <span>Dülmener Str. 42</span>
-                  <span className="ml-0">48249 Dülmen</span>
+                  <span>Hoffnungsradler Dülmen e.V. idG</span>
+                  <span>Königsberger Str. 26</span>
+                  <span>48249 Dülmen</span>
                 </div>
               </div>
             </div>
