@@ -73,7 +73,7 @@ const TourDates = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-anton text-4xl text-prussian text-center mb-12">
-            Tour-Termine 2024
+            Tour-Termine 2025
           </h2>
           <div className="bg-white rounded-lg p-4 md:p-8 shadow-lg border border-forest/10">
             <div className="overflow-x-auto">

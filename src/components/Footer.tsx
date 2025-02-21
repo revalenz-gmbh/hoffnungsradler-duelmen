@@ -28,14 +28,14 @@ const Footer = () => {
             <h3 className="font-anton text-xl mb-4">Kontakt</h3>
             <div className="space-y-2 font-inter">
               <a
-                href="mailto:info@hoffnungsradler.de"
+                href="mailto:hoffnungsradlerinfo@gmail.com"
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
                 <AtSign className="w-4 h-4" />
-                <span>info@hoffnungsradler.de</span>
+                <span>hoffnungsradlerinfo@gmail.com</span>
               </a>
               <a
-                href="tel:+491234567890"
+                href="tel:+4916090615995"
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
                 <Phone className="w-4 h-4" />
