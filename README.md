@@ -1,4 +1,4 @@
-# Willkommen bei dem Hoffnungsradler Dülmen Projekt
+# Willkommen bei den Hoffnungsradlern Dülmen
 
 Dies ist die offizielle Webseite des Hoffnungsradler Dülmen e.V. Hier finden Sie Informationen über unsere Fahrradtouren, Aktivitäten und wie Sie sich beteiligen können.
 
