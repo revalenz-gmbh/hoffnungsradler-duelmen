@@ -46,7 +46,7 @@ Folgen Sie diesen Schritten:
 
 ```sh
 # Schritt 1: Klonen Sie das Repository
-git clone https://github.com/yourusername/hoffnungsradler-duelmen.git
+git clone https://github.com/nsalewski/hoffnungsradler-duelmen
 
 # Schritt 2: Wechseln Sie in das Projektverzeichnis
 cd hoffnungsradler-duelmen
