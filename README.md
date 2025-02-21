@@ -62,7 +62,7 @@ npm run dev
 
 Besuchen Sie einfach das [Lovable Projekt](https://lovable.dev/projects/4ddb9728-827f-457a-8cc3-d033e6dc1719) und beginnen Sie mit der Eingabe von Prompts.
 
-Änderungen, die über Lovable vorgenommen werden, werden automatisch in dieses Repository übernommen.
+Änderungen, die über Lovable vorgenommen werden, können automatisch in dieses Repository übernommen werden.
 
 **Direkte Bearbeitung in GitHub**
 
