@@ -39,12 +39,12 @@ const Footer = () => {
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
                 <Phone className="w-4 h-4" />
-                <span>+49 1234 567890</span>
+                <span>+49 160 906 15995</span>
               </a>
               <div className="flex items-start gap-2 justify-center md:justify-start">
                 <Mail className="w-4 h-4 shrink-0 mt-1" />
                 <div className="flex flex-col">
-                  <span>Dülmener Str. 42</span>
+                  <span>Königsberger Str. 26</span>
                   <span className="ml-0">48249 Dülmen</span>
                 </div>
               </div>
@@ -112,7 +112,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-white/10 text-sm text-white/80">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
             <div className="flex items-center gap-8">
-              <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
+              <p>&copy; 2025 Hoffnungsradler Dülmen e.V. i.G.</p>
               <span className="hidden md:inline-block text-white/40">|</span>
               <Link
                 to="/impressum"
