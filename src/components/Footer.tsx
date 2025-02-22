@@ -68,6 +68,12 @@ const Footer = () => {
                 Presse
               </Link>
               <Link
+                to="/medienhinweis"
+                className="block hover:text-white/80 transition-colors"
+              >
+                Medienhinweis
+              </Link>
+              <Link
                 to="/sponsoren"
                 className="block hover:text-white/80 transition-colors"
               >

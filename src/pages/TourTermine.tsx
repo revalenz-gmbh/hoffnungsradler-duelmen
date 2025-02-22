@@ -42,15 +42,21 @@ const TourTermine = () => {
               <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10 -mt-16">
                 <div className="space-y-4 text-text text-center">
                   <p className="italic">
-                    Die Baumberger-Touren sind nicht ausgeschildert und nur als
-                    GPS-Track veröffentlicht.
+                    Mit Ausnahme der "Baumberge Alpin-Tour" werden alle Touren von erfahrenen Tour-Guides geführt. Die Teilnahme erfolgt auf eigene Verantwortung.
                   </p>
                   <p className="font-medium">
-                    Die Bestimmungen der StVO sind einzuhalten. Jeder Teilnehmer
-                    fährt auf eigene Gefahr.
+                    Alle Teilnehmer sind verpflichtet, die Regelungen der Straßenverkehrsordnung (StVO) einzuhalten und eigenverantwortlich für ihre persönliche Sicherheit zu sorgen.
                   </p>
                   <p className="font-medium">
-                    Für Unfälle wird keine Haftung übernommen.
+                    Der Verein und die Tour-Guides übernehmen keine Haftung für Personen- oder Sachschäden während der Veranstaltung.
+                  </p>
+                  <p className="mt-6">
+                    <Link 
+                      to="/medienhinweis" 
+                      className="text-forest hover:text-forest/80 underline transition-colors"
+                    >
+                      Wichtiger Hinweis zu Foto- und Videoaufnahmen während der Tour
+                    </Link>
                   </p>
                 </div>
               </section>
