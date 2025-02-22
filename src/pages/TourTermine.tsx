@@ -35,11 +35,11 @@ const TourTermine = () => {
               </div>
             </div>
             {/* Tour Dates Section */}
-            <div className="-mt-32">
+            <div className="-mt-16">
               <TourDates />
 
               {/* Legal Notice */}
-              <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10 -mt-16">
+              <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10 mt-8">
                 <div className="space-y-4 text-text text-center">
                   <p className="italic">
                     Mit Ausnahme der "Baumberge Alpin-Tour" werden alle Touren von erfahrenen Tour-Guides geführt. Die Teilnahme erfolgt auf eigene Verantwortung.

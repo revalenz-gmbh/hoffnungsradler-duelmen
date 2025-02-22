@@ -8,8 +8,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+interface TourDate {
+  date: string;
+  time: string;
+  name: string;
+  location: string;
+  address: string;
+  distance: string;
+  speed: string;
+}
+
 const TourDates = () => {
-  const tours = [
+  const tours: TourDate[] = [
     {
       date: "18.04.2025",
       day: "Karfreitag",
@@ -17,6 +27,8 @@ const TourDates = () => {
       distance: "52 km",
       time: "10:00 Uhr",
       location: "Rathausplatz Dülmen",
+      address: "Marktstraße 1, Dülmen",
+      speed: "25-27 km/h"
     },
     {
       date: "11.05.2025",
@@ -24,7 +36,8 @@ const TourDates = () => {
       name: "in Planung",
       distance: " km",
       time: "10:00 Uhr",
-      location: "Sportzentrum Süd, Kapellenweg",
+      location: "Sportzentrum Süd",
+      address: "Kapellenweg, Dülmen"
     },
     {
       date: "24.05.2025",
@@ -32,7 +45,8 @@ const TourDates = () => {
       name: "Münster Berg Fidel",
       distance: "70km",
       time: "14:00 Uhr",
-      location: "Sportzentrum Süd/Kapellenweg",
+      location: "Sportzentrum Süd",
+      address: "Kapellenweg, Dülmen"
     },
     {
       date: "22.06.2025",
@@ -40,7 +54,8 @@ const TourDates = () => {
       name: "in Planung",
       distance: " km",
       time: "10:00 Uhr",
-      location: "Sportzentrum Süd/Kapellenweg",
+      location: "Sportzentrum Süd",
+      address: "Kapellenweg, Dülmen"
     },
     {
       date: "20.07.2025",
@@ -48,7 +63,8 @@ const TourDates = () => {
       name: "in Planung",
       distance: " km",
       time: "10:00 Uhr",
-      location: "Sportzentrum Süd/Kapellenweg",
+      location: "Sportzentrum Süd",
+      address: "Kapellenweg, Dülmen"
     },
     {
       date: "24.08.2028",
@@ -56,7 +72,8 @@ const TourDates = () => {
       name: "in Planung",
       distance: " km",
       time: "10:00 Uhr",
-      location: "Sportzentrum Süd/Kapellenweg",
+      location: "Sportzentrum Süd",
+      address: "Kapellenweg, Dülmen"
     },
     {
       date: "28.09.2025",
@@ -64,7 +81,9 @@ const TourDates = () => {
       name: "Baumberger Alpin-Tour",
       distance: "48/78/106km",
       time: "10:00 Uhr",
-      location: "Sportzentrum Süd/Kapellenweg",
+      location: "Sportzentrum Süd",
+      address: "Kapellenweg, Dülmen",
+      speed: "frei"
     },
   ];
 
@@ -75,51 +94,47 @@ const TourDates = () => {
           <h2 className="font-anton text-4xl text-prussian text-center mb-12">
             Tour-Termine 2025
           </h2>
-          <div className="bg-white rounded-lg p-4 md:p-8 shadow-lg border border-forest/10">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="w-[180px] font-medium text-prussian">
-                      Datum
-                    </TableHead>
-                    <TableHead className="w-[200px] font-medium text-prussian">
-                      Tour
-                    </TableHead>
-                    <TableHead className="w-[120px] font-medium text-prussian">
-                      Distanz
-                    </TableHead>
-                    <TableHead className="w-[100px] font-medium text-prussian">
-                      Start
-                    </TableHead>
-                    <TableHead className="min-w-[220px] font-medium text-prussian">
-                      Treffpunkt
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tours.map((tour, index) => (
-                    <TableRow key={index} className="hover:bg-forest/5">
-                      <TableCell className="font-medium whitespace-nowrap">
-                        {tour.day}, {tour.date}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {tour.name}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {tour.distance}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {tour.time}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {tour.location}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white rounded-lg shadow-lg border border-forest/10">
+              <thead className="bg-forest text-white">
+                <tr>
+                  <th className="px-4 py-3 text-left">Datum & Zeit</th>
+                  <th className="px-4 py-3 text-left">Tour</th>
+                  <th className="px-4 py-3 text-left">Treffpunkt</th>
+                  <th className="px-4 py-3 text-left">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tours.map((tour, index) => (
+                  <tr 
+                    key={index}
+                    className={`border-t border-forest/10 ${
+                      index % 2 === 0 ? 'bg-forest/5' : 'bg-white'
+                    }`}
+                  >
+                    <td className="px-4 py-3">
+                      <div className="font-medium">{tour.date}</div>
+                      <div className="text-sm text-gray-600">{tour.time}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {tour.name === "in Planung" ? (
+                        <div className="text-gray-400 italic">in Planung</div>
+                      ) : (
+                        <div>{tour.name}</div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="font-medium">{tour.location}</div>
+                      <div className="text-sm text-gray-600">{tour.address}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="font-medium">{tour.distance}</div>
+                      <div className="text-sm text-gray-600">{tour.speed}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
           <div className="mt-8 text-center">
             <Link
