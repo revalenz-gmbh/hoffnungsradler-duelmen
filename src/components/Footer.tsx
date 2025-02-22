@@ -73,6 +73,22 @@ const Footer = () => {
               >
                 Sponsoren
               </Link>
+              <a
+                href="https://drive.google.com/file/d/1rkeDCSUrRD-NJmy1vq8eA3h7HheCJtH6/view?usp=drive_link"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block hover:text-white/80 transition-colors"
+              >
+                Satzung
+              </a>
+              <a
+                href="https://drive.google.com/file/d/1w0MqMYgxws6AAFtrKjx9T9Dwx86CJSpz/view?usp=drive_link"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block hover:text-white/80 transition-colors"
+              >
+                Beitrittserklärung
+              </a>
             </div>
           </div>
 
