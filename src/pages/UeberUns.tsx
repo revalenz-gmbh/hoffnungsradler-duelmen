@@ -73,7 +73,7 @@ const UeberUns = () => {
                   </p>
                   <p className="text-forest font-semibold">
                     Insgesamt konnten durch die Dülmener Hoffnungsradler über
-                    80.000 Euro Spenden gesammelt werden!
+                    90.000 Euro Spenden gesammelt werden!
                   </p>
                 </div>
               </section>
@@ -129,7 +129,7 @@ const UeberUns = () => {
                     Ludger Dey zur Pflege der Internetseite, Tourguide,
                     Öffentlichkeitsarbeit
                   </li>
-                  <li>Martin Stolz als Tourguide, Öffentlichkeitsarbeit</li>
+                  <li>Martin Stolz zur Öffentlichkeitsarbeit</li>
                 </ul>
               </section>
 
