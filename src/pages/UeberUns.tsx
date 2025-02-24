@@ -117,20 +117,32 @@ const UeberUns = () => {
               {/* Current Team Section */}
               <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
                 <h2 className="font-anton text-2xl text-prussian mb-6">
-                  Aktuelles Orgateam
+                  Langjähriges Orgateam
                 </h2>
-                <p className="mb-4">
-                  Zum aktuellen Orgateam der Dülmener Hoffnungsradler gehören
-                  seit 2023:
-                </p>
-                <ul className="list-disc list-inside space-y-2 ml-4">
-                  <li>Josef Friedag als Hauptinitiator und Tourguide</li>
-                  <li>
-                    Ludger Dey zur Pflege der Internetseite, Tourguide,
-                    Öffentlichkeitsarbeit
-                  </li>
-                  <li>Martin Stolz zur Öffentlichkeitsarbeit</li>
-                </ul>
+                <div className="space-y-4 leading-relaxed">
+                  <p>
+                    Neben Josef Friedag als Hauptinitiator haben auch Ludger Dey und Robert van der Linde 
+                    über viele Jahre als Tourguides die Initiative aktiv mitgetragen. Sie waren zudem 
+                    für die Pflege der Internetseite und die Öffentlichkeitsarbeit verantwortlich.
+                  </p>
+                </div>
+              </section>
+
+              {/* Vereinsgründung Section */}
+              <section className="bg-white rounded-lg p-8 shadow-lg border border-forest/10">
+                <h2 className="font-anton text-2xl text-prussian mb-6">
+                  Vereinsgründung 2025
+                </h2>
+                <div className="space-y-4 leading-relaxed">
+                  <p>
+                  Nachdem die Hoffnungsradler Dülmen seit über 21 Jahren durch Radsportveranstaltungen Spenden für krebskranke Kinder gesammelt haben, 
+                  wurden sie am 30. Januar 2025 als gemeinnütziger Verein konstituiert.
+                  </p>
+                  <p>
+                    Als Vorsitzende wurden Martin Stolz und Gregor Horstmann für zwei Jahre gewählt,
+                    da Josef Friedag nach den vielen Jahren den Staffelstab weitergeben wollte.
+                  </p>
+                </div>
               </section>
 
               {/* Website Section */}
@@ -138,18 +150,22 @@ const UeberUns = () => {
                 <h2 className="font-anton text-2xl text-prussian mb-6">
                   Internetseite
                 </h2>
-                <p className="leading-relaxed">
-                  Seit 2017 haben die Dülmener Hoffnungsradler wieder eine
-                  eigene neue Internetseite:{" "}
-                  <a
-                    href="https://www.hoffnungs-radler-duelmen.de"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-forestDark hover:text-forest transition-colors underline"
-                  >
-                    www.hoffnungs-radler-duelmen.de
-                  </a>
-                </p>
+                <div className="space-y-4 leading-relaxed">
+                  <p>
+                    Seit 2017 hatten die Dülmener Hoffnungsradler wieder eine eigene Internetseite, 
+                    die durch Edgar Stepke und Ludger Dey gepflegt wurde. Im Zuge der Vereinsgründung 
+                    wurde die Seite in 2025 neu überarbeitet und ist nun unter{" "}
+                    <a
+                      href="https://www.hoffnungs-radler-duelmen.de"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-forestDark hover:text-forest transition-colors underline"
+                    >
+                      www.hoffnungs-radler-duelmen.de
+                    </a>{" "}
+                    zu finden.
+                  </p>
+                </div>
               </section>
             </div>
           </div>
