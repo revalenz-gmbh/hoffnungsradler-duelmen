@@ -25,8 +25,8 @@ const PhotoGallery = () => {
       alt: "Hoffnungsradler Gruppenpause auf der Sandsteinroute",
     },
     {
-      src: "/lovable-uploads/dd742c69-9e75-48ca-9d73-988155c1bca7.png",
-      alt: "Hoffnungsradler Gruppenfoto",
+      src: "/lovable-uploads/Gründungsversammlung.png",
+      alt: "Gründungsversammlung der Hoffnungsradler",
     },
     {
       src: "/lovable-uploads/32eef6b5-977b-435f-af25-6ea63b499462.png",
