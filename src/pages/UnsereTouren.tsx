@@ -6,49 +6,35 @@ import { Separator } from "@/components/ui/separator";
 const UnsereTouren = () => {
   const tours = [
     {
-      name: "Dülmen-Büren-Dülmen",
-      filename: "Dulmen-Buren-Dulmen.gpx",
+      name: "Altenberge-Häger",
+      filename: "Altenberge-Häger.gpx",
+      driveUrl: "https://drive.google.com/file/d/1Mddv5BjKvPysk0ChLkdBTuScZUhfc0rr/view?usp=drive_link"
     },
     {
-      name: "Henrichenburg-Schiffshebewerk",
-      filename: "Henrichenburg-Schiffshebewerk.gpx",
+      name: "Durch die Seppenrader Schweiz",
+      filename: "Durch die Seppenrader Schweiz 58 Km.gpx",
+      driveUrl: "https://drive.google.com/file/d/1S5yx3WpMVTNPd66kA_YtTq5ilvERc-5Q/view?usp=drive_link"
     },
     {
-      name: "Rieselfelder-Handorf",
-      filename: "Rieselfelder-Handorf.gpx",
+      name: "Henrichenburg Schiffshebewerk",
+      filename: "Henrichenburg-schiffshebewerk.gpx",
+      driveUrl: "https://drive.google.com/file/d/1e2a-SMAtAghNHgCEpI1pUapj6L7eUWry/view?usp=drive_link"
     },
     {
-      name: "Dülmen-Legden-Düstermühle",
-      filename: "Dulmen-Legden-Dustermuhle.gpx",
+      name: "Matjes-Tour",
+      filename: "Matjes-tour 1.gpx",
+      driveUrl: "https://drive.google.com/file/d/1e2Zj8vouvXLYwX1xMxahS5SFm_Eb-aMD/view?usp=drive_link"
     },
     {
-      name: "Dülmen Offlumer-See",
-      filename: "Dulmen-Offlumer-See.gpx",
+      name: "Rheinpromenade Wesel",
+      filename: "Rheinpromenade-wesel.gpx",
+      driveUrl: "https://drive.google.com/file/d/1rdLMEVwn-gTRIk07TpV6iIpDWh6Piiad/view?usp=drive_link"
     },
     {
-      name: "Dülmen-Sendenhorst",
-      filename: "Dulmen-Sendenhorst.gpx",
-    },
-    {
-      name: "Dülmen Zwillbrocker-Venn-Stadtlohn",
-      filename: "Dulmen-Zwillbrocker-Venn-Stadtlohn.gpx",
-    },
-    {
-      name: "Rheinpromenade-Wesel",
-      filename: "Rheinpromenade-Wesel.gpx",
-    },
-    {
-      name: "Schloß-Raesfeld-Heiden",
-      filename: "Schloss-Raesfeld-Heiden.gpx",
-    },
-    {
-      name: "12 Schlösser Tour",
-      filename: "12-Schlosser-Tour.gpx",
-    },
-    {
-      name: "Karfreitags-Tour 2024",
-      filename: "Karfreitags-Tour-2024.gpx",
-    },
+      name: "Schloss Nordkirchen",
+      filename: "SchlossNordkirchen.gpx",
+      driveUrl: "https://drive.google.com/file/d/1SQLxLmVSxIMqBbUapXk0nZ1g40SsX0wN/view?usp=drive_link"
+    }
   ];
 
   return (
@@ -78,12 +64,11 @@ const UnsereTouren = () => {
                 GPS-Dateien unserer Touren
               </h1>
               <p className="text-text text-lg max-w-4xl mx-auto mb-6">
-                Hier können Sie sich kostenlos die GPS-Daten der
-                Hoffnungsradler-Dülmen herunterladen.
+                Hier können Sie sich kostenlos die GPS-Daten der Hoffnungsradler-Touren herunterladen.
               </p>
               <p className="text-text text-lg max-w-4xl mx-auto">
-                Wir stellen Ihnen den Track der Hoffnungsradler in den Formaten
-                .gpx zur Verfügung.
+                Die Tracks stehen Ihnen im GPX-Format zur Verfügung und können in alle gängigen 
+                Navigationsgeräte und Apps importiert werden.
               </p>
             </div>
 
@@ -99,7 +84,11 @@ const UnsereTouren = () => {
                         className="flex items-center gap-2 text-forest hover:text-forest hover:bg-forest/5"
                         asChild
                       >
-                        <a href={`/gps/${tour.filename}`} download>
+                        <a 
+                          href={tour.driveUrl} 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <Download className="w-4 h-4" />
                           GPX herunterladen
                         </a>
@@ -111,28 +100,6 @@ const UnsereTouren = () => {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Ferry Information */}
-            <div className="mt-12 bg-white rounded-lg p-6 md:p-8 shadow-lg border border-forest/10">
-              <h2 className="font-medium text-xl text-prussian mb-4">
-                Zusatzinformation für die Tour nach Arnheim
-              </h2>
-              <p className="text-text">
-                <strong>Issel-Fähre Brummen - Bronkhorst:</strong> bei ca. 151
-                km (Autofahre)
-                <br />
-                Mobil: 06-15020976
-                <br />
-                Fahrzeiten:
-                <br />
-                1.5.-30.9.: mo-fr 7.30-19.00 h; sa+so 9.30-19.00 h
-                <br />
-                1.10.-30.4.: mo-fr 7.30-17.30 h; sa+so 10.00–17.00 h
-                <br />
-                Keine Fahrt bei Eisgang, mehr als Windstärke 7 und bei
-                Hochwasser.
-              </p>
             </div>
           </div>
         </div>

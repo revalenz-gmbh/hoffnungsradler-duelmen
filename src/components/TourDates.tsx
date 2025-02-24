@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Download, Map } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -7,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 interface TourDate {
   date: string;
@@ -15,7 +17,10 @@ interface TourDate {
   location: string;
   address: string;
   distance: string;
-  speed: string;
+  speed?: string;
+  gpxUrl?: string;
+  mapUrl?: string;
+  day?: string;
 }
 
 const TourDates = () => {
@@ -28,7 +33,9 @@ const TourDates = () => {
       time: "10:00 Uhr",
       location: "Rathausplatz Dülmen",
       address: "Marktstraße 1, Dülmen",
-      speed: "25-27 km/h"
+      speed: "25-27 km/h",
+      gpxUrl: "https://drive.google.com/file/d/1_JqqlE72V2TLM0BVQHFZKXD99x5MieLz/view?usp=drive_link",
+      mapUrl: "https://www.google.com/maps/d/edit?mid=1T-IjkctOlimn3-_vp7HJY5hLDRT-JEc&usp=drive_link"
     },
     {
       date: "11.05.2025",
@@ -102,6 +109,7 @@ const TourDates = () => {
                   <th className="px-4 py-3 text-left">Tour</th>
                   <th className="px-4 py-3 text-left">Treffpunkt</th>
                   <th className="px-4 py-3 text-left">Details</th>
+                  <th className="px-4 py-3 text-left">Route</th>
                 </tr>
               </thead>
               <tbody>
@@ -115,6 +123,9 @@ const TourDates = () => {
                     <td className="px-4 py-3">
                       <div className="font-medium">{tour.date}</div>
                       <div className="text-sm text-gray-600">{tour.time}</div>
+                      {tour.day && (
+                        <div className="text-sm text-gray-600">{tour.day}</div>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {tour.name === "in Planung" ? (
@@ -130,6 +141,44 @@ const TourDates = () => {
                     <td className="px-4 py-3">
                       <div className="font-medium">{tour.distance}</div>
                       <div className="text-sm text-gray-600">{tour.speed}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2">
+                        {tour.gpxUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-forest hover:text-forest hover:bg-forest/5"
+                            asChild
+                          >
+                            <a 
+                              href={tour.gpxUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="GPX herunterladen"
+                            >
+                              <Download className="w-4 h-4" />
+                            </a>
+                          </Button>
+                        )}
+                        {tour.mapUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-forest hover:text-forest hover:bg-forest/5"
+                            asChild
+                          >
+                            <a 
+                              href={tour.mapUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Route auf Google Maps ansehen"
+                            >
+                              <Map className="w-4 h-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

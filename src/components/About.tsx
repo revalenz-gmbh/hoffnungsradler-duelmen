@@ -104,7 +104,7 @@ const About = () => {
 
                   <p className="font-semibold">
                     Insgesamt konnten durch die Dülmener Hoffnungsradler über
-                    80.000 Euro Spenden gesammelt werden!
+                    90.000 Euro Spenden gesammelt werden!
                   </p>
                 </div>
               </div>
