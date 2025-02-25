@@ -16,6 +16,7 @@ const Header = () => {
       name: "Fotogalerie",
       path: "http://bilder.xn--hoffnungs-radler-dlmen-9lc.de/",
     },
+    { name: "Kontakt", path: "/kontakt" },
   ];
 
   return (
