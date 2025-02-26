@@ -3,9 +3,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import emailjs from '@emailjs/browser';
+import { useToast } from "@/components/ui/use-toast";
 
 const Kontakt = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // EmailJS initialisieren
+  useEffect(() => {
+    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,14 +23,44 @@ const Kontakt = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:hoffnungsradlerinfo@gmail.com?subject=${encodeURIComponent(
-      formData.subject || "Kontaktanfrage"
-    )}&body=${encodeURIComponent(
-      `Name: ${formData.name}\nE-Mail: ${formData.email}\n\n${formData.message}`
-    )}`;
-    window.location.href = mailtoLink;
+    setIsSubmitting(true);
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        }
+      );
+
+      toast({
+        title: "Nachricht gesendet",
+        description: "Vielen Dank für Ihre Nachricht. Wir werden uns bald bei Ihnen melden.",
+      });
+
+      // Formular zurücksetzen
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Fehler beim Senden:", error);
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: "Beim Senden der Nachricht ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -116,8 +156,9 @@ const Kontakt = () => {
                 <Button
                   type="submit"
                   className="w-full bg-forest hover:bg-forest/90"
+                  disabled={isSubmitting}
                 >
-                  Nachricht senden
+                  {isSubmitting ? "Wird gesendet..." : "Nachricht senden"}
                 </Button>
               </form>
             </div>

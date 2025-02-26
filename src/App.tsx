@@ -16,6 +16,7 @@ import Impressum from "./pages/Impressum";
 import Medienhinweis from "./pages/Medienhinweis";
 import Presse from './pages/Presse';
 import Kontakt from "./pages/Kontakt";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -38,7 +39,6 @@ const App = () => (
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/medienhinweis" element={<Medienhinweis />} />
             <Route path="/kontakt" element={<Kontakt />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

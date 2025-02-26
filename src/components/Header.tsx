@@ -6,14 +6,14 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    { name: "Wir über uns", path: "/ueber-uns" },
+    { name: "Über uns", path: "/ueber-uns" },
     { name: "Tour-Termine", path: "/tour-termine" },
     { name: "Unsere Touren", path: "/unsere-touren" },
-    { name: "Presse", path: "/presse" },
     { name: "Sponsoren", path: "/sponsoren" },
     { name: "Spenden", path: "/spenden" },
+    { name: "Presse", path: "/presse" },
     {
-      name: "Fotogalerie",
+      name: "Bilder",
       path: "http://bilder.xn--hoffnungs-radler-dlmen-9lc.de/",
     },
     { name: "Kontakt", path: "/kontakt" },
