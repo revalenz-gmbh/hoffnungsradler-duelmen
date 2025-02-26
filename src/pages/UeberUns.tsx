@@ -121,7 +121,7 @@ const UeberUns = () => {
                 </h2>
                 <div className="space-y-4 leading-relaxed">
                   <p>
-                    Neben Josef Friedag als Hauptinitiator haben auch Ludger Dey und Robert Van der Linde 
+                    Neben Josef Friedag als Hauptinitiator haben auch Ludger Dey, Johannes Heiming und Robert Van der Linde 
                     über viele Jahre als Tourguides die Initiative aktiv mitgetragen. Sie waren zudem 
                     für die Pflege der Internetseite und die Öffentlichkeitsarbeit verantwortlich.
                   </p>

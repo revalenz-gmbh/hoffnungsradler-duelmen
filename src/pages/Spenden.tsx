@@ -92,6 +92,11 @@ const Spenden = () => {
       link: "https://www.kinderkrebshilfe-muenster.de/",
     },
     {
+      name: "Krebsberatung Münster",
+      description: "Die Krebsberatung Münster bietet spezielle Unterstützung für Kinder und Jugendliche aus Familien mit krebskranken Angehörigen. Durch Beratungsgespräche, psychoonkologische Begleitung und praktische Hilfen werden Kinder und ihre Familien in dieser schwierigen Situation unterstützt.",
+      link: "https://krebsberatung-muenster.de/kinder-und-jugendliche/",
+    },
+    {
       name: "Tour der Hoffnung",
       description: "Die Tour der Hoffnung ist eine jährliche Benefizradtour, die seit 1983 deutschlandweit Spenden für krebskranke Kinder und Jugendliche sammelt. Die gesammelten Spenden fließen in verschiedene Einrichtungen wie Kinderkliniken, Hospize und Forschungseinrichtungen.",
       link: "https://www.tour-der-hoffnung.de/",

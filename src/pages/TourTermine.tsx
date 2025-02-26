@@ -107,6 +107,9 @@ const TourTermine = () => {
                     Mit Ausnahme der "Baumberge Alpin-Tour" werden alle Touren von erfahrenen Tour-Guides geführt. Die Teilnahme erfolgt auf eigene Verantwortung.
                   </p>
                   <p className="font-medium">
+                    Das Tragen eines Fahrradhelms ist bei allen gemeinsamen Touren verpflichtend.
+                  </p>
+                  <p className="font-medium">
                     Alle Teilnehmer sind verpflichtet, die Regelungen der Straßenverkehrsordnung (StVO) einzuhalten und eigenverantwortlich für ihre persönliche Sicherheit zu sorgen.
                   </p>
                   <p className="font-medium">
