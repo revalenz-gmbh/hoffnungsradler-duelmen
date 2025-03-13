@@ -16,6 +16,8 @@ import Impressum from "./pages/Impressum";
 import Medienhinweis from "./pages/Medienhinweis";
 import Presse from './pages/Presse';
 import Kontakt from "./pages/Kontakt";
+import NewsletterUnsubscribe from './pages/NewsletterUnsubscribe';
+import TourSignup from "@/components/TourSignup";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,7 @@ const App = () => (
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/medienhinweis" element={<Medienhinweis />} />
             <Route path="/kontakt" element={<Kontakt />} />
+            <Route path="/newsletter/abmelden" element={<NewsletterUnsubscribe />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
