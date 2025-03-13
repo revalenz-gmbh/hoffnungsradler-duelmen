@@ -36,7 +36,7 @@ const NewsletterUnsubscribe = () => {
       
       toast({
         title: "Abmeldung erfolgreich",
-        description: "Sie wurden erfolgreich vom Newsletter abgemeldet. Eine Bestätigung wird in Kürze an Ihre E-Mail-Adresse gesendet.",
+        description: "Du wurdest erfolgreich vom Newsletter abgemeldet. Eine Bestätigung wird in Kürze an deine E-Mail-Adresse gesendet.",
       });
       
       setIsComplete(true);
@@ -45,7 +45,7 @@ const NewsletterUnsubscribe = () => {
       toast({
         variant: "destructive",
         title: "Fehler",
-        description: "Bei der Abmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        description: "Bei der Abmeldung ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
       });
     } finally {
       setIsUnsubscribing(false);
@@ -80,12 +80,12 @@ const NewsletterUnsubscribe = () => {
               
               {!id || !email ? (
                 <p className="text-text mb-6">
-                  Ungültiger Abmelde-Link. Bitte überprüfen Sie den Link oder wenden Sie sich an uns.
+                  Ungültiger Abmelde-Link. Bitte überprüfe den Link oder wende dich an uns.
                 </p>
               ) : isComplete ? (
                 <div>
                   <p className="text-text mb-6">
-                    Sie wurden erfolgreich vom Tour-Newsletter abgemeldet.
+                    Du wurdest erfolgreich vom Tour-Newsletter abgemeldet.
                   </p>
                   <Link to="/" className="text-forest hover:underline">
                     Zurück zur Startseite
@@ -94,7 +94,7 @@ const NewsletterUnsubscribe = () => {
               ) : (
                 <div>
                   <p className="text-text mb-6">
-                    Möchten Sie sich wirklich von unserem Tour-Newsletter abmelden?
+                    Möchtest du dich wirklich von unserem Tour-Newsletter abmelden?
                   </p>
                   <p className="text-sm text-gray-600 mb-8">
                     E-Mail-Adresse: {email}

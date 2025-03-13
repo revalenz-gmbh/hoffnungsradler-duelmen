@@ -40,7 +40,7 @@ const TourSignup = () => {
 
       toast({
         title: "Anmeldung erfolgreich",
-        description: "Vielen Dank für Ihre Anmeldung zum Tour-Newsletter! Eine Bestätigung wird in Kürze an Ihre E-Mail-Adresse gesendet.",
+        description: "Vielen Dank für deine Anmeldung zum Tour-Newsletter! Eine Bestätigung wird in Kürze an deine E-Mail-Adresse gesendet.",
       });
 
       // Formular zurücksetzen
@@ -50,7 +50,7 @@ const TourSignup = () => {
       toast({
         variant: "destructive",
         title: "Fehler",
-        description: "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        description: "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
       });
     } finally {
       setLoading(false);
@@ -69,7 +69,7 @@ const TourSignup = () => {
               Jetzt für den Tour-Newsletter anmelden!
             </h2>
             <p className="text-text mb-8 max-w-2xl mx-auto">
-              Bleiben Sie stets über unsere Touren informiert! Mit unserem Tour-Newsletter erhalten Sie:
+              Bleib stets über unsere Touren informiert! Mit unserem Tour-Newsletter erhältst du:
               <ul className="text-left list-disc pl-6 mt-4 space-y-2">
                 <li>Eine Woche vor jeder Tour eine detaillierte Routenbeschreibung</li>
                 <li>Kurzfristige Updates bei Wetteränderungen oder Routenänderungen</li>
@@ -83,7 +83,7 @@ const TourSignup = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <input
                   type="email"
-                  placeholder="Ihre E-Mail-Adresse"
+                  placeholder="Deine E-Mail-Adresse"
                   className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-forest"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -98,10 +98,10 @@ const TourSignup = () => {
                 </button>
               </div>
               <div className="mt-4 text-sm text-gray-600">
-                Mit der Anmeldung stimmen Sie dem Erhalt von E-Mails bezüglich unserer Touren zu. 
-                Ihre Daten werden ausschließlich für den Versand des Newsletters verwendet. 
-                Sie können sich jederzeit über einen Link in jeder E-Mail abmelden. 
-                Weitere Informationen finden Sie in unserer <Link to="/datenschutz" className="text-forest hover:underline">Datenschutzerklärung</Link>.
+                Mit der Anmeldung stimmst du dem Erhalt von E-Mails bezüglich unserer Touren zu. 
+                Deine Daten werden ausschließlich für den Versand des Newsletters verwendet. 
+                Du kannst dich jederzeit über einen Link in jeder E-Mail abmelden. 
+                Weitere Informationen findest du in unserer <Link to="/datenschutz" className="text-forest hover:underline">Datenschutzerklärung</Link>.
               </div>
             </form>
           </div>
