@@ -17,7 +17,6 @@ import Medienhinweis from "./pages/Medienhinweis";
 import Presse from './pages/Presse';
 import Kontakt from "./pages/Kontakt";
 import NewsletterUnsubscribe from './pages/NewsletterUnsubscribe';
-import TourSignup from "@/components/TourSignup";
 
 const queryClient = new QueryClient();
 
