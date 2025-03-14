@@ -14,8 +14,16 @@ const NewsletterUnsubscribe = () => {
   const email = searchParams.get('email');
   
   useEffect(() => {
+    if (!id || !email) {
+      toast({
+        title: "Fehler",
+        description: "Ungültiger Abmelde-Link. Bitte kontaktiere uns unter hoffnungsradler-info@gmail",
+        variant: "destructive"
+      });
+    }
+    
     emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-  }, []);
+  }, [id, email, toast]);
   
   const handleUnsubscribe = async () => {
     if (!id || !email) return;
@@ -30,22 +38,22 @@ const NewsletterUnsubscribe = () => {
         {
           subscriber_email: email,
           subscriber_id: id,
-          unsubscribe_date: new Date().toLocaleDateString('de-DE')
+          unsubscribe_date: new Date().toLocaleDateString('de-DE'),
+          unsubscribe_url: window.location.href
         }
       );
       
-      toast({
-        title: "Abmeldung erfolgreich",
-        description: "Du wurdest erfolgreich vom Newsletter abgemeldet. Eine Bestätigung wird in Kürze an deine E-Mail-Adresse gesendet.",
-      });
-      
       setIsComplete(true);
+      toast({
+        title: "Erfolgreich abgemeldet",
+        description: "Du wurdest erfolgreich von unserem Newsletter abgemeldet."
+      });
     } catch (error) {
       console.error("Fehler bei der Abmeldung:", error);
       toast({
-        variant: "destructive",
-        title: "Fehler",
-        description: "Bei der Abmeldung ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+        title: "Fehler bei der Abmeldung",
+        description: "Bitte versuche es später erneut oder kontaktiere uns direkt.",
+        variant: "destructive"
       });
     } finally {
       setIsUnsubscribing(false);
