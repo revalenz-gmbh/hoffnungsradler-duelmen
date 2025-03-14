@@ -41,7 +41,7 @@ const Kontakt = () => {
 
       toast({
         title: "Nachricht gesendet",
-        description: "Vielen Dank für Ihre Nachricht. Wir werden uns bald bei Ihnen melden.",
+        description: "Vielen Dank für Deine Nachricht. Wir werden uns bald bei Dir melden.",
       });
 
       // Formular zurücksetzen
@@ -93,7 +93,7 @@ const Kontakt = () => {
                 Kontakt
               </h1>
               <p className="text-text text-lg">
-                Haben Sie Fragen oder Anregungen? Schreiben Sie uns eine Nachricht!
+                Hast Du Fragen oder Anregungen? Schreib uns eine Nachricht!
               </p>
             </div>
 
@@ -109,7 +109,7 @@ const Kontakt = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ihr Name"
+                    placeholder="Dein Name"
                   />
                 </div>
 
@@ -123,7 +123,7 @@ const Kontakt = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="ihre@email.de"
+                    placeholder="deine@email.de"
                   />
                 </div>
 
@@ -148,7 +148,7 @@ const Kontakt = () => {
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Ihre Nachricht an uns"
+                    placeholder="Deine Nachricht an uns"
                     className="min-h-[150px]"
                   />
                 </div>
