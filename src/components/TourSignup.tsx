@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarPlus } from "lucide-react";
+import { Mail } from "lucide-react";
 import emailjs from '@emailjs/browser';
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
@@ -63,7 +63,7 @@ const TourSignup = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white rounded-lg p-8 md:p-12 shadow-lg border border-forest/10">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-forest/10 text-forest mb-6">
-              <CalendarPlus className="w-8 h-8" />
+              <Mail className="w-8 h-8" />
             </div>
             <h2 className="font-anton text-3xl text-prussian mb-4">
               Jetzt für den Tour-Newsletter anmelden!
@@ -76,7 +76,6 @@ const TourSignup = () => {
                 <li>Exklusive Tipps zur Vorbereitung auf die jeweilige Tour</li>
                 <li>Gelegentliche Fotoeindrücke vergangener Touren</li>
               </ul>
-              Die Abmeldung ist jederzeit mit einem Klick möglich.
             </p>
             
             <form onSubmit={handleSubmit} className="max-w-md mx-auto">

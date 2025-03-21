@@ -32,7 +32,7 @@ const Footer = () => {
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
                 <AtSign className="w-4 h-4" />
-                <span>hoffnungsradlerinfo@gmail.com</span>
+                <span className="whitespace-nowrap">hoffnungsradler-info@gmail.com</span>
               </a>
               <a
                 href="tel:+4916090615995"
@@ -134,7 +134,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-white/10 text-sm text-white/80">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
             <div className="flex items-center gap-8">
-              <p>&copy; 2025 Hoffnungsradler Dülmen e.V. i.G.</p>
+              <p>&copy; 2025 Hoffnungsradler Dülmen e.V.</p>
               <span className="hidden md:inline-block text-white/40">|</span>
               <Link
                 to="/impressum"
