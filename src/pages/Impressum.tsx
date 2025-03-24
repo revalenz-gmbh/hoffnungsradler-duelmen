@@ -18,7 +18,7 @@ const Impressum = () => {
           <p>Gregor Horstmann (2. Vorsitzender)</p>
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Kontakt</h2>
-          <p>E-Mail: hoffnungsradler-info@gmail.com</p>
+          <p>E-Mail: hoffnungsradlerinfo@gmail.com</p>
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Vereinsregistereintrag</h2>
           <p>Eingetragen im Vereinsregister beim Amtsgericht Coesfeld</p>

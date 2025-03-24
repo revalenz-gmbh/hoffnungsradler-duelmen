@@ -32,7 +32,7 @@ const Footer = () => {
                 className="flex items-center gap-2 hover:text-white/80 transition-colors justify-center md:justify-start"
               >
                 <AtSign className="w-4 h-4" />
-                <span className="whitespace-nowrap">hoffnungsradler-info@gmail.com</span>
+                <span className="whitespace-nowrap">hoffnungsradlerinfo@gmail.com</span>
               </a>
               <a
                 href="tel:+4916090615995"
