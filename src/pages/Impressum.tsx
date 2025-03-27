@@ -22,7 +22,7 @@ const Impressum = () => {
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Vereinsregistereintrag</h2>
           <p>Eingetragen im Vereinsregister beim Amtsgericht Coesfeld</p>
-          <p>Registernummer: VR XXXX</p>
+          <p>Registernummer: VR 7924 </p>
           
           <h2 className="text-xl font-semibold mt-6 mb-2">Steuernummer</h2>
           <p>312/5838/1207</p>
