@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from 'react-router-dom';
 
 const Datenschutz = () => {
   return (
@@ -85,7 +86,30 @@ const Datenschutz = () => {
               kann die Funktionalität dieser Website eingeschränkt sein.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-2">4. Hosting und Content Delivery Networks (CDN)</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2">4. Newsletter</h2>
+            <p className="mb-4">
+              Wenn Sie sich für unseren Tour-Newsletter anmelden, werden die von Ihnen angegebenen Daten (E-Mail-Adresse) 
+              gespeichert und für den Versand des Newsletters verwendet. Diese Datenverarbeitung erfolgt auf Grundlage 
+              Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). 
+            </p>
+            <p className="mb-4">
+              Für jede Newsletter-Anmeldung generieren wir eine eindeutige ID, die zusammen mit Ihrer E-Mail-Adresse 
+              und dem Anmeldedatum gespeichert wird. Diese Daten dienen der Verwaltung Ihres Newsletter-Abonnements 
+              und zur Nachweisbarkeit Ihrer Anmeldung.
+            </p>
+            <p className="mb-4">
+              Sie können den Newsletter jederzeit abbestellen, indem Sie den Abmelde-Link verwenden, der in jeder 
+              Newsletter-Mail enthalten ist. Alternativ können Sie sich auch direkt über diesen 
+              <Link to="/newsletter/abmelden" className="text-forest hover:underline ml-1">Abmelde-Link</Link> oder 
+              durch eine Mitteilung an die im Impressum angegebenen Kontaktdaten abmelden.
+            </p>
+            <p className="mb-4">
+              Nach der Abmeldung werden Ihre personenbezogenen Daten gelöscht, soweit Sie nicht ausdrücklich in 
+              eine weitere Nutzung eingewilligt haben oder wir uns eine darüberhinausgehende Datenverwendung vorbehalten, 
+              die gesetzlich erlaubt ist.
+            </p>
+
+            <h2 className="text-xl font-semibold mt-6 mb-2">5. Hosting und Content Delivery Networks (CDN)</h2>
             <h3 className="text-lg font-semibold mt-4 mb-2">Externes Hosting durch Vercel</h3>
             <p className="mb-4">
               Diese Website wird bei Vercel gehostet. Vercel ist ein Dienst der Vercel Inc., 340 S Lemon Ave #4133, Walnut, CA 91789, USA.
@@ -109,7 +133,7 @@ const Datenschutz = () => {
               personenbezogene Daten wie IP-Adressen an Server weltweit übermittelt werden.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-2">5. SSL/TLS-Verschlüsselung</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2">6. SSL/TLS-Verschlüsselung</h2>
             <p className="mb-4">
               Diese Seite nutzt aus Sicherheitsgründen eine SSL/TLS-Verschlüsselung, um die Vertraulichkeit und Integrität 
               der übertragenen Daten zu schützen. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile 
@@ -117,7 +141,7 @@ const Datenschutz = () => {
               dieser Verschlüsselung können die von Ihnen übermittelten Daten nicht von Dritten mitgelesen werden.
             </p>
 
-            <h2 className="text-xl font-semibold mt-6 mb-2">6. Speicherdauer</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2">7. Speicherdauer</h2>
             <p className="mb-4">
               Sofern nicht spezifisch angegeben, speichern wir personenbezogene Daten nur so lange, wie es zur Erfüllung der 
               verfolgten Zwecke notwendig ist oder gesetzliche Aufbewahrungsfristen dies vorschreiben. Die Speicherdauer der 

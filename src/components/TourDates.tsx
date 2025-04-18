@@ -40,20 +40,26 @@ const TourDates = () => {
     {
       date: "11.05.2025",
       day: "Sonntag",
-      name: "in Planung",
-      distance: " km",
+      name: "Weseke",
+      distance: "86 km",
       time: "10:00 Uhr",
       location: "Sportzentrum Süd",
-      address: "Kapellenweg, Dülmen"
+      address: "Kapellenweg, Dülmen",
+      speed: "25-27 km/h",
+      gpxUrl: "https://drive.google.com/file/d/1Gk6tMpEJr4nVyP6IJq39PkXrrkhIhzqL/view?usp=sharing",
+      mapUrl: "https://www.google.com/maps/d/edit?mid=1WtmfEqv87gfcf9ca7ncuw90fC-P59Q4&usp=drive_link"
     },
     {
       date: "24.05.2025",
       day: "Samstag",
       name: "Münster Berg Fidel",
-      distance: "70km",
+      distance: "70 km",
+      speed: "25-27 km/h",
       time: "14:00 Uhr",
       location: "Sportzentrum Süd",
-      address: "Kapellenweg, Dülmen"
+      address: "Kapellenweg, Dülmen",
+      gpxUrl: "https://drive.google.com/file/d/1NtkOMY6Jj-1TBx_o4P8JHU4nI6nh-Xx-/view?usp=sharing",
+      mapUrl: "https://www.google.com/maps/d/edit?mid=1O1HENk0BcTf_93drEwojRXFMb8pqAyc&usp=sharing"
     },
     {
       date: "22.06.2025",

@@ -9,7 +9,7 @@ const Impressum = () => {
           <h1 className="text-3xl font-bold mb-6">Impressum</h1>
           
           <h2 className="text-xl font-semibold mt-4 mb-2">Angaben gemäß § 5 TMG</h2>
-          <p>Hoffnungsradler Dülmen e.V. i.G.</p>
+          <p>Hoffnungsradler Dülmen e.V.</p>
           <p>Königsberger Str. 26</p>
           <p>48249 Dülmen</p>
 
@@ -21,11 +21,14 @@ const Impressum = () => {
           <p>E-Mail: hoffnungsradlerinfo@gmail.com</p>
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Vereinsregistereintrag</h2>
-          <p>Der Verein befindet sich in Gründung.</p>
-          <p>Eintragung in das Vereinsregister beim Amtsgericht [zuständiges Amtsgericht] ist beantragt.</p>
+          <p>Eingetragen im Vereinsregister beim Amtsgericht Coesfeld</p>
+          <p>Registernummer: VR 7924 </p>
+          
+          <h2 className="text-xl font-semibold mt-6 mb-2">Steuernummer</h2>
+          <p>312/5838/1207</p>
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
-          <p>Martin Stolz   </p>
+          <p>Martin Stolz</p>
           <p>Königsberger Str. 26</p>
           <p>48249 Dülmen</p>
         </CardContent>
