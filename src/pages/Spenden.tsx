@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import {
   Table,
   TableBody,
@@ -103,6 +104,27 @@ const Spenden = () => {
     },
   ];
 
+  // Spendenkonto-Informationen
+  const bankAccount = {
+    bank: "Sparkasse Westmünsterland",
+    accountHolder: "Hoffnungsradler Dülmen e.V.",
+    iban: "DE76 4015 4530 0035 6376 51",
+    bic: "WELADE3WXXX"
+  };
+
+  // QR-Code-Daten für SEPA-Überweisung
+  const qrCodeData = `BCD
+001
+1
+SCT
+${bankAccount.bic}
+${bankAccount.accountHolder}
+${bankAccount.iban.replace(/\s/g, "")}
+EUR
+0
+Spende Hoffnungsradler
+`;
+
   return (
     <div className="min-h-screen bg-snow">
       {/* Header with Back Navigation */}
@@ -139,6 +161,47 @@ const Spenden = () => {
               <p className="text-text text-lg max-w-2xl text-center mb-8">
                 Seit 2004 haben wir Spendengelder in Höhe von insgesamt 91.055,00 € an gemeinnützige Organisationen übergeben, die sich der Unterstützung und Betreuung von Familien mit krebskranken Kindern widmen.
               </p>
+            </div>
+
+            {/* Spendenkonto Section */}
+            <div className="mb-16 bg-white rounded-lg shadow-lg border border-forest/10 p-8">
+              <h2 className="font-anton text-3xl text-prussian mb-6">Unser Spendenkonto</h2>
+              <p className="text-text mb-6">
+                Unterstützen Sie uns mit Ihrer Spende. Sie können den QR-Code mit Ihrer Banking-App scannen, um eine Überweisung zu tätigen, oder die Kontodaten manuell eingeben.
+              </p>
+              
+              <div className="flex flex-col md:flex-row gap-8 items-center">
+                <div className="bg-white p-4 rounded-lg border border-forest/20">
+                  <QRCodeSVG 
+                    value={qrCodeData} 
+                    size={200} 
+                    level="M"
+                    includeMargin={true}
+                  />
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-bold text-xl text-prussian mb-2">Kontoinhaber</h3>
+                    <p className="text-text">{bankAccount.accountHolder}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-bold text-xl text-prussian mb-2">Bank</h3>
+                    <p className="text-text">{bankAccount.bank}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-bold text-xl text-prussian mb-2">IBAN</h3>
+                    <p className="text-text font-mono">{bankAccount.iban}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-bold text-xl text-prussian mb-2">BIC</h3>
+                    <p className="text-text font-mono">{bankAccount.bic}</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Organizations Section */}
