@@ -55,17 +55,28 @@ const Presse = () => {
         {pressArticles.map((article, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
+              {article.image && (
+                <div className="mb-4">
+                  <img 
+                    src={article.image} 
+                    alt={article.title}
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
+              )}
               <div className="text-sm text-gray-500 mb-2">{article.date} | {article.source}</div>
               <h2 className="text-2xl font-bold mb-3">{article.title}</h2>
               <p className="text-gray-700 mb-4">{article.excerpt}</p>
-              <a 
-                href={article.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Artikel lesen →
-              </a>
+              {article.link && (
+                <a 
+                  href={article.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Artikel lesen →
+                </a>
+              )}
             </CardContent>
           </Card>
         ))}
