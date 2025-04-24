@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+
+interface PressArticle {
+  date: string;
+  title: string;
+  source: string;
+  excerpt?: string;
+  link?: string;
+  image?: string;
+}
 
 const Presse = () => {
-  const pressArticles = [
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const pressArticles: PressArticle[] = [
+    {
+      date: "22. April 2025",
+      title: "Traditioneller Start am Marktplatz",
+      source: "Dülmener Zeitung",
+      excerpt: "An den Ternschersee führte die erste Tour der 22. Saison der Dülmener Hoffnungsradler. Traditionell am Karfreitag machten sich die Radler auf den Weg,...",
+      image: "/lovable-uploads/dz250422.png"
+    },
     {
       date: "23. Januar 2025",
       title: "Künftig gemeinnützig auf dem Rad",
@@ -48,40 +67,55 @@ const Presse = () => {
   ];
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-4xl font-bold mb-8">Pressespiegel</h1>
-      
-      <div className="grid gap-6">
-        {pressArticles.map((article, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              {article.image && (
-                <div className="mb-4">
-                  <img 
-                    src={article.image} 
-                    alt={article.title}
-                    className="w-full h-auto rounded-lg"
-                  />
-                </div>
-              )}
-              <div className="text-sm text-gray-500 mb-2">{article.date} | {article.source}</div>
-              <h2 className="text-2xl font-bold mb-3">{article.title}</h2>
-              <p className="text-gray-700 mb-4">{article.excerpt}</p>
-              {article.link && (
-                <a 
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Artikel lesen →
-                </a>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+    <Dialog onOpenChange={(isOpen) => !isOpen && setSelectedImage(null)}>
+      <div className="container mx-auto py-8 px-4">
+        <h1 className="text-4xl font-bold mb-8">Pressespiegel</h1>
+        
+        <div className="grid gap-6">
+          {pressArticles.map((article, index) => (
+            <Card key={index} className="hover:shadow-lg transition-shadow">
+              <CardContent className="p-6">
+                <div className="text-sm text-gray-500 mb-2">{article.date} | {article.source}</div>
+                <h2 className="text-2xl font-bold mb-3">{article.title}</h2>
+                {article.excerpt && (
+                  <p className="text-gray-700 mb-4">{article.excerpt}</p>
+                )}
+                
+                {article.link ? (
+                  <a 
+                    href={article.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Artikel lesen →
+                  </a>
+                ) : article.image ? (
+                  <DialogTrigger asChild>
+                    <button 
+                      onClick={() => setSelectedImage(article.image!)}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      Artikel lesen →
+                    </button>
+                  </DialogTrigger>
+                ) : null}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+
+      <DialogContent className="max-w-4xl w-[95vw] p-0">
+        {selectedImage && (
+          <img 
+            src={selectedImage} 
+            alt="Zeitungsartikel" 
+            className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
+          />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };
 
