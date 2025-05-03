@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Download, Map } from "lucide-react";
+import { Download, Map, Link2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -20,6 +20,7 @@ interface TourDate {
   speed?: string;
   gpxUrl?: string;
   mapUrl?: string;
+  komootUrl?: string;
   day?: string;
 }
 
@@ -46,8 +47,9 @@ const TourDates = () => {
       location: "Sportzentrum Süd",
       address: "Kapellenweg, Dülmen",
       speed: "25-27 km/h",
-      gpxUrl: "https://drive.google.com/file/d/1Gk6tMpEJr4nVyP6IJq39PkXrrkhIhzqL/view?usp=sharing",
-      mapUrl: "https://www.google.com/maps/d/edit?mid=1WtmfEqv87gfcf9ca7ncuw90fC-P59Q4&usp=drive_link"
+      gpxUrl: "https://drive.google.com/file/d/1xjgRRVigXswIta5iDUo3O0lX83kwbKMY/view?usp=drive_link",
+      mapUrl: "https://www.google.com/maps/d/edit?mid=1WtmfEqv87gfcf9ca7ncuw90fC-P59Q4&usp=drive_link",
+      komootUrl: "https://www.komoot.com/de-de/tour/2098047867"
     },
     {
       date: "24.05.2025",
@@ -58,7 +60,7 @@ const TourDates = () => {
       time: "14:00 Uhr",
       location: "Sportzentrum Süd",
       address: "Kapellenweg, Dülmen",
-      gpxUrl: "https://drive.google.com/file/d/1NtkOMY6Jj-1TBx_o4P8JHU4nI6nh-Xx-/view?usp=sharing",
+      gpxUrl: "https://drive.google.com/file/d/1bfz8Tmz_nY5gI_Qt5KlPaJ8ADg6zzzOl/view?usp=drive_link",
       mapUrl: "https://www.google.com/maps/d/edit?mid=1O1HENk0BcTf_93drEwojRXFMb8pqAyc&usp=sharing"
     },
     {
@@ -181,6 +183,23 @@ const TourDates = () => {
                               title="Route auf Google Maps ansehen"
                             >
                               <Map className="w-4 h-4" />
+                            </a>
+                          </Button>
+                        )}
+                        {tour.komootUrl && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-forest hover:text-forest hover:bg-forest/5"
+                            asChild
+                          >
+                            <a 
+                              href={tour.komootUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Route auf Komoot ansehen"
+                            >
+                              <Link2 className="w-4 h-4" />
                             </a>
                           </Button>
                         )}
