@@ -49,7 +49,7 @@ const TourDates = () => {
       speed: "25-27 km/h",
       gpxUrl: "https://drive.google.com/file/d/1xjgRRVigXswIta5iDUo3O0lX83kwbKMY/view?usp=drive_link",
       mapUrl: "https://www.google.com/maps/d/edit?mid=1WtmfEqv87gfcf9ca7ncuw90fC-P59Q4&usp=drive_link",
-      komootUrl: "https://www.komoot.com/de-de/tour/2098047867"
+      komootUrl: "https://www.komoot.com/de-de/tour/2098047867?s"
     },
     {
       date: "24.05.2025",
