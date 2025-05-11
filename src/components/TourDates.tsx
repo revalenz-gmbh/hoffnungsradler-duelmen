@@ -61,16 +61,21 @@ const TourDates = () => {
       location: "Sportzentrum Süd",
       address: "Kapellenweg, Dülmen",
       gpxUrl: "https://drive.google.com/file/d/1bfz8Tmz_nY5gI_Qt5KlPaJ8ADg6zzzOl/view?usp=drive_link",
-      mapUrl: "https://www.google.com/maps/d/edit?mid=1O1HENk0BcTf_93drEwojRXFMb8pqAyc&usp=sharing"
+      mapUrl: "https://www.google.com/maps/d/edit?mid=1O1HENk0BcTf_93drEwojRXFMb8pqAyc&usp=sharing",
+      komootUrl: "https://www.komoot.com/de-de/tour/1414939627?share_token=a3kDdj7AKoPj7zkq1oUcF7pWqu0cnREoQp2BWrRn6zHy4cnuTg&ref=wtd"
     },
     {
       date: "22.06.2025",
       day: "Sonntag",
-      name: "in Planung",
-      distance: " km",
+      name: "Tour nach Rhade-Dorsten",
+      distance: "74 km",
+      speed: "25-27 km/h",
       time: "10:00 Uhr",
       location: "Sportzentrum Süd",
-      address: "Kapellenweg, Dülmen"
+      address: "Kapellenweg, Dülmen",
+      gpxUrl: "https://drive.google.com/file/d/1RUGjdUtle2thNF0RbgbC0BjMU6w2qkIC/view?usp=sharing",
+      mapUrl: "https://www.google.com/maps/d/edit?mid=1QgvcjQe412DEhl5ba4zD-JiCkPQnCVE&usp=sharing",
+      komootUrl: "https://www.komoot.com/de-de/tour/2235975171?share_token=aa8vO4K4MhMWm2L4pnWamJtKS4x413Bf5233GLDoKB3hu9r3Nq&ref=wtd"
     },
     {
       date: "20.07.2025",

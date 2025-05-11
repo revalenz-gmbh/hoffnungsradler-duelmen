@@ -1,20 +1,77 @@
+import { currentYearDonations, totalDonations, donationGoal, donationYear } from "../data/donations";
+import { useEffect, useState } from "react";
+
 const Hero = () => {
+  // Animierte Zahlen
+  const [animatedCurrent, setAnimatedCurrent] = useState(0);
+  const [animatedTotal, setAnimatedTotal] = useState(0);
+
+  useEffect(() => {
+    // Animation für aktuelle Spendensumme
+    let start = 0;
+    const duration = 1200;
+    const step = (timestamp: number, startTime: number) => {
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setAnimatedCurrent(Math.floor(progress * currentYearDonations));
+      if (progress < 1) {
+        requestAnimationFrame((t) => step(t, startTime));
+      } else {
+        setAnimatedCurrent(currentYearDonations);
+      }
+    };
+    requestAnimationFrame((t) => step(t, t));
+    // Animation für Gesamtsumme
+    let startTotal = 0;
+    const durationTotal = 1500;
+    const stepTotal = (timestamp: number, startTime: number) => {
+      const progress = Math.min((timestamp - startTime) / durationTotal, 1);
+      setAnimatedTotal(Math.floor(progress * totalDonations));
+      if (progress < 1) {
+        requestAnimationFrame((t) => stepTotal(t, startTime));
+      } else {
+        setAnimatedTotal(totalDonations);
+      }
+    };
+    requestAnimationFrame((t) => stepTotal(t, t));
+  }, []);
+
+  // Fortschritt für Balken
+  const progress = Math.min(animatedCurrent / donationGoal, 1);
+
   return (
-    <div className="relative h-screen">
+    <div className="relative h-screen flex flex-col justify-center items-center">
       <img
         src="/lovable-uploads/Hoffnungsradler Titelphoto.png"
         alt="Hoffnungsradler cycling group"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover absolute inset-0 z-0"
       />
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="absolute inset-0 flex items-center justify-center -translate-y-[20%]">
-        <div className="text-center px-4">
+      <div className="absolute inset-0 bg-black/60 z-10" />
+      <div className="relative z-20 flex flex-col items-center w-full px-4 h-full">
+        <div className="text-center mt-12 md:mt-0 flex-1 flex flex-col justify-center">
           <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in">
             Hoffnungsradler Dülmen
           </h1>
-          <p className="font-inter text-xl md:text-2xl text-white/90 animate-fade-in-up">
+          <p className="font-inter text-xl md:text-2xl text-white/90 animate-fade-in-up mb-8">
             Gemeinsam bewegen wir mehr.
           </p>
+        </div>
+        {/* Fortschrittsbalken und Gesamtsumme ganz unten */}
+        <div className="w-full max-w-xl mb-8 mt-auto">
+          <div className="flex justify-between mb-1">
+            <span className="text-white/90 font-semibold text-lg">{donationYear} – Spendenziel {donationGoal.toLocaleString("de-DE")} €</span>
+            <span className="text-white/80 text-md">{((progress * 100).toFixed(0))}%</span>
+          </div>
+          <div className="w-full h-8 bg-white/20 rounded-full overflow-hidden shadow-inner">
+            <div
+              className="h-full bg-forest transition-all duration-700 flex items-center pl-4 text-white font-bold text-lg"
+              style={{ width: `${progress * 100}%`, minWidth: "2.5rem" }}
+            >
+              {animatedCurrent.toLocaleString("de-DE")} €
+            </div>
+          </div>
+          <div className="mt-4 text-white/90 text-lg md:text-xl font-inter drop-shadow text-center">
+            Insgesamt übergeben: <span className="font-bold">{animatedTotal.toLocaleString("de-DE")} €</span>
+          </div>
         </div>
       </div>
     </div>
