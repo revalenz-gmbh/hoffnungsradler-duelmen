@@ -11,6 +11,14 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "11.05.2025",
+      title: "'Große Scheibe Lette' überreicht Spende in Höhe von 1.200 € bei Tour nach Weseke",
+      excerpt: `Bei der Tour nach Weseke überreichte die Radsportgruppe 'Große Scheibe Lette' eine großzügige Spende in Höhe von 1.200€, die sie gemeinsam mit dem Team des Dentallabors Böinghoff aus Ahaus gesammelt hatte. Diese Spende ist ein großer Beitrag zur Spendensumme für 2025, die damit bereits auf 1.930 € anstieg.
+Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette' zudem eine starke Führungsarbeit und sorgte für eine schwungvolle Fahrt. Die Hoffnungsradler bedanken sich herzlich für die tolle Unterstützung und den gemeinsamen Einsatz. Die Tour war ein sportlicher und solidarischer Erfolg.`,
+      images: ["/lovable-uploads/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg"],
+      type: "internal"
+    },
+    {
       date: "22.04.2025",
       title: "Traditioneller Start am Marktplatz",
       source: "Dülmener Zeitung",

@@ -5,36 +5,25 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PhotoGallery = () => {
   const images = [
     {
-      src: "/lovable-uploads/613a2cc8-11be-4e10-ab1f-36fa9f108889.png",
-      alt: "Hoffnungsradler Gruppenfoto",
-    },
-    {
-      src: "/lovable-uploads/IMG_0007 1.png",
-      alt: "Hoffnungsradler bei einer Tour",
+      src: "/lovable-uploads/PXL_20250511_075522965~3.jpg",
+      alt: "2025: Große Scheibe Lette überreicht gesammelte Spenden über 1200 €",
     },
     {
       src: "/lovable-uploads/IMG_0255.png",
-      alt: "Hoffnungsradler Gruppe",
+      alt: "2024: Hoffnungsradler besuchen Sponsoren",
     },
-    {
-      src: "/lovable-uploads/Sandsteinroute 24 IMG_0515.png",
-      alt: "Hoffnungsradler auf der Sandsteinroute 2024",
-    },
-    {
-      src: "/lovable-uploads/Sandsteinroute 24 IMG_0518.png",
-      alt: "Hoffnungsradler Gruppenpause auf der Sandsteinroute",
-    },
+       
     {
       src: "/lovable-uploads/Gründungsversammlung.png",
-      alt: "Gründungsversammlung der Hoffnungsradler",
+      alt: "2025: Gründungsversammlung der Hoffnungsradler Dülmen e.V.",
     },
     {
-      src: "/lovable-uploads/32eef6b5-977b-435f-af25-6ea63b499462.png",
-      alt: "Hoffnungsradler Gruppe vor dem Start",
+      src: "/lovable-uploads/PXL_20250418_080335661.MP.jpg",
+      alt: "2025: Bürgermeister Carsten Hövekamp ehrt Josef Friedag zum Saisonauftakt",
     },
     {
-      src: "/lovable-uploads/51c8b22f-ad16-4975-aa65-3183d8706a01.png",
-      alt: "Hoffnungsradler Team vor Geschäft",
+      src: "/lovable-uploads/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg",
+      alt: "2025: Tour mit Rast in Weseke",
     },
   ];
 
@@ -86,46 +75,56 @@ const PhotoGallery = () => {
             {/* Image Carousel */}
             <div className="grid grid-cols-2 gap-4">
               {/* Erstes Bild */}
-              <Dialog>
-                <DialogTrigger>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg border border-forest/10 cursor-pointer">
+              <div className="flex flex-col items-center">
+                <Dialog>
+                  <DialogTrigger>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg border border-forest/10 cursor-pointer">
+                      <img
+                        src={images[currentIndex].src}
+                        alt={images[currentIndex].alt}
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl w-[95vw]">
                     <img
                       src={images[currentIndex].src}
                       alt={images[currentIndex].alt}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
                     />
-                    <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl w-[95vw]">
-                  <img
-                    src={images[currentIndex].src}
-                    alt={images[currentIndex].alt}
-                    className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
-                  />
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+                <span className="mt-2 text-center text-prussian text-base font-medium max-w-full break-words">
+                  {images[currentIndex].alt}
+                </span>
+              </div>
 
               {/* Zweites Bild */}
-              <Dialog>
-                <DialogTrigger>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg border border-forest/10 cursor-pointer">
+              <div className="flex flex-col items-center">
+                <Dialog>
+                  <DialogTrigger>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg border border-forest/10 cursor-pointer">
+                      <img
+                        src={images[getSecondImageIndex()].src}
+                        alt={images[getSecondImageIndex()].alt}
+                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl w-[95vw]">
                     <img
                       src={images[getSecondImageIndex()].src}
                       alt={images[getSecondImageIndex()].alt}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
                     />
-                    <div className="absolute inset-0 bg-black/30 opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl w-[95vw]">
-                  <img
-                    src={images[getSecondImageIndex()].src}
-                    alt={images[getSecondImageIndex()].alt}
-                    className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
-                  />
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+                <span className="mt-2 text-center text-prussian text-base font-medium max-w-full break-words">
+                  {images[getSecondImageIndex()].alt}
+                </span>
+              </div>
             </div>
 
             {/* Dots Navigation */}
