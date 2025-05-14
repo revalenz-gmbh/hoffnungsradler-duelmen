@@ -1,5 +1,5 @@
 export const donations = [
-  { year: 2025, amount: 1930 }, // Neues Jahr 2025
+  { year: 2025, amount: 2180 }, // Neues Jahr 2025
   { year: 2024, amount: 7000 },
   { year: 2023, amount: 13000 },
   { year: 2022, amount: 4000 },
