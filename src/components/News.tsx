@@ -11,6 +11,14 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "17.05.2025",
+      source: "Dülmenplus",
+      title: "Hoffnungsradler auch am 24. Mai unterwegs",
+      excerpt: `Die Hoffnungsradler Dülmen unternahmen am Sonntag eine gemeinsame Radtour von Dülmen nach Weseke und zurück. Die 86 Kilometer lange Strecke führte entlang malerischer Baumalleen...`,
+      images: ["/public/lovable-uploads/duelmenplus-250517.png"],
+      type: "press"
+    },
+    {
       date: "11.05.2025",
       title: "'Große Scheibe Lette' überreicht Spende in Höhe von 1.200 € bei Tour nach Weseke",
       excerpt: `Bei der Tour nach Weseke überreichte die Radsportgruppe 'Große Scheibe Lette' eine großzügige Spende in Höhe von 1.200€, die sie gemeinsam mit dem Team des Dentallabors Böinghoff aus Ahaus gesammelt hatte. Diese Spende ist ein großer Beitrag zur Spendensumme für 2025, die damit bereits auf 1.930 € anstieg.

@@ -1,0 +1,9 @@
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('Newsletter')
+      .addItem('Newsletter-Blatt erstellen/öffnen', 'createNewsletterSheet')
+      .addItem('Einen Test versenden', 'sendNewsletterTest')
+      .addItem('Newsletter versenden', 'sendNewsletterToAllSubscribers')
+      .addItem('Manuell Adressen hinzufügen', ' addManualSubscribers')
+      .addToUi();
+}

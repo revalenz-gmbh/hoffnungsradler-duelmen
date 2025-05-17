@@ -16,6 +16,13 @@ const Presse = () => {
 
   const pressArticles: PressArticle[] = [
     {
+      date: "17. Mai 2025",
+      title: "Hoffnungsradler auch am 24. Mai unterwegs",
+      source: "Dülmenplus",
+      excerpt: "Die Hoffnungsradler Dülmen unternahmen am Sonntag eine gemeinsame Radtour von Dülmen nach Weseke und zurück. Die 86 Kilometer lange Strecke führte entlang malerischer Baumalleen...",
+      image: "/public/lovable-uploads/duelmenplus-250517.png"
+    },
+    {
       date: "22. April 2025",
       title: "Traditioneller Start am Marktplatz",
       source: "Dülmener Zeitung",
@@ -66,13 +73,19 @@ const Presse = () => {
     },
   ];
 
+  // Die neuesten Presseartikel stehen oben (nach Datum sortiert)
+  const sortedArticles = [...pressArticles].sort((a, b) => {
+    // Versuche das Datum zu parsen (funktioniert für '22. April 2025' in den meisten Browsern)
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
   return (
     <Dialog onOpenChange={(isOpen) => !isOpen && setSelectedImage(null)}>
       <div className="container mx-auto py-8 px-4">
         <h1 className="text-4xl font-bold mb-8">Pressespiegel</h1>
         
         <div className="grid gap-6">
-          {pressArticles.map((article, index) => (
+          {sortedArticles.map((article, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="text-sm text-gray-500 mb-2">{article.date} | {article.source}</div>

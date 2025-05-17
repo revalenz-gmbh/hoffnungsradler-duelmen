@@ -55,14 +55,14 @@ const TourDates = () => {
       date: "24.05.2025",
       day: "Samstag",
       name: "Münster Berg Fidel",
-      distance: "70 km",
+      distance: "77 km",
       speed: "25-27 km/h",
       time: "14:00 Uhr",
       location: "Sportzentrum Süd",
       address: "Kapellenweg, Dülmen",
-      gpxUrl: "https://drive.google.com/file/d/1bfz8Tmz_nY5gI_Qt5KlPaJ8ADg6zzzOl/view?usp=drive_link",
+      gpxUrl: "https://drive.google.com/file/d/1WQsIXZI9PUE4_nmZePiOGnDDKn24VLfP/view?usp=sharing",
       mapUrl: "https://www.google.com/maps/d/edit?mid=1O1HENk0BcTf_93drEwojRXFMb8pqAyc&usp=sharing",
-      komootUrl: "https://www.komoot.com/de-de/tour/1414939627?share_token=a3kDdj7AKoPj7zkq1oUcF7pWqu0cnREoQp2BWrRn6zHy4cnuTg&ref=wtd"
+      komootUrl: "https://www.komoot.com/de-de/tour/2244963952?share_token=a722EL5hQbTT9suvWG57BSBvixPOobLPaE2TEY9fZgelfjJ0eu&ref=wtd"
     },
     {
       date: "22.06.2025",
