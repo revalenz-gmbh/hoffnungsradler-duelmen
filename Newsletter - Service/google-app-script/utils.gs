@@ -57,11 +57,14 @@ function getNewsletterTemplate(data) {
     `Du erhältst diese E-Mail, weil du dich für unseren Tour-Newsletter angemeldet hast.\n` +
     `Um dich abzumelden, besuche: ${data.unsubscribeLink}`;
 
+  // **Text** durch <strong>Text</strong> ersetzen
+  const formattedHtmlDescription = (data.tourDescription || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
       <h1 style="color: #003366; text-align: center; border-bottom: 2px solid #003366; padding-bottom: 10px;">Tour-Newsletter der Hoffnungsradler Dülmen</h1>
       <div style="margin-top: 20px; line-height: 1.6;">
-        ${(data.tourDescription || '').replace(/\n/g, '<br>')}
+        ${formattedHtmlDescription.replace(/\n/g, '<br>')}
       </div>
       <p style="margin-top: 25px;">Wir freuen uns auf deine Teilnahme!</p>
       <p style="margin-top: 15px;">Mit sportlichen Grüßen,<br>Das Team der Hoffnungsradler Dülmen</p>

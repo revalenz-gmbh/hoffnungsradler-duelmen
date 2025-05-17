@@ -42,4 +42,12 @@ Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-
 
 ## Support & Weiterentwicklung
 
-Für Fragen oder Erweiterungen bitte an den Entwickler wenden oder Issues im Hauptrepo anlegen. 
+Für Fragen oder Erweiterungen bitte an den Entwickler wenden oder Issues im Hauptrepo anlegen.
+
+## Zukunft / Weiterentwicklung
+
+**Geplantes Entwicklungsziel:**
+
+- Die geplanten Touren und alle relevanten Links (z.B. Google Maps, Komoot, GPS-Daten) sollen zentral in einem eigenen Tabellenblatt im Google Spreadsheet gepflegt werden.
+- Der Newsletter (und perspektivisch auch die Webseite) liest diese Informationen automatisiert aus und stellt sie als übersichtliche Karten/Buttons dar.
+- Damit greifen alle Systeme auf eine gemeinsame, stets aktuelle Datenbasis zu und die Pflege wird deutlich vereinfacht. 
