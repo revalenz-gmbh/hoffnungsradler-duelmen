@@ -93,3 +93,81 @@ Das Projekt wurde mit folgenden modernen Webtechnologien entwickelt:
 Das Projekt wird automatisch über [Vercel](https://vercel.com/) gehostet. Jeder Push auf den main-Branch führt automatisch zu einem neuen Deployment.
 
 Die Live-Version ist unter [URL-HIER] erreichbar.
+
+## Integration von Google Spreadsheet (Übergebene Spenden) ins Frontend
+
+### 1. Google Apps Script als Web-API
+
+Das Apps Script stellt eine Web-API bereit, z.B.:
+
+```
+https://script.google.com/macros/s/DEINE_WEBAPP_ID/exec?action=getUebergabeSummen
+```
+
+Diese URL liefert ein JSON mit den Summen pro Jahr und der Gesamtsumme:
+
+```
+{
+  "summen": { "2023": 13000, "2024": 1930 },
+  "gesamt": 14930
+}
+```
+
+### 2. Funktion zum Abrufen der Summen im Frontend
+
+In `src/lib/fetchUebergabeSummen.ts` befindet sich eine Funktion:
+
+```ts
+export async function fetchUebergabeSummen(apiUrl: string) {
+  const res = await fetch(`${apiUrl}?action=getUebergabeSummen`);
+  if (!res.ok) throw new Error("Fehler beim Laden der Spendensummen");
+  return await res.json();
+}
+```
+
+### 3. Verwendung in einer React-Komponente
+
+```tsx
+import { useEffect, useState } from "react";
+import { fetchUebergabeSummen } from "../lib/fetchUebergabeSummen";
+
+const API_URL = "https://script.google.com/macros/s/DEINE_WEBAPP_ID/exec";
+
+export default function UebergabeSummen() {
+  const [summen, setSummen] = useState<{ [jahr: string]: number }>({});
+  const [gesamt, setGesamt] = useState<number>(0);
+
+  useEffect(() => {
+    fetchUebergabeSummen(API_URL).then(data => {
+      setSummen(data.summen);
+      setGesamt(data.gesamt);
+    });
+  }, []);
+
+  return (
+    <div>
+      <h2>Übergebene Spenden</h2>
+      <ul>
+        {Object.entries(summen).map(([jahr, betrag]) => (
+          <li key={jahr}>
+            {jahr}: {betrag.toLocaleString("de-DE")} €
+          </li>
+        ))}
+      </ul>
+      <strong>Gesamtsumme: {gesamt.toLocaleString("de-DE")} €</strong>
+    </div>
+  );
+}
+```
+
+### 4. Wofür sind die Dateien in `src/lib`?
+
+- **spenden-core.ts**: Datenmodell und Interface für verschiedene Datenquellen.
+- **spenden-apps-script.ts**: Adapter für die Kommunikation mit der Apps Script Web-API.
+- **spenden-google-sheets.ts**: (Platzhalter für direkten Zugriff auf Google Sheets per API.)
+- **spenden-example.ts**: Beispiel für die Nutzung eines Providers.
+- **fetchUebergabeSummen.ts**: Funktion zum Abrufen der Summen aus dem Apps Script.
+- **utils.ts**: Hilfsfunktionen.
+
+**Vorteil:**
+Du kannst die Datenquelle später wechseln, ohne das Frontend neu zu schreiben. Die Logik für das Laden, Hinzufügen oder Aktualisieren von Spenden ist gekapselt und wiederverwendbar.

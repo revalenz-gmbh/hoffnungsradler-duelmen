@@ -9,61 +9,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import { fetchUebergabeSummen } from "../lib/fetchUebergabeSummen";
 
 const Spenden = () => {
   const donations = [
-    {
-      year: 2024,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 7000.0,
-    },
-    {
-      year: 2023,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 13000.0,
-    },
-    {
-      year: 2022,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 4000.0,
-    },
+    { year: 2024, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 7000.0 },
+    { year: 2023, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 13000.0 },
+    { year: 2022, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 4000.0 },
     { year: 2021, recipient: "Kinderkrebshilfe Münster", amount: 4500.0 },
-    {
-      year: 2020,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 5600.0,
-    },
-    {
-      year: 2019,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 5500.0,
-    },
+    { year: 2020, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5600.0 },
+    { year: 2019, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5500.0 },
     { year: 2018, recipient: "Kinderkrebshilfe Münster", amount: 5000.0 },
-    {
-      year: 2017,
-      recipient: "Kinder u. Jugendliche-Krebsberatung-Münster",
-      amount: 5000.0,
-    },
-    {
-      year: 2016,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 7000.0,
-    },
-    {
-      year: 2015,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 5600.0,
-    },
-    {
-      year: 2014,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 5555.0,
-    },
-    {
-      year: 2013,
-      recipient: "Datteln Elterninitiative krebskranker Kinder",
-      amount: 2000.0,
-    },
+    { year: 2017, recipient: "Kinder u. Jugendliche-Krebsberatung-Münster", amount: 5000.0 },
+    { year: 2016, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 7000.0 },
+    { year: 2015, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5600.0 },
+    { year: 2014, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5555.0 },
+    { year: 2013, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 2000.0 },
     { year: 2013, recipient: "Tour der Hoffnung", amount: 3000.0 },
     { year: 2012, recipient: "Tour der Hoffnung", amount: 4000.0 },
     { year: 2011, recipient: "Tour der Hoffnung", amount: 4000.0 },
@@ -76,10 +38,8 @@ const Spenden = () => {
     { year: 2004, recipient: "Tour der Hoffnung", amount: 100.0 },
   ];
 
-  const totalDonations = donations.reduce(
-    (sum, donation) => sum + donation.amount,
-    0
-  );
+  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
+  const tableData = [...donations].sort((a, b) => b.year - a.year);
 
   const organizations = [
     {
@@ -159,7 +119,7 @@ Spende Hoffnungsradler
                 Spenden
               </h1>
               <p className="text-text text-lg max-w-2xl text-center mb-8">
-                Seit 2004 haben wir Spendengelder in Höhe von insgesamt 91.055,00 € an gemeinnützige Organisationen übergeben, die sich der Unterstützung und Betreuung von Familien mit krebskranken Kindern widmen.
+                Seit 2004 haben wir Spendengelder in Höhe von insgesamt {totalDonations.toLocaleString("de-DE", { style: "currency", currency: "EUR" })} an gemeinnützige Organisationen übergeben, die sich der Unterstützung und Betreuung von Familien mit krebskranken Kindern widmen.
               </p>
             </div>
 
@@ -231,30 +191,23 @@ Spende Hoffnungsradler
               </div>
             </div>
 
-            {/* Donations Table */}
+            {/* Tabelle der übergebenen Spenden */}
             <div className="bg-white rounded-lg shadow-lg border border-forest/10 overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-24">Jahr</TableHead>
-                    <TableHead className="min-w-[300px]">
-                      Organisation
-                    </TableHead>
+                    <TableHead className="min-w-[300px]">Organisation</TableHead>
                     <TableHead className="text-right w-32">Betrag</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {donations.map((donation, index) => (
+                  {tableData.map((donation, index) => (
                     <TableRow key={`${donation.year}-${index}`}>
-                      <TableCell className="font-medium">
-                        {donation.year}
-                      </TableCell>
+                      <TableCell className="font-medium">{donation.year}</TableCell>
                       <TableCell>{donation.recipient}</TableCell>
                       <TableCell className="text-right">
-                        {new Intl.NumberFormat("de-DE", {
-                          style: "currency",
-                          currency: "EUR",
-                        }).format(donation.amount)}
+                        {donation.amount.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
                       </TableCell>
                     </TableRow>
                   ))}
