@@ -41,7 +41,7 @@ const Hero = () => {
   return (
     <div className="relative h-screen flex flex-col justify-center items-center">
       <img
-        src="/lovable-uploads/Hoffnungsradler Titelphoto.png"
+        src="/photos/Hoffnungsradler Titelphoto.png"
         alt="Hoffnungsradler cycling group"
         className="w-full h-full object-cover absolute inset-0 z-0"
       />

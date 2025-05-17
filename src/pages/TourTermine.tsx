@@ -89,7 +89,7 @@ const TourTermine = () => {
             <div className="flex flex-col items-center mb-12">
               <div className="w-48 h-48 mb-8 bg-forest/5 rounded-full p-4 rotate-3 transition-transform hover:rotate-6">
                 <img
-                  src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                  src="/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                   alt="Hoffnungsradler Logo"
                   className="w-full h-full object-contain"
                 />

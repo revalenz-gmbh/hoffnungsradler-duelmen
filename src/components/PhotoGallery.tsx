@@ -5,24 +5,23 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PhotoGallery = () => {
   const images = [
     {
-      src: "/lovable-uploads/PXL_20250511_075522965~3.jpg",
+      src: "/photos/PXL_20250511_075522965~3.jpg",
       alt: "2025: Große Scheibe Lette überreicht gesammelte Spenden über 1200 €",
     },
     {
-      src: "/lovable-uploads/IMG_0255.png",
+      src: "/photos/IMG_0255.png",
       alt: "2024: Hoffnungsradler besuchen Sponsoren",
     },
-       
     {
-      src: "/lovable-uploads/Gründungsversammlung.png",
+      src: "/photos/Gründungsversammlung.png",
       alt: "2025: Gründungsversammlung der Hoffnungsradler Dülmen e.V.",
     },
     {
-      src: "/lovable-uploads/PXL_20250418_080335661.MP.jpg",
+      src: "/photos/PXL_20250418_080335661.MP.jpg",
       alt: "2025: Bürgermeister Carsten Hövekamp ehrt Josef Friedag zum Saisonauftakt",
     },
     {
-      src: "/lovable-uploads/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg",
+      src: "/zeitungsartikel/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg",
       alt: "2025: Tour mit Rast in Weseke",
     },
   ];

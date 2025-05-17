@@ -15,7 +15,7 @@ const News = () => {
       source: "Dülmenplus",
       title: "Hoffnungsradler auch am 24. Mai unterwegs",
       excerpt: `Die Hoffnungsradler Dülmen unternahmen am Sonntag eine gemeinsame Radtour von Dülmen nach Weseke und zurück. Die 86 Kilometer lange Strecke führte entlang malerischer Baumalleen...`,
-      images: ["/public/lovable-uploads/duelmenplus-250517.png"],
+      images: ["/zeitungsartikel/duelmenplus-250517.png"],
       type: "press"
     },
     {
@@ -23,7 +23,7 @@ const News = () => {
       title: "'Große Scheibe Lette' überreicht Spende in Höhe von 1.200 € bei Tour nach Weseke",
       excerpt: `Bei der Tour nach Weseke überreichte die Radsportgruppe 'Große Scheibe Lette' eine großzügige Spende in Höhe von 1.200€, die sie gemeinsam mit dem Team des Dentallabors Böinghoff aus Ahaus gesammelt hatte. Diese Spende ist ein großer Beitrag zur Spendensumme für 2025, die damit bereits auf 1.930 € anstieg.
 Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette' zudem eine starke Führungsarbeit und sorgte für eine schwungvolle Fahrt. Die Hoffnungsradler bedanken sich herzlich für die tolle Unterstützung und den gemeinsamen Einsatz. Die Tour war ein sportlicher und solidarischer Erfolg.`,
-      images: ["/lovable-uploads/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg"],
+      images: ["/zeitungsartikel/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg"],
       type: "internal"
     },
     {
@@ -31,14 +31,14 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
       title: "Traditioneller Start am Marktplatz",
       source: "Dülmener Zeitung",
       excerpt: "An den Ternschersee führte die erste Tour der 22. Saison der Dülmener Hoffnungsradler. Traditionell am Karfreitag machten sich die Radler auf den Weg,...",
-      images: ["/lovable-uploads/dz250422.png"],
+      images: ["/zeitungsartikel/dz250422.png"],
       type: "press"
     },
     {
       date: "18.04.2025",
       title: "Saisoneröffnung der Hoffnungsradler mit Tour zum Ternscher See",
       excerpt: "Am Karfreitag starteten die Dülmener Hoffnungsradler trotz regnerischer Wetterprognosen zu ihrem traditionellen Saisonauftakt. In diesem Jahr führte die Tour zum Ternscher See. Die 52 km lange Strecke wurde von den Radlern ohne Probleme gemeistert - und das Beste: Alle kamen trocken zurück! Zu Beginn der Tour sprach Bürgermeister Carsten Hövekamp ein paar herzliche Grußworte und nutzte die Gelegenheit, Josef Friedag für sein langjähriges Engagement zu ehren.",
-      images: ["/lovable-uploads/Karfreitag25_1.jpg"],
+      images: ["/photos/Karfreitag25_1.jpg"],
       type: "internal"
     },
     {

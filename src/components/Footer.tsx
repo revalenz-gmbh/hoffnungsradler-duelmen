@@ -109,7 +109,7 @@ const Footer = () => {
                 className="hover:opacity-80 transition-opacity"
               >
                 <img
-                  src="/lovable-uploads/b0799038-8c76-42b1-b74b-96c4ea20285e.png"
+                  src="/logos/b0799038-8c76-42b1-b74b-96c4ea20285e.png"
                   alt="DJK Logo"
                   className="h-28 w-auto"
                 />
@@ -121,7 +121,7 @@ const Footer = () => {
                 className="hover:opacity-80 transition-opacity"
               >
                 <img
-                  src="/lovable-uploads/a05f6440-d361-4236-ace4-32d06e932465.png"
+                  src="/logos/a05f6440-d361-4236-ace4-32d06e932465.png"
                   alt="DJK Adler Buldern Logo"
                   className="h-28 w-28 object-cover rounded-full bg-white"
                 />

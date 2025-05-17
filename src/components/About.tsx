@@ -14,7 +14,7 @@ const About = () => {
             <h2 className="font-anton text-4xl text-prussian">Über Uns</h2>
             <div className="bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
               <img
-                src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                src="/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                 alt="Hoffnungsradler Logo"
                 className="w-20 h-auto"
               />
@@ -76,7 +76,7 @@ const About = () => {
               <div className="hidden md:block">
                 <div className="float-right ml-8 mb-8 bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
                   <img
-                    src="/lovable-uploads/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
+                    src="/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                     alt="Hoffnungsradler Logo"
                     className="w-24 h-auto"
                   />

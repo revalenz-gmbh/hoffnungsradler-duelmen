@@ -20,14 +20,14 @@ const Presse = () => {
       title: "Hoffnungsradler auch am 24. Mai unterwegs",
       source: "Dülmenplus",
       excerpt: "Die Hoffnungsradler Dülmen unternahmen am Sonntag eine gemeinsame Radtour von Dülmen nach Weseke und zurück. Die 86 Kilometer lange Strecke führte entlang malerischer Baumalleen...",
-      image: "/public/lovable-uploads/duelmenplus-250517.png"
+      image: "/zeitungsartikel/duelmenplus-250517.png"
     },
     {
       date: "22. April 2025",
       title: "Traditioneller Start am Marktplatz",
       source: "Dülmener Zeitung",
       excerpt: "An den Ternschersee führte die erste Tour der 22. Saison der Dülmener Hoffnungsradler. Traditionell am Karfreitag machten sich die Radler auf den Weg,...",
-      image: "/lovable-uploads/dz250422.png"
+      image: "/zeitungsartikel/dz250422.png"
     },
     {
       date: "23. Januar 2025",
