@@ -22,6 +22,7 @@ interface TourDate {
   mapUrl?: string;
   komootUrl?: string;
   day?: string;
+  cancelled?: boolean;
 }
 
 const TourDates = () => {
@@ -62,7 +63,8 @@ const TourDates = () => {
       address: "Kapellenweg, Dülmen",
       gpxUrl: "https://drive.google.com/file/d/1WQsIXZI9PUE4_nmZePiOGnDDKn24VLfP/view?usp=sharing",
       mapUrl: "https://www.google.com/maps/d/edit?mid=1O1HENk0BcTf_93drEwojRXFMb8pqAyc&usp=sharing",
-      komootUrl: "https://www.komoot.com/de-de/tour/2244963952?share_token=a722EL5hQbTT9suvWG57BSBvixPOobLPaE2TEY9fZgelfjJ0eu&ref=wtd"
+      komootUrl: "https://www.komoot.com/de-de/tour/2244963952?share_token=a722EL5hQbTT9suvWG57BSBvixPOobLPaE2TEY9fZgelfjJ0eu&ref=wtd",
+      cancelled: true 
     },
     {
       date: "22.06.2025",
@@ -75,7 +77,7 @@ const TourDates = () => {
       address: "Kapellenweg, Dülmen",
       gpxUrl: "https://drive.google.com/file/d/1RUGjdUtle2thNF0RbgbC0BjMU6w2qkIC/view?usp=sharing",
       mapUrl: "https://www.google.com/maps/d/edit?mid=1QgvcjQe412DEhl5ba4zD-JiCkPQnCVE&usp=sharing",
-      komootUrl: "https://www.komoot.com/de-de/tour/2235975171?share_token=aa8vO4K4MhMWm2L4pnWamJtKS4x413Bf5233GLDoKB3hu9r3Nq&ref=wtd"
+      komootUrl: "https://www.komoot.com/de-de/tour/2235975171?share_token=aa8vO4K4MhMWm2L4pnWamJtKS4x413Bf5233GLDoKB3hu9r3Nq&ref=wtd",
     },
     {
       date: "20.07.2025",
@@ -130,7 +132,11 @@ const TourDates = () => {
                   <tr 
                     key={index}
                     className={`border-t border-forest/10 ${
-                      index % 2 === 0 ? 'bg-forest/5' : 'bg-white'
+                      tour.cancelled
+                        ? 'bg-red-100 text-red-700 font-bold'
+                        : index % 2 === 0
+                        ? 'bg-forest/5'
+                        : 'bg-white'
                     }`}
                   >
                     <td className="px-4 py-3">
@@ -138,6 +144,9 @@ const TourDates = () => {
                       <div className="text-sm text-gray-600">{tour.time}</div>
                       {tour.day && (
                         <div className="text-sm text-gray-600">{tour.day}</div>
+                      )}
+                      {tour.cancelled && (
+                        <div className="text-xs text-red-700 font-bold mt-1">Abgesagt</div>
                       )}
                     </td>
                     <td className="px-4 py-3">
