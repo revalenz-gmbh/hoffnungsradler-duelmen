@@ -37,6 +37,9 @@ function sendNewsletterToAllSubscribers() {
   
   const newsletterSubject = "Neue Tour-Information: " + tourTitle;
   
+  // Vor dem Versand: Newsletter-ID aus B15 lesen
+  const newsletterId = inputSheet.getRange('B15').getValue();
+  
   // Zähle aktive Abonnenten
   const activeSubscribers = countActiveSubscribers(data);
   
@@ -161,6 +164,7 @@ function sendNewsletterToAllSubscribers() {
               name: "Hoffnungsradler Dülmen" 
             }
           );
+          logNewsletterSendTimestamp();
           
           // Letzten Versand aktualisieren
           sheet.getRange(i + 1, 6).setValue(new Date());
@@ -169,6 +173,9 @@ function sendNewsletterToAllSubscribers() {
           if (data[0].length >= 7) {
             sheet.getRange(i + 1, 7).setValue("erfolgreich");
           }
+          
+          // Im Versand-Loop, nach erfolgreichem Versand:
+          sheet.getRange(i + 1, 8).setValue(newsletterId); // Spalte 8 = Newsletter-ID
           
           sentCount++;
           
@@ -331,9 +338,6 @@ function cleanupInvalidEmails() {
   );
 }
 
-/**
- * Erweiterte onOpen-Funktion mit zusätzlichem Menüpunkt für die Aufräumfunktion
- */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('Newsletter')
@@ -345,4 +349,22 @@ function onOpen() {
       .addSeparator()
       .addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails')
       .addToUi();
+  // Neuen Menüpunkt für Tourplanung ergänzen
+  ui.createMenu('Tourplanung')
+    .addItem('Neues Blatt für Tourplanung anlegen', 'menuCreateTourPlanningSheet')
+    .addToUi();
 }
+
+function menuCreateTourPlanningSheet() {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt('Neues Touren-Blatt anlegen', 'Wie soll das neue Blatt heißen? (z.B. "Touren 2024")', ui.ButtonSet.OK_CANCEL);
+  if (response.getSelectedButton() !== ui.Button.OK) {
+    return;
+  }
+  const sheetName = response.getResponseText().trim();
+  if (!sheetName) {
+    ui.alert('Bitte gib einen gültigen Namen ein!');
+    return;
+  }
+  createTourPlanningSheet(sheetName);
+} 

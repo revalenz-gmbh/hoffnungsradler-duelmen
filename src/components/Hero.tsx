@@ -39,42 +39,53 @@ const Hero = () => {
   const progress = Math.min(animatedCurrent / donationGoal, 1);
 
   return (
-    <div className="relative h-screen flex flex-col justify-center items-center">
-      <img
-        src="/photos/Hoffnungsradler Titelphoto.png"
-        alt="Hoffnungsradler cycling group"
-        className="w-full h-full object-cover absolute inset-0 z-0"
-      />
-      <div className="absolute inset-0 bg-black/60 z-10" />
-      <div className="relative z-20 flex flex-col items-center w-full px-4 h-full">
-        <div className="text-center mt-12 md:mt-0 flex-1 flex flex-col justify-center">
-          <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in">
-            Hoffnungsradler Dülmen
-          </h1>
-          <p className="font-inter text-xl md:text-2xl text-white/90 animate-fade-in-up mb-8">
-            Gemeinsam bewegen wir mehr.
-          </p>
-        </div>
-        {/* Fortschrittsbalken und Gesamtsumme ganz unten */}
-        <div className="w-full max-w-xl mb-8 mt-auto">
-          <div className="flex justify-between mb-1">
-            <span className="text-white/90 font-semibold text-lg">{donationYear} – Spendenziel {donationGoal.toLocaleString("de-DE")} €</span>
-            <span className="text-white/80 text-md">{((progress * 100).toFixed(0))}%</span>
+    <>
+      {/* Tour-Absage-Banner sticky unterhalb des Headers */}
+      <div className="sticky top-20 w-full bg-red-600 text-white py-4 px-2 flex items-center justify-center z-40">
+        <svg className="w-6 h-6 mr-3 text-yellow-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span className="font-bold text-lg">
+          Die heutige Tour muss leider aufgrund der Wettervorhersage abgesagt werden.
+        </span>
+      </div>
+      <div className="relative h-screen flex flex-col justify-center items-center">
+        <img
+          src="/photos/Hoffnungsradler Titelphoto.png"
+          alt="Hoffnungsradler cycling group"
+          className="w-full h-full object-cover absolute inset-0 z-0"
+        />
+        <div className="absolute inset-0 bg-black/60 z-10" />
+        <div className="relative z-20 flex flex-col items-center w-full px-4 h-full">
+          <div className="text-center mt-12 md:mt-0 flex-1 flex flex-col justify-center">
+            <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in">
+              Hoffnungsradler Dülmen
+            </h1>
+            <p className="font-inter text-xl md:text-2xl text-white/90 animate-fade-in-up mb-8">
+              Gemeinsam bewegen wir mehr.
+            </p>
           </div>
-          <div className="w-full h-8 bg-white/20 rounded-full overflow-hidden shadow-inner">
-            <div
-              className="h-full bg-forest transition-all duration-700 flex items-center pl-4 text-white font-bold text-lg"
-              style={{ width: `${progress * 100}%`, minWidth: "2.5rem" }}
-            >
-              {animatedCurrent.toLocaleString("de-DE")} €
+          {/* Fortschrittsbalken und Gesamtsumme ganz unten */}
+          <div className="w-full max-w-xl mb-8 mt-auto">
+            <div className="flex justify-between mb-1">
+              <span className="text-white/90 font-semibold text-lg">{donationYear} – Spendenziel {donationGoal.toLocaleString("de-DE")} €</span>
+              <span className="text-white/80 text-md">{((progress * 100).toFixed(0))}%</span>
             </div>
-          </div>
-          <div className="mt-4 text-white/90 text-lg md:text-xl font-inter drop-shadow text-center">
-            Insgesamt übergeben: <span className="font-bold">{animatedTotal.toLocaleString("de-DE")} €</span>
+            <div className="w-full h-8 bg-white/20 rounded-full overflow-hidden shadow-inner">
+              <div
+                className="h-full bg-forest transition-all duration-700 flex items-center pl-4 text-white font-bold text-lg"
+                style={{ width: `${progress * 100}%`, minWidth: "2.5rem" }}
+              >
+                {animatedCurrent.toLocaleString("de-DE")} €
+              </div>
+            </div>
+            <div className="mt-4 text-white/90 text-lg md:text-xl font-inter drop-shadow text-center">
+              Insgesamt übergeben: <span className="font-bold">{animatedTotal.toLocaleString("de-DE")} €</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
