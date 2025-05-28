@@ -6,6 +6,9 @@ const Hero = () => {
   const [animatedCurrent, setAnimatedCurrent] = useState(0);
   const [animatedTotal, setAnimatedTotal] = useState(0);
 
+  // Banner-Steuerung
+  const showCancellationBanner = false; // Auf true setzen, um den Banner anzuzeigen
+
   useEffect(() => {
     // Animation für aktuelle Spendensumme
     let start = 0;
@@ -40,15 +43,17 @@ const Hero = () => {
 
   return (
     <>
-      {/* Tour-Absage-Banner sticky unterhalb des Headers */}
-      <div className="sticky top-20 w-full bg-red-600 text-white py-4 px-2 flex items-center justify-center z-40">
-        <svg className="w-6 h-6 mr-3 text-yellow-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span className="font-bold text-lg">
-          Die heutige Tour muss leider aufgrund der Wettervorhersage abgesagt werden.
-        </span>
-      </div>
+      {/* Tour-Absage-Banner kann per Variable aktiviert werden */}
+      {showCancellationBanner && (
+        <div className="sticky top-20 w-full bg-red-600 text-white py-4 px-2 flex items-center justify-center z-40">
+          <svg className="w-6 h-6 mr-3 text-yellow-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="font-bold text-lg">
+            Die heutige Tour muss leider aufgrund der Wettervorhersage abgesagt werden.
+          </span>
+        </div>
+      )}
       <div className="relative h-screen flex flex-col justify-center items-center">
         <img
           src="/photos/Hoffnungsradler Titelphoto.png"
