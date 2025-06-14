@@ -57,18 +57,18 @@ const Hero = () => {
       <div className="relative h-screen flex flex-col justify-center items-center">
         <img
           src="/photos/Hoffnungsradler Titelphoto.png"
-          alt="Hoffnungsradler cycling group"
+        alt="Hoffnungsradler cycling group"
           className="w-full h-full object-cover absolute inset-0 z-0"
-        />
+      />
         <div className="absolute inset-0 bg-black/60 z-10" />
         <div className="relative z-20 flex flex-col items-center w-full px-4 h-full">
           <div className="text-center mt-12 md:mt-0 flex-1 flex flex-col justify-center">
-            <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in">
-              Hoffnungsradler Dülmen
-            </h1>
+          <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in">
+            Hoffnungsradler Dülmen
+          </h1>
             <p className="font-inter text-xl md:text-2xl text-white/90 animate-fade-in-up mb-8">
-              Gemeinsam bewegen wir mehr.
-            </p>
+            Gemeinsam bewegen wir mehr.
+          </p>
           </div>
           {/* Fortschrittsbalken und Gesamtsumme ganz unten */}
           <div className="w-full max-w-xl mb-8 mt-auto">

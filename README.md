@@ -171,3 +171,76 @@ export default function UebergabeSummen() {
 
 **Vorteil:**
 Du kannst die Datenquelle später wechseln, ohne das Frontend neu zu schreiben. Die Logik für das Laden, Hinzufügen oder Aktualisieren von Spenden ist gekapselt und wiederverwendbar.
+
+# Hinweise zur Pflege der Webseite Hoffnungsradler Dülmen
+
+## 1. Spendensumme aktualisieren
+
+- Die Spendensummen für das Balkendiagramm und die Gesamtsumme werden in der Datei `src/data/donations.ts` gepflegt.
+- Um die aktuelle Spendensumme für das laufende Jahr zu ändern, passe den Wert im Array für das entsprechende Jahr an:
+
+```js
+export const donations = [
+  { year: 2025, amount: 2220 }, // Beispiel: Jahr 2025, aktuelle Summe
+  // ... weitere Jahre ...
+];
+```
+- Nach dem Speichern und einem Neustart des Dev-Servers (`npm run dev`) wird die neue Summe auf der Webseite angezeigt.
+
+---
+
+## 2. Neue Zeitungsartikel einfügen
+
+- Zeitungsartikel werden in der Datei `src/pages/Presse.tsx` gepflegt.
+- Jeder Artikel ist ein Objekt im Array `pressArticles`:
+
+```js
+const pressArticles = [
+  {
+    date: "17.05.2025",
+    title: "Hoffnungsradler auch am 24. Mai unterwegs",
+    source: "Dülmenplus",
+    excerpt: "...",
+    image: "/zeitungsartikel/duelmenplus-250517.png"
+  },
+  // ... weitere Artikel ...
+];
+```
+- Das Bild zum Artikel muss im Ordner `/public/zeitungsartikel/` liegen und der Pfad entsprechend gesetzt werden.
+- Die neuesten Artikel stehen oben (Sortierung erfolgt automatisch nach Datum).
+
+---
+
+## 3. Tourplanung für das aktuelle Jahr anpassen
+
+- Die geplanten Touren werden in der Datei `src/components/TourDates.tsx` im Array `tours` gepflegt:
+
+```js
+const tours = [
+  {
+    date: "22.06.2025",
+    day: "Sonntag",
+    name: "Tour nach Rhade-Dorsten",
+    distance: "74 km",
+    speed: "25-27 km/h",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+    gpxUrl: "...",
+    mapUrl: "...",
+    komootUrl: "..."
+  },
+  // ... weitere Touren ...
+];
+```
+- Neue Touren können einfach als neues Objekt ergänzt werden.
+- Für abgesagte Touren kann ein Hinweistext im Feld `name` oder `description` ergänzt werden.
+
+---
+
+**Tipp:**
+- Bilder für Zeitungsartikel: `/public/zeitungsartikel/`
+- Fotos: `/public/photos/`
+- Logos: `/public/logos/`
+
+Für weitere Fragen oder Anpassungen einfach im Code nachsehen oder im Team nachfragen!
