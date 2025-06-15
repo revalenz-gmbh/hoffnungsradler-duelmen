@@ -244,3 +244,68 @@ const tours = [
 - Logos: `/public/logos/`
 
 Für weitere Fragen oder Anpassungen einfach im Code nachsehen oder im Team nachfragen!
+
+## Tourpflege
+
+### Aktuelle Touren (TourDates.tsx)
+Die aktuellen Touren werden direkt in der Datei `src/components/TourDates.tsx` gepflegt. Um eine Tour zu ändern oder hinzuzufügen:
+
+1. Öffne die Datei `src/components/TourDates.tsx`
+2. Suche das Array `tours`
+3. Füge eine neue Tour hinzu oder bearbeite eine bestehende:
+
+```typescript
+{
+  date: "15.06.2025",      // Datum im Format TT.MM.JJJJ
+  day: "Sonntag",          // Optional: Wochentag oder besonderer Tag
+  name: "Tour-Name",       // Name der Tour
+  distance: "65 km",       // Distanz
+  time: "10:00 Uhr",       // Startzeit
+  location: "Treffpunkt",  // Treffpunkt
+  address: "Adresse",      // Adresse des Treffpunkts
+  speed: "25-27 km/h",     // Optional: Geschwindigkeit
+  gpxUrl: "...",          // Optional: Link zur GPX-Datei
+  mapUrl: "...",          // Optional: Link zu Google Maps
+  komootUrl: "..."        // Optional: Link zu Komoot
+}
+```
+
+### Historische Touren (Google Spreadsheet)
+Die historischen Touren werden in einem Google Spreadsheet gepflegt und über Google Apps Script automatisch in die Webseite importiert.
+
+1. Öffne das [Touren-Spreadsheet](https://docs.google.com/spreadsheets/d/...)
+2. Füge neue Touren in der Tabelle "Historische Touren" hinzu
+3. Die Änderungen werden automatisch in die Webseite übernommen
+
+### Touren-Abstimmung
+Die Abstimmung über historische Touren erfolgt über ein Google Formular:
+
+1. Öffne das [Abstimmungsformular](https://forms.google.com/...)
+2. Wähle die Touren aus, die du gerne wieder fahren möchtest
+3. Du erhältst sofort eine Übersicht der aktuellen Abstimmungsergebnisse
+
+Die Abstimmung ist auf eine Stimme pro Person beschränkt und wird über die E-Mail-Adresse verifiziert.
+
+## Technische Details
+
+### Google Apps Script
+Die Integration mit Google Sheets und Forms wird über folgende Apps Scripts realisiert:
+
+1. `updateHistoricalTours.gs`: Aktualisiert die historischen Touren in der Webseite
+2. `processVotes.gs`: Verarbeitet die Abstimmungen und aktualisiert die Ergebnisse
+3. `sendNewsletter.gs`: Sendet den Newsletter mit Abstimmungsergebnissen
+
+Die Scripts werden automatisch ausgeführt und benötigen keine manuelle Intervention.
+
+### Newsletter-Integration
+Der Newsletter enthält:
+- Aktuelle Touren des Monats
+- Abstimmungsergebnisse für historische Touren
+- Link zum Abstimmungsformular
+- GPX-Downloads für geplante Touren
+
+## Support
+Bei Fragen zur Tourpflege oder technischen Problemen:
+- E-Mail: [E-Mail-Adresse]
+- Telefon: [Telefonnummer]
+- WhatsApp-Gruppe: [Link]

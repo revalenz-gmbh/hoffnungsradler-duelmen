@@ -10,22 +10,24 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
+// Einfache Struktur für aktuelle Touren
 interface TourDate {
   date: string;
-  time: string;
+  day?: string;
   name: string;
+  distance: string;
+  time: string;
   location: string;
   address: string;
-  distance: string;
   speed?: string;
   gpxUrl?: string;
   mapUrl?: string;
   komootUrl?: string;
-  day?: string;
   cancelled?: boolean;
 }
 
 const TourDates = () => {
+  // Touren für das aktuelle Jahr - einfach hier anpassen
   const tours: TourDate[] = [
     {
       date: "18.04.2025",
@@ -76,7 +78,7 @@ const TourDates = () => {
       address: "Kapellenweg, Dülmen",
       gpxUrl: "https://drive.google.com/file/d/1RUGjdUtle2thNF0RbgbC0BjMU6w2qkIC/view?usp=sharing",
       mapUrl: "https://www.google.com/maps/d/edit?mid=1QgvcjQe412DEhl5ba4zD-JiCkPQnCVE&usp=sharing",
-      komootUrl: "https://www.komoot.com/de-de/tour/2235975171?share_token=aa8vO4K4MhMWm2L4pnWamJtKS4x413Bf5233GLDoKB3hu9r3Nq&ref=wtd",
+      komootUrl: "https://www.komoot.com/de-de/tour/2235975171?share_token=aa8vO4K4MhMWm2L4pnWamJtKS4x413Bf5233GLDoKB3hu9r3Nq&ref=wtd"
     },
     {
       date: "20.07.2025",
@@ -88,7 +90,7 @@ const TourDates = () => {
       address: "Kapellenweg, Dülmen"
     },
     {
-      date: "24.08.2028",
+      date: "24.08.2025",
       day: "Sonntag",
       name: "in Planung",
       distance: " km",
@@ -105,7 +107,7 @@ const TourDates = () => {
       location: "Sportzentrum Süd",
       address: "Kapellenweg, Dülmen",
       speed: "frei"
-    },
+    }
   ];
 
   return (

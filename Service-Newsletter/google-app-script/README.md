@@ -44,7 +44,16 @@ Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-
 - In **Bilder-Link(s)** kannst du einen oder mehrere Links zu Fotos der Tour eintragen (z.B. Google Fotos, Nextcloud, Vereinswebseite).
 - Die Spalte **Bar-Spenden** dient zur Dokumentation der bei der Tour gesammelten Spenden.
 
-### 7. Tipps & Hinweise
+### 7. Tour-Abstimmung vorbereiten
+
+- Wähle im Menü **Newsletter-Verwaltung → Personalisierte Abstimmungs-Links erstellen**.
+- Du wirst aufgefordert, die vollständige URL zur Abstimmungsseite auf eurer Webseite einzugeben (z.B. `https://hoffnungsradler-duelmen.de/abstimmung`).
+- Das Skript liest alle aktiven Abonnenten aus dem Blatt `Newsletter-Abonnenten`.
+- Es erstellt ein neues Blatt namens `Abstimmungs-Links`.
+- In diesem neuen Blatt findest du zwei Spalten: `Email` und `Persönlicher Abstimmungs-Link`.
+- Diese Liste kannst du direkt für einen Serienbrief oder ein Mail-Merge-Tool verwenden, um jedem Abonnenten seinen einzigartigen Link zu schicken.
+
+### 8. Tipps & Hinweise
 
 - Archiviere jeden Newsletter vor dem nächsten Versand, damit die Historie erhalten bleibt und der Zähler korrekt ist.
 - Pflege die Touren-Tabelle möglichst vollständig – so können später Statistiken und die Webseite automatisiert daraus erstellt werden.
@@ -60,14 +69,17 @@ Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-
 - **Automatische Verarbeitung von Anmeldungen per E-Mail**
 - **Abmelde- und Fehler-Handling**
 - **Menü-Integration in Google Sheets**
+- **Generierung von personalisierten Abstimmungs-Links**
 
 ## Zentrale Dateien
 
-- `SendNewletterToAllSubscribers.gs` – Hauptversandfunktion, Menü, Quota-Handling
-- `sendNewsletterTest.gs` – Testversand-Funktion
-- `addManualSubscribers.gs` – Manuelles Hinzufügen von Abonnenten
-- `code.gs` – Automatische Verarbeitung neuer Anmeldungen
-- `utils.gs` – Zentrale Hilfsfunktionen (E-Mail-Validierung, Template, Extraktion)
+- `onOpen.gs` – Erstellt das Menü in der Google Sheets Oberfläche.
+- `SendNewletterToAllSubscribers.gs` – Hauptversandfunktion, Quota-Handling.
+- `sendNewsletterTest.gs` – Testversand-Funktion.
+- `addManualSubscribers.gs` – Manuelles Hinzufügen von Abonnenten.
+- `code.gs` – Automatische Verarbeitung neuer Anmeldungen via E-Mail.
+- `utils.gs` – Zentrale Hilfsfunktionen (E-Mail-Validierung, Template, Extraktion).
+- `generateVotingLinks.gs` – Erstellt personalisierte Links für Umfragen/Abstimmungen.
 
 ## Bedienung
 
@@ -78,6 +90,7 @@ Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-
    - Manuelle Adressen hinzufügen
    - Newsletter-Testversand
    - Newsletter versenden (Quota-sicher)
+   - Personalisierte Abstimmungs-Links erstellen
    - Versandstatus anzeigen
    - Quota-Status (24h) anzeigen
    - Trigger anzeigen

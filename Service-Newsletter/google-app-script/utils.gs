@@ -89,46 +89,6 @@ function getNewsletterTemplate(data) {
 }
 
 /**
- * Legt ein neues Touren-Blatt mit allen benötigten Spalten an
- * @param {string} sheetName - Name des neuen Blatts (z.B. "Touren 2024")
- */
-function createTourPlanningSheet(sheetName) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(sheetName);
-  if (sheet) {
-    SpreadsheetApp.getUi().alert('Es existiert bereits ein Blatt mit diesem Namen!');
-    return;
-  }
-  sheet = ss.insertSheet(sheetName);
-  const headers = [
-    'Datum',
-    'Wochentag',
-    'Uhrzeit',
-    'Titel',
-    'Treffpunkt',
-    'Geschwindigkeit',
-    'Beschreibung',
-    'Google Maps Link',
-    'Komoot Link',
-    'GPS Link',
-    'Tour Guide',
-    'Bemerkung',
-    'Teilnehmer',
-    'Bar-Spenden',
-    'Bilder-Link(s)',
-    'Anmelde-Link'
-  ];
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.setFrozenRows(1);
-  // Optional: Spaltenbreiten setzen
-  sheet.setColumnWidths(1, headers.length, 140);
-  sheet.setColumnWidth(7, 300); // Beschreibung breiter
-  sheet.setColumnWidth(12, 200); // Bemerkung breiter
-  sheet.setColumnWidth(15, 200); // Bilder-Link(s) breiter
-  sheet.setColumnWidth(16, 200); // Anmelde-Link breiter
-}
-
-/**
  * Listet alle aktuellen Trigger auf (Name, Typ, Zeit)
  */
 function listAllTriggers() {
