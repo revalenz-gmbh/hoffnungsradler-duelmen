@@ -3,6 +3,10 @@
     {
       "source": "/api/voting/:path*",
       "destination": "https://script.google.com/macros/s/AKfycbw6T6Nmx0L_72v5n9a-Z5etbXlA4s2-yVFLBwKllGshcg26W2R1-e2Lq8BtTqU2kE3wJQ/exec/:path*"
+    },
+    {
+      "source": "/((?!api/|assets/).*)",
+      "destination": "/index.html"
     }
   ]
 } 
