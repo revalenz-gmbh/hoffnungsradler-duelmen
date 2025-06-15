@@ -47,20 +47,22 @@ function sendNewsletterTest() {
   // E-Mail-Adresse aus dem Prompt holen
   const testEmail = promptResponse.getResponseText().trim();
   
-  // Ein Beispiel für einen Abmelde-Link für den Test
-  const testUnsubscribeLink = "https://hoffnungs-radler-duelmen.de/unsubscribe.html?id=test-id-123456";
-  
   try {
     // Newsletter-Betreff erstellen
     const newsletterSubject = "[TEST] Neue Tour-Information: " + tourTitle;
     
+    // Ein Beispiel für einen Abmelde- und einen Abstimmungs-Link für den Test
+    const testUnsubscribeLink = "https://hoffnungs-radler-duelmen.de/unsubscribe.html?id=test-id-123456";
+    const testVotingLink = "https://hoffnungs-radler-duelmen.de/abstimmung?id=test-abonnent-123";
+
     // Newsletter-Template mit den benötigten Daten füllen
     const newsletterData = {
       tourDescription: tourDescription, // Hauptinhalt
       unsubscribeLink: testUnsubscribeLink
     };
     
-    const newsletter = getNewsletterTemplate(newsletterData);
+    // Der Test-Link für die Abstimmung wird als zweiter Parameter übergeben
+    const newsletter = getNewsletterTemplate(newsletterData, testVotingLink);
     
     // Test-E-Mail senden
     GmailApp.sendEmail(

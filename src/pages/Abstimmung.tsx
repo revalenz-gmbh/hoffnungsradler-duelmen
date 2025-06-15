@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, AlertCircle } from 'lucide-react';
 
-// Die URL zu Deiner Google Apps Script Web App
-const API_URL = 'https://script.google.com/macros/s/AKfycbw6T6Nmx0L_72v5n9a-Z5etbXlA4s2-yVFLBwKllGshcg26W2R1-e2Lq8BtTqU2kE3wJQ/exec';
+// Die URL zum lokalen Proxy. Der Google-Link wird nicht mehr direkt verwendet.
+const PROXY_API_URL = '/api/voting';
 
 interface VotingTour {
   name: string;
@@ -41,10 +41,10 @@ const AbstimmungPage = () => {
     const fetchVotingTours = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}?action=getVotingTours`);
+        const response = await fetch(PROXY_API_URL);
         const data = await response.json();
-        if (data.error) {
-          throw new Error(data.error);
+        if (!response.ok || data.error) {
+          throw new Error(data.error || 'Fehler beim Laden der Touren.');
         }
         setTours(data);
       } catch (err) {
@@ -72,34 +72,35 @@ const AbstimmungPage = () => {
 
   const handleSubmit = async () => {
     if (selectedTours.length === 0) {
-      setError('Bitte wähle mindestens eine Tour aus.');
       return;
     }
     setError(null);
     setSubmitting(true);
-    setVoteResponse(null);
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PROXY_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subscriberId: subscriberId,
           votedTourNames: selectedTours,
         }),
-        mode: 'no-cors' // HINWEIS: Wichtig für Google Apps Script POST Requests aus dem Browser
       });
-      // Da 'no-cors' keine Antwort lesbar macht, zeigen wir eine generische Erfolgsmeldung.
-      // Die eigentliche Validierung (bereits abgestimmt etc.) passiert serverseitig.
-      setVoteResponse({ success: true, message: 'Vielen Dank! Deine Stimme wurde abgeschickt und wird verarbeitet.' });
+      
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Ein unbekannter Fehler ist aufgetreten.');
+      }
+      
+      setVoteResponse({ success: true, message: result.message });
 
     } catch (err) {
-      setVoteResponse({ success: false, message: 'Ein Fehler ist beim Senden aufgetreten. Bitte versuche es später erneut.' });
+      setVoteResponse({ success: false, message: err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten.' });
     } finally {
       setSubmitting(false);
     }
   };
-
 
   const renderContent = () => {
     if (loading) {

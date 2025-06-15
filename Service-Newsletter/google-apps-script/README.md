@@ -46,12 +46,24 @@ Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-
 
 ### 7. Tour-Abstimmung vorbereiten
 
-- Wähle im Menü **Newsletter-Verwaltung → Personalisierte Abstimmungs-Links erstellen**.
-- Du wirst aufgefordert, die vollständige URL zur Abstimmungsseite auf eurer Webseite einzugeben (z.B. `https://hoffnungsradler-duelmen.de/abstimmung`).
-- Das Skript liest alle aktiven Abonnenten aus dem Blatt `Newsletter-Abonnenten`.
-- Es erstellt ein neues Blatt namens `Abstimmungs-Links`.
-- In diesem neuen Blatt findest du zwei Spalten: `Email` und `Persönlicher Abstimmungs-Link`.
-- Diese Liste kannst du direkt für einen Serienbrief oder ein Mail-Merge-Tool verwenden, um jedem Abonnenten seinen einzigartigen Link zu schicken.
+Dieser Prozess besteht aus zwei Schritten: Zuerst werden die Links generiert, danach werden sie im Newsletter-Text verwendet.
+
+**Schritt 1: Links generieren**
+- Wähle im Menü **Newsletter → Personalisierte Abstimmungs-Links erstellen**.
+- Du wirst aufgefordert, die vollständige URL zur Abstimmungsseite auf eurer Webseite zu bestätigen.
+- Das Skript liest alle aktiven Abonnenten aus dem Blatt `Newsletter-Abonnenten` und erstellt ein neues Blatt namens `Abstimmungs-Links`. Dieses Blatt dient als Datenquelle für den Versand.
+
+**Schritt 2: Platzhalter im Newsletter verwenden**
+- Gehe zum Blatt `Newsletter_aktuell` und schreibe deinen Newsletter-Text in Zelle `B3`.
+- Um den personalisierten Abstimmungs-Link einzufügen, hast du zwei Möglichkeiten:
+
+  - **Als klickbaren Button (empfohlen):**
+    Schreibe den Platzhalter `[abstimmungs_button]` genau an die Stelle, an der der Button erscheinen soll. Das Skript ersetzt diesen Text automatisch durch einen schön formatierten HTML-Button.
+
+  - **Als reinen Text-Link:**
+    Schreibe den Platzhalter `[abstimmungs_link]` in deinen Text. Dieser wird durch die klickbare URL ersetzt (z.B. `https://...`).
+
+- Nach dem Versand wird für jeden Empfänger der Platzhalter durch seinen einzigartigen Link ersetzt.
 
 ### 8. Tipps & Hinweise
 

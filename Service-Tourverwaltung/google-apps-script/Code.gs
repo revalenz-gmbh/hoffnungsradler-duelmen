@@ -802,7 +802,7 @@ function doGet(e) {
     const sheet = ss.getSheetByName('Tour Daten');
     if (!sheet) throw new Error('Das Blatt "Tour Daten" wurde nicht gefunden.');
 
-    const data = sheet.getDataRange().getValues();
+  const data = sheet.getDataRange().getValues();
     const headers = data[0];
     const nameIndex = headers.indexOf('Name');
     const distanzIndex = headers.indexOf('Distanz');

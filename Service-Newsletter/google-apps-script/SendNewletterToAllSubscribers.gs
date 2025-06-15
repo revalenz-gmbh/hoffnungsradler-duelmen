@@ -13,6 +13,21 @@ function sendNewsletterToAllSubscribers() {
     return;
   }
   
+  const votingLinksSheet = ss.getSheetByName('Abstimmungs-Links');
+  const votingLinksMap = new Map();
+  if (votingLinksSheet) {
+    const votingLinksData = votingLinksSheet.getDataRange().getValues();
+    // Starte bei 1, um Header zu überspringen
+    for (let i = 1; i < votingLinksData.length; i++) {
+      const email = votingLinksData[i][0];
+      const link = votingLinksData[i][1];
+      if (email && link) {
+        votingLinksMap.set(email, link);
+      }
+    }
+    Logger.log(`${votingLinksMap.size} Abstimmungs-Links geladen.`);
+  }
+  
   const data = sheet.getDataRange().getValues();
   const inputSheet = ss.getSheetByName('Newsletter_aktuell');
   
@@ -142,17 +157,25 @@ function sendNewsletterToAllSubscribers() {
         try {
           processedThisRun++;
           
-          // Newsletter-Template mit Daten füllen
+          // ==========================================================
+          // NEU: Personalisierung des Inhalts
+          // ==========================================================
+          const personalVotingLink = votingLinksMap.get(email) || ''; // Link für diesen Nutzer holen
+          
+          // Platzhalter im Text ersetzen. Funktioniert für Plain-Text und HTML.
+          // ==========================================================
+          
           const newsletterData = {
             tourTitle: tourTitle,
-            tourDescription: tourDescription,
+            tourDescription: tourDescription, // HIER wieder den ORIGINAL-Text übergeben
             tourDate: tourDateTime,
             meetingPoint: meetingPoint,
             unsubscribeLink: unsubscribeLink,
             email: email
           };
           
-          const newsletter = getNewsletterTemplate(newsletterData);
+          // NEU: Der persönliche Link wird als zweiter Parameter übergeben
+          const newsletter = getNewsletterTemplate(newsletterData, personalVotingLink);
           
           // E-Mail senden
           GmailApp.sendEmail(

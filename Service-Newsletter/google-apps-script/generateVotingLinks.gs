@@ -4,20 +4,22 @@
 
 function generateVotingLinks() {
   const ui = SpreadsheetApp.getUi();
+  const defaultUrl = getVotingUrl(); // Ruft die zentral gespeicherte URL ab
   
   const urlResult = ui.prompt(
     'URL der Abstimmungsseite',
-    'Bitte geben Sie die vollständige URL zur Abstimmungs-Seite ein (z.B. https://deine-webseite.de/abstimmung):',
+    'Bitte geben Sie die vollständige URL zur Abstimmungs-Seite ein.\n\nGespeicherter Standardwert:\n' + defaultUrl,
     ui.ButtonSet.OK_CANCEL
   );
 
-  if (urlResult.getSelectedButton() !== ui.Button.OK) return;
+  if (urlResult.getSelectedButton() !== ui.Button.OK || !urlResult.getResponseText()) return;
+  
   const baseUrl = urlResult.getResponseText().trim();
   if (!baseUrl.startsWith('http')) {
     ui.alert('Ungültige URL. Bitte mit https:// beginnen.');
     return;
   }
-
+  
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sourceSheet = ss.getSheetByName('Newsletter-Abonnenten');
   if (!sourceSheet) {

@@ -277,25 +277,36 @@ Die historischen Touren werden in einem Google Spreadsheet gepflegt und über Go
 2. Füge neue Touren in der Tabelle "Historische Touren" hinzu
 3. Die Änderungen werden automatisch in die Webseite übernommen
 
-### Touren-Abstimmung
-Die Abstimmung über historische Touren erfolgt über ein Google Formular:
+### Touren-Abstimmung (Neues System)
+Die Abstimmung über zukünftige Touren wurde neu konzipiert, um sie direkt in die Webseite zu integrieren und fairer zu gestalten. Das System besteht aus drei Komponenten:
 
-1. Öffne das [Abstimmungsformular](https://forms.google.com/...)
-2. Wähle die Touren aus, die du gerne wieder fahren möchtest
-3. Du erhältst sofort eine Übersicht der aktuellen Abstimmungsergebnisse
+**1. Backend (Google Sheet & Apps Script)**
+- **Datenquelle:** Das `Tourverwaltung`-Spreadsheet. Über das Menü `Tourverwaltung > Neue Abstimmung einrichten` werden die zur Wahl stehenden Touren in ein `Abstimmung`-Blatt geschrieben und die Stimmen gezählt.
+- **API:** Das zugehörige Apps Script stellt eine API bereit, um die Touren abzurufen und Stimmen entgegenzunehmen.
 
-Die Abstimmung ist auf eine Stimme pro Person beschränkt und wird über die E-Mail-Adresse verifiziert.
+**2. Frontend (Webseite & Abstimmungs-Seite)**
+- **Abstimmungs-Seite:** Unter `https://hoffnungs-radler-duelmen.de/abstimmung` befindet sich die neue Seite.
+- **Regeln:** Nutzer können bis zu zwei Stimmen für ihre favorisierten Touren abgeben.
+- **Sicherheit:** Der Zugriff auf die Seite ist nur über einen persönlichen Link aus dem Newsletter möglich. Dies stellt sicher, dass nur eingeladene Abonnenten abstimmen und verhindert doppelte Stimmabgaben.
+
+**3. Newsletter-Integration (Persönliche Links)**
+- **Link-Generierung:** Im `Newsletter`-Spreadsheet gibt es die Funktion `Newsletter > Personalisierte Abstimmungs-Links erstellen`.
+- **Serienbrief-Funktion:** Diese Funktion erstellt eine Liste mit einzigartigen Links für jeden Abonnenten (z.B. `.../abstimmung?id=subscriber-id-123`).
+- **Platzhalter im Newsletter:** Im Newsletter-Text kann der Platzhalter `[abstimmungs_button]` verwendet werden, der beim Versand automatisch durch den persönlichen Link-Button für jeden Empfänger ersetzt wird.
 
 ## Technische Details
 
+### CORS-Proxy für die Abstimmung
+Um Browser-Sicherheitsbeschränkungen (CORS-Policy) zu umgehen, kommuniziert die Webseite nicht direkt mit dem Google Apps Script. Stattdessen wird ein API-Proxy verwendet:
+- **API-Route:** In der Webseite existiert eine API-Route unter `/api/voting`.
+- **Ablauf:** Die Abstimmungs-Seite sendet ihre Anfragen (Touren abrufen, Stimme abgeben) an diesen internen Proxy. Der Proxy leitet die Anfrage dann serverseitig sicher an das Google Apps Script weiter und gibt die Antwort zurück an die Webseite.
+- **Vorteil:** Dies ist eine robuste, fehlerfreie und moderne Architektur, die zuverlässiges Feedback (z.B. "Du hast bereits abgestimmt") ermöglicht.
+
 ### Google Apps Script
-Die Integration mit Google Sheets und Forms wird über folgende Apps Scripts realisiert:
+Die Integration mit Google Sheets wird über folgende Apps Scripts realisiert:
 
-1. `updateHistoricalTours.gs`: Aktualisiert die historischen Touren in der Webseite
-2. `processVotes.gs`: Verarbeitet die Abstimmungen und aktualisiert die Ergebnisse
-3. `sendNewsletter.gs`: Sendet den Newsletter mit Abstimmungsergebnissen
-
-Die Scripts werden automatisch ausgeführt und benötigen keine manuelle Intervention.
+1. **Service-Tourverwaltung:** Aktualisiert die historischen Touren, berechnet GPX-Daten und verwaltet die Abstimmung (Backend).
+2. **Service-Newsletter:** Sendet den Newsletter und erstellt die personalisierten Links für die Abstimmung.
 
 ### Newsletter-Integration
 Der Newsletter enthält:

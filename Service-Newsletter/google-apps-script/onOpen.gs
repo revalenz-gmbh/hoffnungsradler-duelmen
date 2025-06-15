@@ -18,6 +18,7 @@ function onOpen() {
   
   const adminSubMenu = ui.createMenu('Administration');
   adminSubMenu.addItem('Backup erstellen', 'createBackup');
+  adminSubMenu.addItem('Abstimmungs-URL festlegen', 'menu_setVotingUrl');
   adminSubMenu.addSeparator();
   adminSubMenu.addItem('Trigger anzeigen', 'listAllTriggers');
   adminSubMenu.addItem('Versandstatus anzeigen', 'getNewsletterSendStatus');

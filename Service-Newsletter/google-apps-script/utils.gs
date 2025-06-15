@@ -44,12 +44,41 @@ function extractEmail(input) {
 /**
  * Erstellt das Newsletter-Template (plain & html)
  * @param {Object} data - Muss mindestens tourDescription und unsubscribeLink enthalten
+ * @param {string} personalVotingLink - Optionaler Link zur Abstimmung
  * @return {Object} - { plainBody, htmlBody }
  */
-function getNewsletterTemplate(data) {
+function getNewsletterTemplate(data, personalVotingLink) {
+  let tourDescriptionHtml = (data.tourDescription || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  let tourDescriptionPlain = data.tourDescription || '';
+
+  const buttonHtml = `
+    <div style="margin: 30px 0 20px 0; text-align: center;">
+      <a href="${personalVotingLink}" style="display:inline-block;padding:14px 28px;background:#ff9800;color:#fff;text-decoration:none;border-radius:8px;font-size:18px;font-weight:bold;">Jetzt abstimmen!</a>
+    </div>
+  `;
+
+  // Platzhalter im HTML-Text ersetzen
+  if (personalVotingLink) {
+    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_button\]/g, buttonHtml);
+    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_link\]/g, personalVotingLink);
+  } else {
+    // Falls kein Link da ist, die Platzhalter entfernen
+    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_button\]/g, '');
+    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_link\]/g, '');
+  }
+
+  // Platzhalter im Plain-Text ersetzen
+  if (personalVotingLink) {
+    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_button\]/g, `Zur Abstimmung: ${personalVotingLink}`);
+    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_link\]/g, personalVotingLink);
+  } else {
+    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_button\]/g, '');
+    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_link\]/g, '');
+  }
+
   const plainBody =
     `Tour-Newsletter der Hoffnungsradler Dülmen\n\n` +
-    `${data.tourDescription}\n\n` +
+    `${tourDescriptionPlain}\n\n` +
     (data.signupLink ? `Zur Anmeldung: ${data.signupLink}\n\n` : '') +
     `Wir freuen uns auf deine Teilnahme!\n\n` +
     `Mit sportlichen Grüßen,\n` +
@@ -57,9 +86,6 @@ function getNewsletterTemplate(data) {
     `--\n` +
     `Du erhältst diese E-Mail, weil du dich für unseren Tour-Newsletter angemeldet hast.\n` +
     `Um dich abzumelden, besuche: ${data.unsubscribeLink}`;
-
-  // **Text** durch <strong>Text</strong> ersetzen
-  const formattedHtmlDescription = (data.tourDescription || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
   const signupButton = data.signupLink ? `
     <div style="margin: 30px 0 20px 0; text-align: center;">
@@ -71,7 +97,7 @@ function getNewsletterTemplate(data) {
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
       <h1 style="color: #003366; text-align: center; border-bottom: 2px solid #003366; padding-bottom: 10px;">Tour-Newsletter der Hoffnungsradler Dülmen</h1>
       <div style="margin-top: 20px; line-height: 1.6;">
-        ${formattedHtmlDescription.replace(/\n/g, '<br>')}
+        ${tourDescriptionHtml}
       </div>
       ${signupButton}
       <p style="margin-top: 25px;">Wir freuen uns auf deine Teilnahme!</p>
