@@ -794,8 +794,9 @@ function doGet(e) {
       const data = sheet.getDataRange().getValues();
       const tours = data.slice(1).map(row => ({ name: row[0], distance: row[1] }));
       
-      return ContentService.createTextOutput(JSON.stringify(tours))
-        .setMimeType(ContentService.MimeType.JSON);
+      const output = ContentService.createTextOutput(JSON.stringify(tours));
+      output.setMimeType(ContentService.MimeType.JSON);
+      return output;
     }
     
     // Standard-Aktion: GPX-Touren-Archiv zurückgeben
@@ -837,13 +838,15 @@ function doGet(e) {
         return a.name.localeCompare(b.name);
     });
 
-    return ContentService.createTextOutput(JSON.stringify(tours))
-      .setMimeType(ContentService.MimeType.JSON);
+    const output = ContentService.createTextOutput(JSON.stringify(tours));
+    output.setMimeType(ContentService.MimeType.JSON);
+    return output;
 
   } catch (error) {
     Logger.log('Fehler in doGet: ' + error.toString());
-    return ContentService.createTextOutput(JSON.stringify({ error: error.message }))
-      .setMimeType(ContentService.MimeType.JSON);
+    const errorOutput = ContentService.createTextOutput(JSON.stringify({ error: error.message }));
+    errorOutput.setMimeType(ContentService.MimeType.JSON);
+    return errorOutput;
   }
 }
 
@@ -925,8 +928,9 @@ function doPost(e) {
 }
 
 function createJsonResponse(data) {
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
+  const output = ContentService.createTextOutput(JSON.stringify(data));
+  output.setMimeType(ContentService.MimeType.JSON);
+  return output;
 }
 
 //==============================================================

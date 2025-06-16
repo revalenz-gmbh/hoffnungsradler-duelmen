@@ -74,7 +74,7 @@ const Hero = () => {
               Gemeinsam bewegen wir mehr.
             </p>
 
-            {/* NEUER BUTTON FÜR DIE ABSTIMMUNG */}
+            {/* NEUER BUTTON FÜR DIE ABSTIMMUNG - VORÜBERGEHEND AUSKOMMENTIERT
             <Dialog>
               <DialogTrigger asChild>
                 <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-white animate-fade-in-up mx-auto">
@@ -105,6 +105,7 @@ const Hero = () => {
                 </Button>
               </DialogContent>
             </Dialog>
+            */}
 
           </div>
           {/* Fortschrittsbalken und Gesamtsumme ganz unten */}
