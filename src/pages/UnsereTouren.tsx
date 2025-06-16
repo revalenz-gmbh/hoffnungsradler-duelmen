@@ -70,7 +70,7 @@ const UnsereTouren: React.FC = () => {
           <div className="mt-8 max-w-4xl mx-auto bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded-r-lg" role="alert">
             <p className="font-bold">Ein kleiner Hinweis</p>
             <p>
-              Hier finden Sie einige Leckerbissen aus unseren gemeinsamen Fahrten der letzten Jahre. Da die Touren teilweise vor längerer Zeit erstellt wurden und nicht regelmäßig überarbeitet werden, empfehlen wir, den Streckenverlauf vor Antritt der Fahrt zu überprüfen.
+              Hier finden Sie einige Highlights aus unseren gemeinsamen Fahrten der letzten Jahre. Da die Touren teilweise vor längerer Zeit erstellt wurden und nicht regelmäßig überarbeitet werden, empfehlen wir, den Streckenverlauf vor Antritt der Fahrt zu überprüfen.
             </p>
           </div>
 
@@ -92,7 +92,7 @@ const UnsereTouren: React.FC = () => {
               {Object.entries(toursByYear).map(([year, tours]) => (
                 <div key={year} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <h3 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">
-                    Touren aus dem Jahr {year}
+                    Touren aus den letzten Jahren
                   </h3>
                   <ul className="divide-y divide-gray-200">
                     {tours.map((tour) => (

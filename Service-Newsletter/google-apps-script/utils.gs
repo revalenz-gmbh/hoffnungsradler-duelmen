@@ -80,7 +80,6 @@ function getNewsletterTemplate(data, personalVotingLink) {
     `Tour-Newsletter der Hoffnungsradler Dülmen\n\n` +
     `${tourDescriptionPlain}\n\n` +
     (data.signupLink ? `Zur Anmeldung: ${data.signupLink}\n\n` : '') +
-    `Wir freuen uns auf deine Teilnahme!\n\n` +
     `Mit sportlichen Grüßen,\n` +
     `Das Team der Hoffnungsradler Dülmen\n\n` +
     `--\n` +
