@@ -1,6 +1,6 @@
 # Google Apps Script – Newsletter-Service für Hoffnungsradler Dülmen
 
-**Hinweis:** Dieses Verzeichnis wurde umbenannt zu `Service-Newsletter/google-app-script`, um die Struktur analog zu weiteren Bereichen wie Vereinsverwaltung und Spenden zu halten. Diese konsistente Benennung erleichtert die Wartung und spätere Erweiterung des Projekts.
+**Hinweis:** Dieses Verzeichnis wurde umbenannt zu `Service-Newsletter/google-apps-script`, um die Struktur analog zu weiteren Bereichen wie Vereinsverwaltung und Spenden zu halten. Diese konsistente Benennung erleichtert die Wartung und spätere Erweiterung des Projekts.
 
 Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-Versand und die Verwaltung der Abonnenten für die Hoffnungsradler-Webseite automatisieren.
 
@@ -44,26 +44,40 @@ Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-
 - In **Bilder-Link(s)** kannst du einen oder mehrere Links zu Fotos der Tour eintragen (z.B. Google Fotos, Nextcloud, Vereinswebseite).
 - Die Spalte **Bar-Spenden** dient zur Dokumentation der bei der Tour gesammelten Spenden.
 
-### 7. Tour-Abstimmung vorbereiten
+### 7. Tour-Abstimmung vorbereiten (NEU: Google Forms-basiert)
 
-Dieser Prozess besteht aus zwei Schritten: Zuerst werden die Links generiert, danach werden sie im Newsletter-Text verwendet.
+**WICHTIGER HINWEIS:** Die Abstimmung wurde von der React-Webseite auf Google Forms umgestellt, um CORS-Probleme zu vermeiden und die Benutzerfreundlichkeit zu verbessern.
 
-**Schritt 1: Links generieren**
+**Schritt 1: Google Forms erstellen**
+- Wähle im Menü **Newsletter → Google Forms für Abstimmung erstellen**.
+- Ein neues Google Forms wird automatisch erstellt mit:
+  - Feld für Abonnenten-ID (wird automatisch ausgefüllt)
+  - Feld für E-Mail-Adresse (zur Verifikation)
+  - Checkbox-Auswahl für Touren (max. 2 auswählbar)
+  - Kommentar-Feld für zusätzliche Wünsche
+- Die Antworten werden automatisch in einem neuen Blatt im Spreadsheet gesammelt.
+
+**Schritt 2: Personalisierte Links generieren**
+- Kopiere die URL des erstellten Google Forms.
 - Wähle im Menü **Newsletter → Personalisierte Abstimmungs-Links erstellen**.
-- Du wirst aufgefordert, die vollständige URL zur Abstimmungsseite auf eurer Webseite zu bestätigen.
-- Das Skript liest alle aktiven Abonnenten aus dem Blatt `Newsletter-Abonnenten` und erstellt ein neues Blatt namens `Abstimmungs-Links`. Dieses Blatt dient als Datenquelle für den Versand.
+- Gib die Google Forms URL ein.
+- Das System erstellt automatisch personalisierte Links für alle Abonnenten.
 
-**Schritt 2: Platzhalter im Newsletter verwenden**
-- Gehe zum Blatt `Newsletter_aktuell` und schreibe deinen Newsletter-Text in Zelle `B3`.
-- Um den personalisierten Abstimmungs-Link einzufügen, hast du zwei Möglichkeiten:
+**Schritt 3: Newsletter verwenden**
+- Schreibe deinen Newsletter-Text in Zelle `B3` des Blattes `Newsletter_aktuell`.
+- Verwende die Platzhalter:
+  - **`[abstimmungs_button]`** - Wird zu einem schönen Button im HTML-Newsletter
+  - **`[abstimmungs_link]`** - Wird zu einem klickbaren Text-Link
 
-  - **Als klickbaren Button (empfohlen):**
-    Schreibe den Platzhalter `[abstimmungs_button]` genau an die Stelle, an der der Button erscheinen soll. Das Skript ersetzt diesen Text automatisch durch einen schön formatierten HTML-Button.
+**Vorteile der Google Forms-Lösung:**
+- ✅ **Keine CORS-Probleme** - Funktioniert immer zuverlässig
+- ✅ **Automatisch responsive** - Perfekt auf allen Geräten
+- ✅ **Bewährte Google-Oberfläche** - Nutzer kennen sich aus
+- ✅ **Automatische Datensammlung** - Antworten landen direkt im Spreadsheet
+- ✅ **Wartungsarm** - Weniger Code zu pflegen
 
-  - **Als reinen Text-Link:**
-    Schreibe den Platzhalter `[abstimmungs_link]` in deinen Text. Dieser wird durch die klickbare URL ersetzt (z.B. `https://...`).
-
-- Nach dem Versand wird für jeden Empfänger der Platzhalter durch seinen einzigartigen Link ersetzt.
+**Migration von der alten React-Lösung:**
+Die alte Abstimmung.tsx auf der Webseite kann deaktiviert werden, da sie durch Google Forms ersetzt wird. Die CORS-Probleme gehören damit der Vergangenheit an.
 
 ### 8. Tipps & Hinweise
 

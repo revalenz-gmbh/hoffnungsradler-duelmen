@@ -1,253 +1,390 @@
 /**
- * Zentrale Hilfsfunktionen für den Newsletter-Service
+ * Verbesserte Funktion zum Versenden des Newsletters an alle Abonnenten
+ * - Unterstützt mehr als 100 Empfänger durch Pagination
+ * - Erkennt und markiert ungültige E-Mail-Adressen
+ * - Beachtet die Google Apps Script Quota-Limits
  */
-
-/**
- * Validiert eine E-Mail-Adresse
- * @param {string} email
- * @return {boolean}
- */
-function validateEmail(email) {
-  // Einheitliche, robuste Regex
-  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-  return emailRegex.test(email);
-}
-
-/**
- * Extrahiert eine E-Mail-Adresse aus einem beliebigen Text (z.B. Name <email> oder nur email)
- * @param {string} input
- * @return {string|null}
- */
-function extractEmail(input) {
-  if (!input) return null;
-  // Format: Name <email@example.com>
-  const angleRegex = /<([^<>]+)>$/;
-  const angleMatch = input.match(angleRegex);
-  if (angleMatch && angleMatch[1]) {
-    const extractedEmail = angleMatch[1].trim();
-    if (validateEmail(extractedEmail)) {
-      return extractedEmail;
-    }
-  }
-  // Format: email@example.com
-  const simpleRegex = /\b([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})\b/;
-  const simpleMatch = input.match(simpleRegex);
-  if (simpleMatch && simpleMatch[1]) {
-    const extractedEmail = simpleMatch[1].trim();
-    if (validateEmail(extractedEmail)) {
-      return extractedEmail;
-    }
-  }
-  return null;
-}
-
-/**
- * Erstellt das Newsletter-Template (plain & html)
- * @param {Object} data - Muss mindestens tourDescription und unsubscribeLink enthalten
- * @param {string} personalVotingLink - Optionaler Link zur Abstimmung
- * @return {Object} - { plainBody, htmlBody }
- */
-function getNewsletterTemplate(data, personalVotingLink) {
-  let tourDescriptionHtml = (data.tourDescription || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-  let tourDescriptionPlain = data.tourDescription || '';
-
-  const buttonHtml = `
-    <div style="margin: 30px 0 20px 0; text-align: center;">
-      <a href="${personalVotingLink}" style="display:inline-block;padding:14px 28px;background:#ff9800;color:#fff;text-decoration:none;border-radius:8px;font-size:18px;font-weight:bold;">Jetzt abstimmen!</a>
-    </div>
-  `;
-
-  // Platzhalter im HTML-Text ersetzen
-  if (personalVotingLink) {
-    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_button\]/g, buttonHtml);
-    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_link\]/g, personalVotingLink);
-  } else {
-    // Falls kein Link da ist, die Platzhalter entfernen
-    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_button\]/g, '');
-    tourDescriptionHtml = tourDescriptionHtml.replace(/\[abstimmungs_link\]/g, '');
-  }
-
-  // Platzhalter im Plain-Text ersetzen
-  if (personalVotingLink) {
-    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_button\]/g, `Zur Abstimmung: ${personalVotingLink}`);
-    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_link\]/g, personalVotingLink);
-  } else {
-    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_button\]/g, '');
-    tourDescriptionPlain = tourDescriptionPlain.replace(/\[abstimmungs_link\]/g, '');
-  }
-
-  const plainBody =
-    `Tour-Newsletter der Hoffnungsradler Dülmen\n\n` +
-    `${tourDescriptionPlain}\n\n` +
-    (data.signupLink ? `Zur Anmeldung: ${data.signupLink}\n\n` : '') +
-    `Mit sportlichen Grüßen,\n` +
-    `Das Team der Hoffnungsradler Dülmen\n\n` +
-    `--\n` +
-    `Du erhältst diese E-Mail, weil du dich für unseren Tour-Newsletter angemeldet hast.\n` +
-    `Um dich abzumelden, besuche: ${data.unsubscribeLink}`;
-
-  const signupButton = data.signupLink ? `
-    <div style="margin: 30px 0 20px 0; text-align: center;">
-      <a href="${data.signupLink}" style="display:inline-block;padding:14px 28px;background:#2E7D32;color:#fff;text-decoration:none;border-radius:8px;font-size:18px;font-weight:bold;">Hier unverbindlich zur Tour anmelden</a>
-    </div>
-  ` : '';
-
-  const htmlBody = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-      <h1 style="color: #003366; text-align: center; border-bottom: 2px solid #003366; padding-bottom: 10px;">Tour-Newsletter der Hoffnungsradler Dülmen</h1>
-      <div style="margin-top: 20px; line-height: 1.6;">
-        ${tourDescriptionHtml}
-      </div>
-      ${signupButton}
-      <p style="margin-top: 25px;">Wir freuen uns auf deine Teilnahme!</p>
-      <p style="margin-top: 15px;">Mit sportlichen Grüßen,<br>Das Team der Hoffnungsradler Dülmen</p>
-      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; text-align: center;">
-        <p>Du erhältst diese E-Mail, weil du dich für unseren Tour-Newsletter angemeldet hast.</p>
-        <p>Um dich abzumelden, <a href="${data.unsubscribeLink}" style="color: #003366; text-decoration: underline;">klicke bitte hier</a>.</p>
-      </div>
-    </div>
-  `;
-  return {
-    plainBody: plainBody,
-    htmlBody: htmlBody
-  };
-}
-
-/**
- * Listet alle aktuellen Trigger auf (Name, Typ, Zeit)
- */
-function listAllTriggers() {
-  const triggers = ScriptApp.getProjectTriggers();
-  let msg = 'Aktive Trigger:\n';
-  if (triggers.length === 0) {
-    msg += 'Keine Trigger vorhanden.';
-  } else {
-    triggers.forEach(t => {
-      msg += `Funktion: ${t.getHandlerFunction()} | Typ: ${t.getEventType()} | Nächste Ausführung: ${(t.getTriggerSourceId() || 'n/a')}\n`;
-    });
-  }
-  Logger.log(msg);
-  SpreadsheetApp.getUi().alert(msg);
-}
-
-/**
- * Gibt den aktuellen Versandstatus für den laufenden Newsletter-Versand zurück
- * (Wie viele E-Mails wurden im aktuellen Lauf bereits versendet?)
- */
-function getNewsletterSendStatus() {
+function sendNewsletterToAllSubscribers() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const inputSheet = ss.getSheetByName('Newsletter_aktuell');
   const sheet = ss.getSheetByName('Newsletter-Abonnenten');
-  if (!inputSheet || !sheet) {
-    SpreadsheetApp.getUi().alert('Blätter nicht gefunden!');
-    return;
-  }
-  const newsletterId = inputSheet.getRange('B15').getValue();
-  const data = sheet.getDataRange().getValues();
-  let sentCount = 0;
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][7] == newsletterId && data[i][6] == 'erfolgreich') {
-      sentCount++;
-    }
-  }
-  SpreadsheetApp.getUi().alert(`Im aktuellen Versandlauf (Newsletter-ID: ${newsletterId}) wurden bisher ${sentCount} E-Mails erfolgreich versendet.`);
-  Logger.log(`Im aktuellen Versandlauf (Newsletter-ID: ${newsletterId}) wurden bisher ${sentCount} E-Mails erfolgreich versendet.`);
-}
-
-/**
- * Prüft, wann der letzte Versandlauf war und ob das 24h-Limit überschritten ist
- */
-function checkLastSendTimeAndQuota() {
-  const ui = SpreadsheetApp.getUi();
-  const scriptProperties = PropertiesService.getScriptProperties();
-  let lastSend = scriptProperties.getProperty('LAST_SEND_TIMESTAMP');
-  let msg = '';
-  if (!lastSend) {
-    // Alternativ: Aus dem Sheet lesen
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const inputSheet = ss.getSheetByName('Newsletter_aktuell');
-    if (inputSheet) {
-      lastSend = inputSheet.getRange('B11').getValue();
-    }
-  }
-  if (lastSend) {
-    const lastSendDate = new Date(lastSend);
-    const now = new Date();
-    const diffMs = now - lastSendDate;
-    const diffH = diffMs / (1000 * 60 * 60);
-    if (diffH < 24) {
-      msg = `Achtung: Der letzte Versand war vor ${diffH.toFixed(1)} Stunden.\nDas Google-Limit erlaubt erst nach 24 Stunden einen neuen Massenversand.\nBitte warte noch ca. ${(24-diffH).toFixed(1)} Stunden.`;
-    } else {
-      msg = `Der letzte Versand war vor ${diffH.toFixed(1)} Stunden.\nDu kannst jetzt wieder einen neuen Versand starten.`;
-    }
-  } else {
-    msg = 'Es konnte kein letzter Versandzeitpunkt ermittelt werden.';
-  }
-  ui.alert(msg);
-  Logger.log(msg);
-}
-
-/**
- * Loggt den Versandzeitpunkt jeder E-Mail in das Blatt 'Versand_Log'
- */
-function logNewsletterSendTimestamp() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let logSheet = ss.getSheetByName('Versand_Log');
-  if (!logSheet) {
-    logSheet = ss.insertSheet('Versand_Log');
-    logSheet.appendRow(['Zeitstempel']);
-  }
-  logSheet.appendRow([new Date()]);
-}
-
-/**
- * Zeigt an, wie viele E-Mails in den letzten 24h versendet wurden und wie viele noch möglich sind
- */
-function checkQuotaUsage() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const logSheet = ss.getSheetByName('Versand_Log');
-  if (!logSheet) {
-    SpreadsheetApp.getUi().alert('Kein Versand-Log gefunden.');
-    return;
-  }
-  const data = logSheet.getRange(2, 1, logSheet.getLastRow()-1, 1).getValues();
-  const now = new Date();
-  const last24h = data.filter(row => {
-    const ts = new Date(row[0]);
-    return (now - ts) < 24*60*60*1000;
-  });
-  const quota = 100; // Standard-Limit für private Google-Konten
-  const msg = `In den letzten 24 Stunden wurden ${last24h.length} E-Mails versendet.\nDu kannst aktuell noch ${quota - last24h.length} E-Mails verschicken (Limit: ${quota}/24h).`;
-  SpreadsheetApp.getUi().alert(msg);
-  Logger.log(msg);
-}
-
-/**
- * Archiviert das aktuelle Newsletter-Blatt, benennt die Kopie nach Nutzerwunsch und erhöht den Zähler in B15
- */
-function archiveCurrentNewsletterSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName('Newsletter_aktuell');
+  
   if (!sheet) {
-    SpreadsheetApp.getUi().alert('Das Blatt "Newsletter_aktuell" wurde nicht gefunden!');
+    Browser.msgBox("Fehler", "Das Tabellenblatt 'Newsletter-Abonnenten' wurde nicht gefunden.", Browser.Buttons.OK);
     return;
   }
+  
+  const data = sheet.getDataRange().getValues();
+  const inputSheet = ss.getSheetByName('Newsletter_aktuell');
+  
+  if (!inputSheet) {
+    Browser.msgBox("Fehler", "Das Blatt 'Newsletter_aktuell' wurde nicht gefunden.", Browser.Buttons.OK);
+    return;
+  }
+  
+  // Daten aus dem Eingabe-Blatt lesen
+  const tourTitle = inputSheet.getRange('B2').getValue();
+  const tourDescription = inputSheet.getRange('B3').getValue();
+  const tourDateTime = inputSheet.getRange('B4').getValue();
+  const meetingPoint = inputSheet.getRange('B5').getValue();
+  
+  // Prüfen, ob alle notwendigen Informationen vorhanden sind
+  if (!tourTitle || !tourDescription || !tourDateTime || !meetingPoint) {
+    Browser.msgBox("Fehlende Informationen", 
+        "Bitte fülle alle Felder im Newsletter-Blatt aus.", 
+        Browser.Buttons.OK);
+    return;
+  }
+  
+  const newsletterSubject = "Neue Tour-Information: " + tourTitle;
+  
+  // Vor dem Versand: Newsletter-ID aus B15 lesen
+  const newsletterId = inputSheet.getRange('B15').getValue();
+  
+  // Zähle aktive Abonnenten
+  const activeSubscribers = countActiveSubscribers(data);
+  
+  // Warnhinweis, wenn viele Empfänger
+  let confirmMessage = `Möchtest du den Newsletter an ${activeSubscribers} aktive Abonnenten versenden?`;
+  
+  if (activeSubscribers > 90) {
+    confirmMessage += "\n\nHinweis: Google Apps Script hat ein Limit von 100 E-Mails pro Tag. " +
+                     "Bei mehr als 90 Empfängern wird der Versand in mehrere Durchgänge aufgeteilt.";
+  }
+  
   const ui = SpreadsheetApp.getUi();
-  const response = ui.prompt('Newsletter archivieren', 'Wie soll das Archiv-Blatt heißen?', ui.ButtonSet.OK_CANCEL);
+  const confirmSend = ui.alert(
+    "Newsletter versenden",
+    confirmMessage,
+    ui.ButtonSet.YES_NO
+  );
+  
+  if (confirmSend !== ui.Button.YES) {
+    return; // Benutzer hat abgebrochen
+  }
+  
+  // Prüfe, ob bereits ein Versand im Gange ist
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const sendingInProgress = scriptProperties.getProperty('SENDING_IN_PROGRESS');
+  const lastProcessedIndex = parseInt(scriptProperties.getProperty('LAST_PROCESSED_INDEX') || "0");
+  
+  // Optionale Spalte für den Status hinzufügen, falls noch nicht vorhanden
+  ensureStatusColumnExists(sheet, data);
+  
+  // Vorbereitung für die Statistik
+  let sentCount = parseInt(scriptProperties.getProperty('SENT_COUNT') || "0");
+  let failCount = parseInt(scriptProperties.getProperty('FAIL_COUNT') || "0");
+  let invalidCount = parseInt(scriptProperties.getProperty('INVALID_COUNT') || "0");
+  
+  try {
+    // Neuen Versand starten oder vorhandenen fortsetzen
+    if (sendingInProgress !== "true") {
+      // Neuer Versand - Status zurücksetzen
+      scriptProperties.setProperty('SENDING_IN_PROGRESS', 'true');
+      scriptProperties.setProperty('LAST_PROCESSED_INDEX', '0');
+      scriptProperties.setProperty('SENT_COUNT', '0');
+      scriptProperties.setProperty('FAIL_COUNT', '0');
+      scriptProperties.setProperty('INVALID_COUNT', '0');
+      
+      sentCount = 0;
+      failCount = 0;
+      invalidCount = 0;
+      
+      // Informiere den Nutzer
+      Browser.msgBox("Versand gestartet", 
+          "Der Newsletter-Versand wurde gestartet. Dies kann einige Zeit dauern, besonders bei vielen Empfängern.", 
+          Browser.Buttons.OK);
+    }
+    
+    // Maximale Anzahl von E-Mails pro Lauf (wegen Quota-Limits)
+    const MAX_EMAILS_PER_RUN = 90;
+    
+    // Erste Zeile überspringen (Überschriften) und ab dem letzten verarbeiteten Index fortfahren
+    let processedThisRun = 0;
+    
+    for (let i = Math.max(1, lastProcessedIndex); i < data.length; i++) {
+      // Prüfen, ob wir das Limit für diesen Lauf erreicht haben
+      if (processedThisRun >= MAX_EMAILS_PER_RUN) {
+        // Speichern des aktuellen Index für den nächsten Lauf
+        scriptProperties.setProperty('LAST_PROCESSED_INDEX', i.toString());
+        scriptProperties.setProperty('SENT_COUNT', sentCount.toString());
+        scriptProperties.setProperty('FAIL_COUNT', failCount.toString());
+        scriptProperties.setProperty('INVALID_COUNT', invalidCount.toString());
+        
+        // Trigger für den nächsten Lauf in 24 Stunden einrichten (wegen Quota-Limits)
+        const now = new Date();
+        const tomorrow = new Date(now.getTime() + (24 * 60 * 60 * 1000));
+        
+        try {
+          // Verwende die neue sichere Trigger-Erstellung
+          createSafeTrigger('sendNewsletterToAllSubscribers', tomorrow);
+          Logger.log(`Trigger erfolgreich für ${tomorrow} erstellt`);
+        } catch (triggerError) {
+          Logger.log(`WARNUNG: Trigger konnte nicht erstellt werden: ${triggerError.message}`);
+          // Fallback: Benutzer informieren, dass manueller Versand nötig ist
+          Browser.msgBox("Trigger-Warnung", 
+              `Der automatische Trigger für morgen konnte nicht erstellt werden.\n\n` +
+              `Fehler: ${triggerError.message}\n\n` +
+              `Bitte setze den Versand morgen manuell über das Menü fort:\n` +
+              `Newsletter → Administration → Versand manuell fortsetzen`,
+              Browser.Buttons.OK);
+        }
+        
+        // Informiere den Nutzer
+        Browser.msgBox("Versand pausiert", 
+            `Es wurden ${processedThisRun} E-Mails in diesem Durchgang versendet.\n\n` +
+            `Gesamtstatus: ${sentCount} versendet, ${failCount} fehlgeschlagen, ${invalidCount} ungültig.\n\n` +
+            `Der Versand wird automatisch morgen fortgesetzt, um das tägliche Limit von Google nicht zu überschreiten.`,
+            Browser.Buttons.OK);
+        
+        return;
+      }
+      
+      const email = data[i][0];
+      const subscriberId = data[i][2];
+      const unsubscribeLink = data[i][3];
+      const status = data[i][4];
+      
+      // Prüfe zusätzliche Statusspalte, falls vorhanden
+      const sendStatus = data[i][6] || "";
+      
+      // Lese Abstimmungs-Link direkt aus der Zeile (Spalte 9 = Index 8)
+      const personalVotingLink = data[i][8] || '';
+      
+      // Nur an aktive Abonnenten senden, die nicht als ungültig markiert sind
+      if (status === 'aktiv' && sendStatus !== 'ungültig') {
+        try {
+          processedThisRun++;
+          
+          // ==========================================================
+          // Personalisierter Abstimmungs-Link direkt aus der Tabelle
+          // ==========================================================
+          
+          // Platzhalter im Text ersetzen. Funktioniert für Plain-Text und HTML.
+          // ==========================================================
+          
+          const newsletterData = {
+            tourTitle: tourTitle,
+            tourDescription: tourDescription, // HIER wieder den ORIGINAL-Text übergeben
+            tourDate: tourDateTime,
+            meetingPoint: meetingPoint,
+            unsubscribeLink: unsubscribeLink,
+            email: email
+          };
+          
+          // NEU: Der persönliche Link wird als zweiter Parameter übergeben
+          const newsletter = getNewsletterTemplate(newsletterData, personalVotingLink);
+          
+          // E-Mail senden
+          GmailApp.sendEmail(
+            email,
+            newsletterSubject,
+            newsletter.plainBody,
+            { 
+              htmlBody: newsletter.htmlBody,
+              name: "Hoffnungsradler Dülmen" 
+            }
+          );
+          logNewsletterSendTimestamp();
+          
+          // Letzten Versand aktualisieren
+          sheet.getRange(i + 1, 6).setValue(new Date());
+          
+          // Sendestatus aktualisieren, falls die Spalte existiert
+          if (data[0].length >= 7) {
+            sheet.getRange(i + 1, 7).setValue("erfolgreich");
+          }
+          
+          // Im Versand-Loop, nach erfolgreichem Versand:
+          sheet.getRange(i + 1, 8).setValue(newsletterId); // Spalte 8 = Newsletter-ID
+          
+          sentCount++;
+          
+          // Pause, um Quota-Limits nicht zu überschreiten
+          Utilities.sleep(1000);
+        } catch (error) {
+          failCount++;
+          Logger.log("Fehler beim Senden an " + email + ": " + error.message);
+          
+          // Sendestatus aktualisieren, falls die Spalte existiert
+          if (data[0].length >= 7) {
+            sheet.getRange(i + 1, 7).setValue("Fehler: " + error.message);
+          }
+          
+          // Prüfen, ob die E-Mail ungültig ist (basierend auf der Fehlermeldung)
+          if (isInvalidEmailError(error.message)) {
+            // Als ungültig markieren
+            if (data[0].length >= 7) {
+              sheet.getRange(i + 1, 7).setValue("ungültig");
+            }
+            invalidCount++;
+          }
+        }
+      }
+      
+      // Aktuellen Fortschritt speichern
+      scriptProperties.setProperty('LAST_PROCESSED_INDEX', i.toString());
+      scriptProperties.setProperty('SENT_COUNT', sentCount.toString());
+      scriptProperties.setProperty('FAIL_COUNT', failCount.toString());
+      scriptProperties.setProperty('INVALID_COUNT', invalidCount.toString());
+    }
+    
+    // Wenn wir hier ankommen, wurde der Versand komplett abgeschlossen
+    scriptProperties.deleteProperty('SENDING_IN_PROGRESS');
+    scriptProperties.deleteProperty('LAST_PROCESSED_INDEX');
+    scriptProperties.deleteProperty('SENT_COUNT');
+    scriptProperties.deleteProperty('FAIL_COUNT');
+    scriptProperties.deleteProperty('INVALID_COUNT');
+    
+    // Statistik aktualisieren
+    inputSheet.getRange('B11').setValue(new Date());
+    inputSheet.getRange('B12').setValue(sentCount);
+    inputSheet.getRange('B13').setValue(`Erfolgreich versendet (${failCount} Fehler, ${invalidCount} ungültig)`);
+    
+    Browser.msgBox(
+      "Newsletter vollständig versendet", 
+      `Der Newsletter wurde an ${sentCount} Abonnenten versendet.\n${failCount} Fehler sind aufgetreten.\n${invalidCount} E-Mail-Adressen wurden als ungültig markiert.`, 
+      Browser.Buttons.OK
+    );
+    
+  } catch (error) {
+    // Hauptfehlerbehandlung
+    Logger.log("Hauptfehler beim Versand: " + error.message);
+    Browser.msgBox(
+      "Fehler beim Versand", 
+      `Es ist ein unerwarteter Fehler aufgetreten: ${error.message}\n\nDer Versand wird beim nächsten Aufruf fortgesetzt.`, 
+      Browser.Buttons.OK
+    );
+  }
+}
+
+/**
+ * Zählt die Anzahl der aktiven Abonnenten
+ * @param {Array} data - Die Daten aus dem Abonnenten-Sheet
+ * @return {number} - Anzahl der aktiven Abonnenten
+ */
+function countActiveSubscribers(data) {
+  let count = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][4] === 'aktiv') {
+      // Prüfen, ob eine Status-Spalte existiert und der Eintrag als ungültig markiert ist
+      const sendStatus = data[i][6] || "";
+      if (sendStatus !== 'ungültig') {
+        count++;
+      }
+    }
+  }
+  return count;
+}
+
+/**
+ * Stellt sicher, dass eine Spalte für den Sendestatus existiert
+ * @param {Sheet} sheet - Das Tabellenblatt
+ * @param {Array} data - Die Daten aus dem Tabellenblatt
+ */
+function ensureStatusColumnExists(sheet, data) {
+  if (data[0].length < 7) {
+    // Neue Überschrift für die Sendestatus-Spalte hinzufügen
+    sheet.getRange(1, 7).setValue("Sendestatus");
+  }
+}
+
+/**
+ * Prüft, ob die Fehlermeldung auf eine ungültige E-Mail-Adresse hinweist
+ * @param {string} errorMessage - Die Fehlermeldung
+ * @return {boolean} - True, wenn es sich um einen Fehler mit ungültiger E-Mail handelt
+ */
+function isInvalidEmailError(errorMessage) {
+  // Typische Fehlermeldungen bei ungültigen E-Mail-Adressen
+  const invalidPatterns = [
+    "Address not found",
+    "Email address not found",
+    "The email address was not found",
+    "not a valid email",
+    "Invalid email address",
+    "Recipient address rejected",
+    "User unknown",
+    "No such user",
+    "User doesn't exist",
+    "Mailbox not found",
+    "Mailbox unavailable",
+    "Mailbox doesn't exist",
+    "Domain not found",
+    "Domain doesn't exist",
+    "Host or domain name not found",
+    "Bad destination mailbox address",
+    "550"  // Häufiger SMTP-Fehlercode für nicht existierende Adresse
+  ];
+  
+  // Prüfen, ob die Fehlermeldung eine der bekannten Muster enthält
+  return invalidPatterns.some(pattern => errorMessage.includes(pattern));
+}
+
+/**
+ * Funktion zum Aufräumen ungültiger E-Mail-Adressen
+ * Kann manuell aufgerufen werden, um ungültige Adressen zu identifizieren/deaktivieren
+ */
+function cleanupInvalidEmails() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Newsletter-Abonnenten');
+  
+  if (!sheet) {
+    Browser.msgBox("Fehler", "Das Tabellenblatt 'Newsletter-Abonnenten' wurde nicht gefunden.", Browser.Buttons.OK);
+    return;
+  }
+  
+  const data = sheet.getDataRange().getValues();
+  let deactivatedCount = 0;
+  
+  // Stelle sicher, dass die Sendestatus-Spalte existiert
+  ensureStatusColumnExists(sheet, data);
+  
+  // Erste Zeile überspringen (Überschriften)
+  for (let i = 1; i < data.length; i++) {
+    const status = data[i][4];
+    const sendStatus = data[i][6] || "";
+    
+    // Prüfe, ob die E-Mail als ungültig markiert ist
+    if (status === 'aktiv' && sendStatus === 'ungültig') {
+      // Setze den Status auf 'inaktiv'
+      sheet.getRange(i + 1, 5).setValue('inaktiv');
+      deactivatedCount++;
+    }
+  }
+  
+  Browser.msgBox(
+    "Aufräumen abgeschlossen", 
+    `Es wurden ${deactivatedCount} ungültige E-Mail-Adressen auf 'inaktiv' gesetzt.`, 
+    Browser.Buttons.OK
+  );
+}
+
+function onOpen() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('Newsletter')
+      .addItem('Newsletter-Blatt erstellen/öffnen', 'createNewsletterSheet')
+      .addItem('Manuelle Adressen hinzufügen', 'addManualSubscribers')
+      .addSeparator()
+      .addItem('Newsletter-Testversand', 'sendNewsletterTest')
+      .addItem('Newsletter versenden', 'sendNewsletterToAllSubscribers')
+      .addSeparator()
+      .addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails')
+      .addToUi();
+  // Neuen Menüpunkt für Tourplanung ergänzen
+  ui.createMenu('Tourplanung')
+    .addItem('Neues Blatt für Tourplanung anlegen', 'menuCreateTourPlanningSheet')
+    .addToUi();
+}
+
+function menuCreateTourPlanningSheet() {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt('Neues Touren-Blatt anlegen', 'Wie soll das neue Blatt heißen? (z.B. "Touren 2024")', ui.ButtonSet.OK_CANCEL);
   if (response.getSelectedButton() !== ui.Button.OK) {
     return;
   }
-  const archiveName = response.getResponseText().trim();
-  if (!archiveName) {
+  const sheetName = response.getResponseText().trim();
+  if (!sheetName) {
     ui.alert('Bitte gib einen gültigen Namen ein!');
     return;
   }
-  // Kopiere das Blatt
-  const newSheet = sheet.copyTo(ss);
-  newSheet.setName(archiveName);
-  // Zähler in B15 erhöhen
-  const counterCell = sheet.getRange('B15');
-  let counter = parseInt(counterCell.getValue() || '0', 10);
-  counterCell.setValue(counter + 1);
-  ui.alert(`Das Blatt wurde als "${archiveName}" archiviert und der Zähler in B15 erhöht.`);
+  createTourPlanningSheet(sheetName);
 } 

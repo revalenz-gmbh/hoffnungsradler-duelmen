@@ -13,21 +13,6 @@ function sendNewsletterToAllSubscribers() {
     return;
   }
   
-  const votingLinksSheet = ss.getSheetByName('Abstimmungs-Links');
-  const votingLinksMap = new Map();
-  if (votingLinksSheet) {
-    const votingLinksData = votingLinksSheet.getDataRange().getValues();
-    // Starte bei 1, um Header zu überspringen
-    for (let i = 1; i < votingLinksData.length; i++) {
-      const email = votingLinksData[i][0];
-      const link = votingLinksData[i][1];
-      if (email && link) {
-        votingLinksMap.set(email, link);
-      }
-    }
-    Logger.log(`${votingLinksMap.size} Abstimmungs-Links geladen.`);
-  }
-  
   const data = sheet.getDataRange().getValues();
   const inputSheet = ss.getSheetByName('Newsletter_aktuell');
   
@@ -129,10 +114,20 @@ function sendNewsletterToAllSubscribers() {
         const now = new Date();
         const tomorrow = new Date(now.getTime() + (24 * 60 * 60 * 1000));
         
-        ScriptApp.newTrigger('sendNewsletterToAllSubscribers')
-          .timeBased()
-          .at(tomorrow)
-          .create();
+        try {
+          // Verwende die neue sichere Trigger-Erstellung
+          createSafeTrigger('sendNewsletterToAllSubscribers', tomorrow);
+          Logger.log(`Trigger erfolgreich für ${tomorrow} erstellt`);
+        } catch (triggerError) {
+          Logger.log(`WARNUNG: Trigger konnte nicht erstellt werden: ${triggerError.message}`);
+          // Fallback: Benutzer informieren, dass manueller Versand nötig ist
+          Browser.msgBox("Trigger-Warnung", 
+              `Der automatische Trigger für morgen konnte nicht erstellt werden.\n\n` +
+              `Fehler: ${triggerError.message}\n\n` +
+              `Bitte setze den Versand morgen manuell über das Menü fort:\n` +
+              `Newsletter → Administration → Versand manuell fortsetzen`,
+              Browser.Buttons.OK);
+        }
         
         // Informiere den Nutzer
         Browser.msgBox("Versand pausiert", 
@@ -152,15 +147,17 @@ function sendNewsletterToAllSubscribers() {
       // Prüfe zusätzliche Statusspalte, falls vorhanden
       const sendStatus = data[i][6] || "";
       
+      // Lese Abstimmungs-Link direkt aus der Zeile (Spalte 9 = Index 8)
+      const personalVotingLink = data[i][8] || '';
+      
       // Nur an aktive Abonnenten senden, die nicht als ungültig markiert sind
       if (status === 'aktiv' && sendStatus !== 'ungültig') {
         try {
           processedThisRun++;
           
           // ==========================================================
-          // NEU: Personalisierung des Inhalts
+          // Personalisierter Abstimmungs-Link direkt aus der Tabelle
           // ==========================================================
-          const personalVotingLink = votingLinksMap.get(email) || ''; // Link für diesen Nutzer holen
           
           // Platzhalter im Text ersetzen. Funktioniert für Plain-Text und HTML.
           // ==========================================================
@@ -372,22 +369,36 @@ function onOpen() {
       .addSeparator()
       .addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails')
       .addToUi();
-  // Neuen Menüpunkt für Tourplanung ergänzen
-  ui.createMenu('Tourplanung')
-    .addItem('Neues Blatt für Tourplanung anlegen', 'menuCreateTourPlanningSheet')
-    .addToUi();
 }
 
-function menuCreateTourPlanningSheet() {
-  const ui = SpreadsheetApp.getUi();
-  const response = ui.prompt('Neues Touren-Blatt anlegen', 'Wie soll das neue Blatt heißen? (z.B. "Touren 2024")', ui.ButtonSet.OK_CANCEL);
-  if (response.getSelectedButton() !== ui.Button.OK) {
-    return;
-  }
-  const sheetName = response.getResponseText().trim();
-  if (!sheetName) {
-    ui.alert('Bitte gib einen gültigen Namen ein!');
-    return;
-  }
-  createTourPlanningSheet(sheetName);
-} 
+/**
+ * BEISPIEL-NEWSLETTER FÜR TOUR-ABSTIMMUNG
+ * 
+ * Kopiere diesen Text in das "Newsletter_aktuell" Blatt:
+ * 
+ * B2 (Tour-Titel): Tour-Abstimmung 2025 ist live!
+ * 
+ * B3 (Tour-Beschreibung): 
+Liebe Hoffnungsradler,
+
+es ist soweit - die **Tour-Abstimmung für 2025** ist gestartet! 🚴‍♂️✨
+
+Wir haben **5 fantastische Touren** für euch ausgewählt und möchten von euch wissen, welche Tour euch am meisten interessiert. Eure Stimme entscheidet, welche Touren wir gemeinsam fahren werden!
+
+**So funktioniert's:**
+✅ Klickt auf den Abstimmungs-Button unten
+✅ Wählt eure Lieblings-Tour aus
+✅ Fertig! Eure Stimme ist gezählt
+
+[abstimmungs_button]
+
+**Warum eure Stimme wichtig ist:**
+Gemeinsam planen wir die schönsten Touren für 2025. Jede Stimme hilft uns dabei, die Touren auszuwählen, die euch wirklich begeistern. Ob gemütliche Rundfahrten oder sportliche Herausforderungen - eure Präferenzen stehen im Mittelpunkt!
+
+Die Abstimmung läuft noch bis Ende des Monats. **Stimmt jetzt ab und seid dabei!**
+
+Sportliche Grüße und vielen Dank für eure Teilnahme! 🙏
+ * 
+ * B4 (Datum/Zeit): [Leer lassen]
+ * B5 (Treffpunkt): [Leer lassen] 
+ */ 

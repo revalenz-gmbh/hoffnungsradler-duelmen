@@ -85,6 +85,12 @@ function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
     }
   }
   
+  // Stelle sicher, dass die Abstimmungs-Link Spalte existiert
+  ensureVotingLinkColumnInSubscriberSheet(sheet);
+  
+  // Generiere automatisch einen Abstimmungs-Link falls möglich
+  const autoVotingLink = generateVotingLinkForNewSubscriber(subscriberId);
+  
   // Neue Zeile hinzufügen
   sheet.appendRow([
     email,
@@ -92,7 +98,10 @@ function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
     subscriberId,
     unsubscribeLink,
     'aktiv',
-    '' // Letzter Versand - leer für neue Abonnenten
+    '', // Letzter Versand - leer für neue Abonnenten
+    '', // Sendestatus - leer für neue Abonnenten
+    '', // Newsletter-ID - leer für neue Abonnenten  
+    autoVotingLink // Abstimmungs-Link - automatisch generiert falls möglich
   ]);
   
   Logger.log("Neuer Abonnent hinzugefügt: " + email);
@@ -170,4 +179,81 @@ function createNewsletterSheet() {
       "Wenn du den Newsletter versenden möchtest, wähle 'Erweiterungen > Newsletter > Newsletter versenden'.\n\n" +
       "Um frühere Newsletter zu archivieren, kannst du vor dem Senden das Blatt duplizieren und umbenennen.", 
       Browser.Buttons.OK);
+}
+
+/**
+ * Stellt sicher, dass alle benötigten Spalten in der Newsletter-Abonnenten Tabelle existieren
+ * @param {Sheet} sheet - Das Newsletter-Abonnenten Tabellenblatt
+ */
+function ensureVotingLinkColumnInSubscriberSheet(sheet) {
+  const data = sheet.getDataRange().getValues();
+  if (data.length === 0) return; // Leere Tabelle
+  
+  const headers = data[0];
+  const expectedHeaders = [
+    'Email', 
+    'Anmeldedatum', 
+    'SubscriberID', 
+    'Abmelde-Link', 
+    'Status', 
+    'Letzter Versand',
+    'Sendestatus',
+    'Newsletter-ID',
+    'Abstimmungs-Link'
+  ];
+  
+  let columnAdded = false;
+  
+  // Prüfe und füge fehlende Header hinzu
+  for (let i = 0; i < expectedHeaders.length; i++) {
+    const expectedHeader = expectedHeaders[i];
+    
+    if (i >= headers.length || headers[i] !== expectedHeader) {
+      // Header fehlt oder ist an falscher Position
+      const columnIndex = i + 1;
+      
+      // Neue Spalte einfügen
+      sheet.insertColumnAfter(Math.max(0, i));
+      sheet.getRange(1, columnIndex).setValue(expectedHeader).setFontWeight('bold');
+      
+      // Spaltenbreite setzen
+      if (expectedHeader === 'Abstimmungs-Link' || expectedHeader === 'Abmelde-Link') {
+        sheet.setColumnWidth(columnIndex, 300);
+      } else if (expectedHeader === 'Email') {
+        sheet.setColumnWidth(columnIndex, 200);
+      } else {
+        sheet.setColumnWidth(columnIndex, 150);
+      }
+      
+      columnAdded = true;
+      Logger.log(`Spalte "${expectedHeader}" wurde hinzugefügt.`);
+      
+      // Aktualisiere headers Array für nächste Iteration
+      headers.splice(i, 0, expectedHeader);
+    }
+  }
+  
+  if (columnAdded) {
+    Logger.log('Newsletter-Abonnenten Tabelle wurde aktualisiert.');
+  }
+}
+
+/**
+ * Generiert automatisch einen Abstimmungs-Link für einen neuen Abonnenten
+ * @param {string} subscriberId - Die Abonnenten-ID
+ * @return {string} - Der generierte Link oder leerer String
+ */
+function generateVotingLinkForNewSubscriber(subscriberId) {
+  try {
+    const baseUrl = getVotingUrl(); // Ruft die gespeicherte URL ab
+    
+    if (baseUrl && baseUrl.startsWith('http') && subscriberId) {
+      return `${baseUrl}?id=${subscriberId}`;
+    }
+    
+    return ''; // Keine URL gespeichert oder ungültige Parameter
+  } catch (error) {
+    Logger.log(`Fehler beim Generieren des Abstimmungs-Links: ${error.message}`);
+    return '';
+  }
 }

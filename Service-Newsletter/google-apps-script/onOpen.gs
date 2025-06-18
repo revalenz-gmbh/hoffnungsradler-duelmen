@@ -14,13 +14,20 @@ function onOpen() {
   newsletterMenu.addItem('Manuelle Abonnenten hinzufügen', 'addManualSubscribers');
   newsletterMenu.addSeparator();
   newsletterMenu.addItem('Personalisierte Abstimmungs-Links erstellen', 'generateVotingLinks');
+  newsletterMenu.addItem('Google Forms Entry-IDs ermitteln', 'getFormsEntryIds');
+  newsletterMenu.addItem('Migration: Alte Abstimmungs-Links übertragen', 'migrateVotingLinksToMainTable');
   newsletterMenu.addSeparator();
   
   const adminSubMenu = ui.createMenu('Administration');
   adminSubMenu.addItem('Backup erstellen', 'createBackup');
   adminSubMenu.addItem('Abstimmungs-URL festlegen', 'menu_setVotingUrl');
   adminSubMenu.addSeparator();
-  adminSubMenu.addItem('Trigger anzeigen', 'listAllTriggers');
+  adminSubMenu.addItem('Trigger-Status (detailliert)', 'showDetailedTriggerStatus');
+  adminSubMenu.addItem('Versand manuell fortsetzen', 'manualContinueNewsletterSend');
+  adminSubMenu.addItem('Newsletter-System zurücksetzen', 'resetNewsletterSystem');
+  adminSubMenu.addItem('Monitoring-Trigger installieren', 'installMonitoringTrigger');
+  adminSubMenu.addSeparator();
+  adminSubMenu.addItem('Trigger anzeigen (einfach)', 'listAllTriggers');
   adminSubMenu.addItem('Versandstatus anzeigen', 'getNewsletterSendStatus');
   adminSubMenu.addItem('Versand-24h-Check', 'checkLastSendTimeAndQuota');
   adminSubMenu.addItem('Quota-Status (24h) anzeigen', 'checkQuotaUsage');

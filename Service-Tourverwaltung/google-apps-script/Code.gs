@@ -9,6 +9,7 @@ function onOpen() {
     .addItem('Einzelne Tour neu berechnen', 'recalculateSingleTour')
     .addSeparator()
     .addItem('Neue Abstimmung einrichten', 'setupVoting')
+    .addItem('Google Forms für Abstimmung erstellen', 'createVotingFormInTourManagement')
     .addSeparator()
     .addItem('Neues Planungs-Sheet erstellen', 'menuCreateTourPlanningSheet')
     .addSeparator()
@@ -794,9 +795,7 @@ function doGet(e) {
       const data = sheet.getDataRange().getValues();
       const tours = data.slice(1).map(row => ({ name: row[0], distance: row[1] }));
       
-      const output = ContentService.createTextOutput(JSON.stringify(tours));
-      output.setMimeType(ContentService.MimeType.JSON);
-      return output;
+      return createJsonResponse(tours);
     }
     
     // Standard-Aktion: GPX-Touren-Archiv zurückgeben
@@ -838,15 +837,11 @@ function doGet(e) {
         return a.name.localeCompare(b.name);
     });
 
-    const output = ContentService.createTextOutput(JSON.stringify(tours));
-    output.setMimeType(ContentService.MimeType.JSON);
-    return output;
+    return createJsonResponse(tours);
 
   } catch (error) {
     Logger.log('Fehler in doGet: ' + error.toString());
-    const errorOutput = ContentService.createTextOutput(JSON.stringify({ error: error.message }));
-    errorOutput.setMimeType(ContentService.MimeType.JSON);
-    return errorOutput;
+    return createJsonResponse({ error: error.message });
   }
 }
 
@@ -859,65 +854,9 @@ function doPost(e) {
     const requestData = JSON.parse(e.postData.contents);
     const { subscriberId, votedTourNames } = requestData;
 
-    if (!subscriberId || !Array.isArray(votedTourNames) || votedTourNames.length === 0) {
-      throw new Error('Ungültige Anfrage: subscriberId oder votedTourNames fehlen.');
-    }
-
-    // Konfiguration aus den Script-Properties laden
-    const scriptProperties = PropertiesService.getScriptProperties();
-    const newsletterSheetId = scriptProperties.getProperty('newsletterSheetId');
-    const votingRoundName = scriptProperties.getProperty('votingRoundName');
-
-    if (!newsletterSheetId || !votingRoundName) {
-      throw new Error('Die Abstimmung ist nicht konfiguriert. Bitte führen Sie "Abstimmung einrichten" aus.');
-    }
-
-    // --- Schritt 1: Überprüfen, ob der Abonnent bereits abgestimmt hat ---
-    const newsletterSpreadsheet = SpreadsheetApp.openById(newsletterSheetId);
-    // Annahme: Das erste Blatt ist das relevante.
-    const subscribersSheet = newsletterSpreadsheet.getSheets()[0]; 
-    const subscribersData = subscribersSheet.getDataRange().getValues();
-    const headers = subscribersData[0];
-    const idIndex = headers.indexOf('SubscriberID');
-    let voteColumnIndex = headers.indexOf(votingRoundName);
-
-    if (idIndex === -1) {
-      throw new Error('Spalte "SubscriberID" im Newsletter-Sheet nicht gefunden.');
-    }
-    
-    // Wenn die Abstimmungsspalte nicht existiert, füge sie hinzu.
-    if (voteColumnIndex === -1) {
-      subscribersSheet.getRange(1, headers.length + 1).setValue(votingRoundName);
-      voteColumnIndex = headers.length; // Neuer Index
-    }
-
-    const subscriberRow = subscribersData.find(row => row[idIndex] === subscriberId);
-    if (!subscriberRow) {
-      return createJsonResponse({ success: false, message: 'Ungültige Abonnenten-ID.' });
-    }
-
-    if (subscriberRow[voteColumnIndex]) {
-      return createJsonResponse({ success: false, message: 'Du hast bereits abgestimmt.' });
-    }
-
-    // --- Schritt 2: Stimmen im "Abstimmung"-Blatt zählen ---
-    const tourSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    const votingSheet = tourSpreadsheet.getSheetByName('Abstimmung');
-    const votingData = votingSheet.getDataRange().getValues();
-    
-    for (const tourName of votedTourNames) {
-      const tourRowIndex = votingData.findIndex(row => row[0] === tourName);
-      if (tourRowIndex !== -1) {
-        const currentVotes = votingSheet.getRange(tourRowIndex + 1, 3).getValue();
-        votingSheet.getRange(tourRowIndex + 1, 3).setValue(currentVotes + 1);
-      }
-    }
-
-    // --- Schritt 3: Abonnent als "hat abgestimmt" markieren ---
-    const subscriberRowIndex = subscribersData.findIndex(row => row[idIndex] === subscriberId) + 1;
-    subscribersSheet.getRange(subscriberRowIndex, voteColumnIndex + 1).setValue(new Date());
-
-    return createJsonResponse({ success: true, message: 'Vielen Dank! Deine Stimme wurde gezählt.' });
+    // Verwende die neue interne Abstimmungsverarbeitung
+    const result = processVoteInternal(subscriberId, votedTourNames);
+    return createJsonResponse(result);
 
   } catch (error) {
     Logger.log('Fehler in doPost: ' + error.toString());
@@ -930,7 +869,22 @@ function doPost(e) {
 function createJsonResponse(data) {
   const output = ContentService.createTextOutput(JSON.stringify(data));
   output.setMimeType(ContentService.MimeType.JSON);
+  // Erlaubt Anfragen von jeder Webseite.
+  output.setHeader('Access-Control-Allow-Origin', '*');
   return output;
+}
+
+/**
+ * Antwortet auf CORS "Preflight"-Anfragen, die der Browser vor
+ * einem POST-Request sendet.
+ */
+function doOptions() {
+  const response = ContentService.createTextOutput();
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  response.setMimeType(ContentService.MimeType.TEXT);
+  return response;
 }
 
 //==============================================================
@@ -983,4 +937,304 @@ function createTourPlanningSheet(sheetName) {
   sheet.setColumnWidth(12, 200); // Bemerkung breiter
   sheet.setColumnWidth(15, 200); // Bilder-Link(s) breiter
   sheet.setColumnWidth(16, 200); // Anmelde-Link breiter
+}
+
+/**
+ * Erstellt ein Google Forms für Tour-Abstimmungen als Alternative zur React-App
+ * (Lösung für CORS-Probleme)
+ */
+function createVotingFormInTourManagement() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // Prüfe, ob Abstimmungs-Daten vorhanden sind
+    const votingSheet = ss.getSheetByName('Abstimmung');
+    if (!votingSheet) {
+      ui.alert('Fehler', 'Es wurde kein "Abstimmung" Blatt gefunden.\n\nBitte richte zuerst über "Neue Abstimmung einrichten" eine Abstimmung ein.', ui.ButtonSet.OK);
+      return;
+    }
+    
+    const votingData = votingSheet.getDataRange().getValues();
+    if (votingData.length <= 1) {
+      ui.alert('Fehler', 'Keine Touren zur Abstimmung gefunden.\n\nBitte richte zuerst über "Neue Abstimmung einrichten" eine Abstimmung ein.', ui.ButtonSet.OK);
+      return;
+    }
+    
+    // Erstelle ein neues Google Forms
+    const form = FormApp.create('Hoffnungsradler - Tour-Abstimmung');
+    
+    // Setze Beschreibung
+    form.setDescription(
+      'Wähle die Tour aus, die dich am meisten interessiert. ' +
+      'Deine Stimme hilft uns bei der Planung der nächsten Gruppentouren!'
+    );
+    
+    // Füge Feld für Abonnenten-ID hinzu
+    const subscriberIdItem = form.addTextItem();
+    subscriberIdItem.setTitle('Abonnenten-ID (automatisch ausgefüllt)');
+    subscriberIdItem.setRequired(true);
+    subscriberIdItem.setHelpText('Diese ID wird automatisch vom Newsletter-Link ausgefüllt.');
+    
+    // Füge Feld für E-Mail hinzu (optional, für Verifikation)
+    const emailItem = form.addTextItem();
+    emailItem.setTitle('E-Mail-Adresse (automatisch ausgefüllt)');
+    emailItem.setRequired(false);
+    emailItem.setHelpText('Zur Verifikation - wird automatisch ausgefüllt.');
+    
+    // DEBUG: Zeige was im Abstimmungs-Blatt steht
+    Logger.log(`Abstimmungs-Blatt hat ${votingData.length} Zeilen`);
+    Logger.log('Erste paar Zeilen des Abstimmungs-Blatts:');
+    for (let i = 0; i < Math.min(5, votingData.length); i++) {
+      Logger.log(`Zeile ${i}: ${JSON.stringify(votingData[i])}`);
+    }
+    
+    // Lese die aktuellen Touren aus dem Abstimmungs-Blatt
+    const tourChoices = [];
+    for (let i = 1; i < votingData.length; i++) {
+      const tourName = votingData[i][0];
+      const tourDistance = votingData[i][1];
+      Logger.log(`Zeile ${i}: Name="${tourName}", Distanz="${tourDistance}"`);
+      
+      if (tourName && tourName.toString().trim() !== '') {
+        const choiceText = `${tourName} (${tourDistance || 'unbekannt'})`;
+        tourChoices.push(choiceText);
+        Logger.log(`Hinzugefügt: "${choiceText}"`);
+      } else {
+        Logger.log(`Übersprungen: Leerer Tour-Name in Zeile ${i}`);
+      }
+    }
+    
+    Logger.log(`Insgesamt ${tourChoices.length} Touren gefunden: ${JSON.stringify(tourChoices)}`);
+    
+    if (tourChoices.length === 0) {
+      throw new Error(`Keine gültigen Touren zur Abstimmung gefunden. Abstimmungs-Blatt hat ${votingData.length} Zeilen. Erste Zeile: ${JSON.stringify(votingData[0] || 'leer')}`);
+    }
+    
+    // Füge Multiple-Choice-Feld für Touren hinzu
+    const tourItem = form.addMultipleChoiceItem();
+    tourItem.setTitle('Welche Tour interessiert dich am meisten?');
+    tourItem.setRequired(true);
+    
+    // Erstelle Choice-Objekte für MultipleChoiceItem
+    const choices = tourChoices.map(choice => tourItem.createChoice(choice));
+    tourItem.setChoices(choices);
+    tourItem.setHelpText('Bitte wähle die Tour aus, die dich am meisten interessiert.');
+    
+    // Füge Kommentar-Feld hinzu
+    const commentItem = form.addParagraphTextItem();
+    commentItem.setTitle('Kommentare oder Wünsche (optional)');
+    commentItem.setRequired(false);
+    commentItem.setHelpText('Hier kannst du zusätzliche Wünsche oder Anmerkungen hinterlassen.');
+    
+    // WICHTIG: Erst einmal OHNE Spreadsheet-Verknüpfung erstellen
+    // Die Verknüpfung kann später manuell hinzugefügt werden
+    // form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
+    
+    // Hole die Forms-URL
+    const formUrl = form.getPublishedUrl();
+    
+    // Speichere die Forms-URL in den Einstellungen
+    const settingsSheet = ss.getSheetByName('Einstellungen');
+    if (settingsSheet) {
+      const settingsData = settingsSheet.getDataRange().getValues();
+      let formsUrlRowIndex = -1;
+      
+      // Suche nach vorhandener "Forms-URL" Zeile
+      for (let i = 0; i < settingsData.length; i++) {
+        if (settingsData[i][0] === 'Abstimmungs-Forms-URL') {
+          formsUrlRowIndex = i;
+          break;
+        }
+      }
+      
+      if (formsUrlRowIndex === -1) {
+        // Füge neue Zeile hinzu
+        settingsSheet.appendRow(['Abstimmungs-Forms-URL', formUrl, new Date().toISOString()]);
+      } else {
+        // Aktualisiere vorhandene Zeile
+        settingsSheet.getRange(formsUrlRowIndex + 1, 2).setValue(formUrl);
+        settingsSheet.getRange(formsUrlRowIndex + 1, 3).setValue(new Date().toISOString());
+      }
+    }
+    
+    ui.alert(
+      'Google Forms erstellt!',
+      `Ein neues Google Forms für Tour-Abstimmungen wurde erstellt:\n\n${formUrl}\n\n` +
+      'WICHTIG: Verknüpfe das Formular manuell mit diesem Spreadsheet:\n' +
+      '1. Öffne das Forms über den obigen Link\n' +
+      '2. Klicke auf "Antworten" → Einstellungen (Zahnrad)\n' +
+      '3. Wähle "Antworten in Tabellenkalkulationen sammeln"\n' +
+      '4. Wähle "Neue Tabellenkalkulation erstellen" oder "Vorhandene auswählen"\n\n' +
+      'Die URL wurde in den Einstellungen gespeichert für den Newsletter-Service.',
+      ui.ButtonSet.OK
+    );
+    
+    Logger.log(`Google Forms für Abstimmung erstellt: ${formUrl}`);
+    return formUrl;
+    
+  } catch (error) {
+    Logger.log(`Fehler beim Erstellen des Abstimmungs-Forms: ${error.message}`);
+    SpreadsheetApp.getUi().alert('Fehler', `Forms konnte nicht erstellt werden: ${error.message}`, SpreadsheetApp.getUi().ButtonSet.OK);
+    return null;
+  }
+}
+
+/**
+ * Hilfsfunktion zum Abrufen der gespeicherten Forms-URL
+ */
+function getVotingFormsUrl() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const settingsSheet = ss.getSheetByName('Einstellungen');
+    
+    if (!settingsSheet) {
+      return null;
+    }
+    
+    const data = settingsSheet.getDataRange().getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (data[i][0] === 'Abstimmungs-Forms-URL') {
+        return data[i][1] || null;
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    Logger.log(`Fehler beim Abrufen der Forms-URL: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Verarbeitet Google Forms Antworten automatisch
+ * Diese Funktion wird als Trigger auf das Forms-Antworten-Blatt gesetzt
+ */
+function onFormSubmit(e) {
+  try {
+    Logger.log('Google Forms Antwort empfangen');
+    
+    // Hole die Antworten aus dem Event
+    const formResponse = e.values;
+    
+    if (!formResponse || formResponse.length < 4) {
+      Logger.log('Unvollständige Antwort empfangen');
+      return;
+    }
+    
+    // Forms-Antworten Struktur:
+    // [0] = Timestamp
+    // [1] = Abonnenten-ID  
+    // [2] = E-Mail
+    // [3] = Tour-Auswahl (Kommagetrennt)
+    // [4] = Kommentare (optional)
+    
+    const timestamp = formResponse[0];
+    const subscriberId = formResponse[1];
+    const email = formResponse[2];
+    const tourSelections = formResponse[3];
+    const comments = formResponse[4] || '';
+    
+    Logger.log(`Verarbeite Antwort von ${subscriberId}: ${tourSelections}`);
+    
+    // Simuliere die doPost Verarbeitung
+    const votedTourNames = parseFormsResponse(tourSelections);
+    
+    const result = processVoteInternal(subscriberId, votedTourNames, comments);
+    
+    if (result.success) {
+      Logger.log(`Abstimmung erfolgreich verarbeitet für ${subscriberId}`);
+    } else {
+      Logger.log(`Fehler bei Abstimmung für ${subscriberId}: ${result.message}`);
+    }
+    
+  } catch (error) {
+    Logger.log(`Fehler beim Verarbeiten der Forms-Antwort: ${error.message}`);
+  }
+}
+
+/**
+ * Hilfsfunktion zum Parsen der Forms-Antworten
+ */
+function parseFormsResponse(tourSelection) {
+  if (!tourSelection) return [];
+  
+  // Bei MultipleChoiceItem kommt nur eine einzelne Auswahl (kein Komma-getrennter String)
+  const selection = tourSelection.toString().trim();
+  
+  // Extrahiere den Tour-Namen (entferne Distanz-Angaben in Klammern)
+  const match = selection.match(/^(.+?)\s*\(/);
+  const tourName = match ? match[1].trim() : selection;
+  
+  return [tourName]; // Gib Array mit einem Element zurück für Kompatibilität
+}
+
+/**
+ * Interne Abstimmungsverarbeitung (sowohl für API als auch Forms)
+ */
+function processVoteInternal(subscriberId, votedTourNames, comments = '') {
+  try {
+    if (!subscriberId || !Array.isArray(votedTourNames) || votedTourNames.length === 0) {
+      return { success: false, message: 'Ungültige Anfrage: subscriberId oder votedTourNames fehlen.' };
+    }
+
+    // Konfiguration aus den Script-Properties laden
+    const scriptProperties = PropertiesService.getScriptProperties();
+    const newsletterSheetId = scriptProperties.getProperty('newsletterSheetId');
+    const votingRoundName = scriptProperties.getProperty('votingRoundName');
+
+    if (!newsletterSheetId || !votingRoundName) {
+      return { success: false, message: 'Die Abstimmung ist nicht konfiguriert. Bitte führen Sie "Abstimmung einrichten" aus.' };
+    }
+
+    // --- Schritt 1: Überprüfen, ob der Abonnent bereits abgestimmt hat ---
+    const newsletterSpreadsheet = SpreadsheetApp.openById(newsletterSheetId);
+    const subscribersSheet = newsletterSpreadsheet.getSheets()[0]; 
+    const subscribersData = subscribersSheet.getDataRange().getValues();
+    const headers = subscribersData[0];
+    const idIndex = headers.indexOf('SubscriberID');
+    let voteColumnIndex = headers.indexOf(votingRoundName);
+
+    if (idIndex === -1) {
+      return { success: false, message: 'Spalte "SubscriberID" im Newsletter-Sheet nicht gefunden.' };
+    }
+    
+    // Wenn die Abstimmungsspalte nicht existiert, füge sie hinzu
+    if (voteColumnIndex === -1) {
+      subscribersSheet.getRange(1, headers.length + 1).setValue(votingRoundName);
+      voteColumnIndex = headers.length;
+    }
+
+    const subscriberRow = subscribersData.find(row => row[idIndex] === subscriberId);
+    if (!subscriberRow) {
+      return { success: false, message: 'Ungültige Abonnenten-ID.' };
+    }
+
+    if (subscriberRow[voteColumnIndex]) {
+      return { success: false, message: 'Du hast bereits abgestimmt.' };
+    }
+
+    // --- Schritt 2: Stimmen im "Abstimmung"-Blatt zählen ---
+    const tourSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const votingSheet = tourSpreadsheet.getSheetByName('Abstimmung');
+    const votingData = votingSheet.getDataRange().getValues();
+    
+    for (const tourName of votedTourNames) {
+      const tourRowIndex = votingData.findIndex(row => row[0] === tourName);
+      if (tourRowIndex !== -1) {
+        const currentVotes = votingSheet.getRange(tourRowIndex + 1, 3).getValue();
+        votingSheet.getRange(tourRowIndex + 1, 3).setValue(currentVotes + 1);
+      }
+    }
+
+    // --- Schritt 3: Abonnent als "hat abgestimmt" markieren ---
+    const subscriberRowIndex = subscribersData.findIndex(row => row[idIndex] === subscriberId) + 1;
+    subscribersSheet.getRange(subscriberRowIndex, voteColumnIndex + 1).setValue(new Date());
+
+    return { success: true, message: 'Vielen Dank! Deine Stimme wurde gezählt.' };
+
+  } catch (error) {
+    Logger.log('Fehler bei der Abstimmungsverarbeitung: ' + error.toString());
+    return { success: false, message: 'Ein interner Fehler ist aufgetreten: ' + error.message };
+  }
 }

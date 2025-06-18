@@ -280,19 +280,23 @@ Die historischen Touren werden in einem Google Spreadsheet gepflegt und über Go
 ### Touren-Abstimmung (Neues System)
 Die Abstimmung über zukünftige Touren wurde neu konzipiert, um sie direkt in die Webseite zu integrieren und fairer zu gestalten. Das System besteht aus drei Komponenten:
 
-**1. Backend (Google Sheet & Apps Script)**
-- **Datenquelle:** Das `Tourverwaltung`-Spreadsheet. Über das Menü `Tourverwaltung > Neue Abstimmung einrichten` werden die zur Wahl stehenden Touren in ein `Abstimmung`-Blatt geschrieben und die Stimmen gezählt.
-- **API:** Das zugehörige Apps Script stellt eine API bereit, um die Touren abzurufen und Stimmen entgegenzunehmen.
+Das Herzstück des Systems ist ein Google Apps Script, das als Backend fungiert. Es wird direkt in einem Google Sheet entwickelt und bereitgestellt.
 
-**2. Frontend (Webseite & Abstimmungs-Seite)**
-- **Abstimmungs-Seite:** Unter `https://hoffnungs-radler-duelmen.de/abstimmung` befindet sich die neue Seite.
-- **Regeln:** Nutzer können bis zu zwei Stimmen für ihre favorisierten Touren abgeben.
-- **Sicherheit:** Der Zugriff auf die Seite ist nur über einen persönlichen Link aus dem Newsletter möglich. Dies stellt sicher, dass nur eingeladene Abonnenten abstimmen und verhindert doppelte Stimmabgaben.
+- **`doGet(e)`**: Diese Funktion dient als API-Endpunkt für GET-Anfragen. Sie kann verschiedene Aktionen ausführen, z.B. das Abrufen der zur Abstimmung stehenden Touren (`action=getVotingTours`) oder das gesamte Touren-Archiv.
+- **`doPost(e)`**: Diese Funktion empfängt POST-Anfragen, um Daten zu speichern. Im aktuellen Fall wird sie verwendet, um die abgegebenen Stimmen zu verarbeiten. Sie prüft, ob ein Nutzer bereits abgestimmt hat und zählt dann die neuen Stimmen.
+- **`setupVoting()`**: Eine Menü-Funktion im Spreadsheet, um eine neue Abstimmungsrunde zu konfigurieren. Sie fragt nach den relevanten Tour-Zeilen und bereitet das `Abstimmung`-Blatt vor.
+- **LockService**: Um konkurrierende Schreibzugriffe zu verhindern (z.B. wenn zwei Nutzer exakt gleichzeitig abstimmen), wird der `LockService` von Google verwendet, der den Zugriff auf den Code-Abschnitt für kurze Zeit sperrt.
 
-**3. Newsletter-Integration (Persönliche Links)**
-- **Link-Generierung:** Im `Newsletter`-Spreadsheet gibt es die Funktion `Newsletter > Personalisierte Abstimmungs-Links erstellen`.
-- **Serienbrief-Funktion:** Diese Funktion erstellt eine Liste mit einzigartigen Links für jeden Abonnenten (z.B. `.../abstimmung?id=subscriber-id-123`).
-- **Platzhalter im Newsletter:** Im Newsletter-Text kann der Platzhalter `[abstimmungs_button]` verwendet werden, der beim Versand automatisch durch den persönlichen Link-Button für jeden Empfänger ersetzt wird.
+### Frontend-Anbindung
+
+Die React-Webseite (speziell die `AbstimmungPage.tsx`) kommuniziert direkt mit der bereitgestellten Web-App-URL des Google Apps Scripts.
+
+- **Daten abrufen (GET)**: Beim Laden der Seite wird eine `fetch`-Anfrage an die Script-URL mit dem Parameter `?action=getVotingTours` gesendet, um die Liste der Touren zu erhalten.
+- **Stimme abgeben (POST)**: Wenn der Nutzer auf "Abstimmen" klickt, wird eine `POST`-Anfrage mit den ausgewählten Touren und der `subscriberId` im Body an die Script-URL gesendet.
+
+Damit die domainübergreifende Anfrage vom Frontend zum Google-Server funktioniert (Stichwort: CORS), sendet das Google Apps Script bei jeder Antwort den `Access-Control-Allow-Origin: *` Header mit. Dies wird in der `createJsonResponse`-Funktion zentral gesteuert.
+
+## Spenden-Verwaltung
 
 ## Technische Details
 
