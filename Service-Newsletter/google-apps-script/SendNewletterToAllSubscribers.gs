@@ -368,7 +368,7 @@ function onOpen() {
       .addItem('Newsletter versenden', 'sendNewsletterToAllSubscribers')
       .addSeparator()
       .addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails')
-      .addToUi();
+    .addToUi();
 }
 
 /**

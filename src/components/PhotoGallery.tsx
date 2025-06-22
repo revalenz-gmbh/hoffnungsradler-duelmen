@@ -9,12 +9,12 @@ const PhotoGallery = () => {
       alt: "2025: Große Scheibe Lette überreicht gesammelte Spenden über 1200 €",
     },
     {
-      src: "/photos/IMG_0255.png",
-      alt: "2024: Hoffnungsradler besuchen Sponsoren",
+      src: "/photos/PXL_20250622_080113338.jpg",
+      alt: "2025: Tour Dorsten Rhade",
     },
     {
-      src: "/photos/Gründungsversammlung.png",
-      alt: "2025: Gründungsversammlung der Hoffnungsradler Dülmen e.V.",
+      src: "/photos/95ce881c-58bc-4a88-872e-a0335e78ca06~1.jpg",
+      alt: "2025: Pause bei Landhaus Föcker",
     },
     {
       src: "/photos/PXL_20250418_080335661.MP.jpg",

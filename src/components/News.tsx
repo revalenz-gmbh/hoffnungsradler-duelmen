@@ -25,35 +25,6 @@ const News = () => {
 Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette' zudem eine starke Führungsarbeit und sorgte für eine schwungvolle Fahrt. Die Hoffnungsradler bedanken sich herzlich für die tolle Unterstützung und den gemeinsamen Einsatz. Die Tour war ein sportlicher und solidarischer Erfolg.`,
       images: ["/zeitungsartikel/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg"],
       type: "internal"
-    },
-    {
-      date: "22.04.2025",
-      title: "Traditioneller Start am Marktplatz",
-      source: "Dülmener Zeitung",
-      excerpt: "An den Ternschersee führte die erste Tour der 22. Saison der Dülmener Hoffnungsradler. Traditionell am Karfreitag machten sich die Radler auf den Weg,...",
-      images: ["/zeitungsartikel/dz250422.png"],
-      type: "press"
-    },
-    {
-      date: "18.04.2025",
-      title: "Saisoneröffnung der Hoffnungsradler mit Tour zum Ternscher See",
-      excerpt: "Am Karfreitag starteten die Dülmener Hoffnungsradler trotz regnerischer Wetterprognosen zu ihrem traditionellen Saisonauftakt. In diesem Jahr führte die Tour zum Ternscher See. Die 52 km lange Strecke wurde von den Radlern ohne Probleme gemeistert - und das Beste: Alle kamen trocken zurück! Zu Beginn der Tour sprach Bürgermeister Carsten Hövekamp ein paar herzliche Grußworte und nutzte die Gelegenheit, Josef Friedag für sein langjähriges Engagement zu ehren.",
-      images: ["/photos/Karfreitag25_1.jpg"],
-      type: "internal"
-    },
-    {
-      date: "12.01.2025",
-      title: "Hoffnungsradler übergeben 7.000 Euro an Elterninitiative",
-      source: "DÜLMENplus",
-      link: "https://duelmenplus.de/hoffnungsradler-uebergeben-7-000-euro-an-elterninitiative/",
-      type: "press"
-    },
-    {
-      date: "23.01.2025",
-      title: "Künftig gemeinnützig auf dem Rad",
-      source: "Dülmener Zeitung",
-      link: "https://www.dzonline.de/sport/lokalsport/kuenftig-gemeinnuetzig-auf-dem-rad-3233070",
-      type: "press"
     }
   ];
 
