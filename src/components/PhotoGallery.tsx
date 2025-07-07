@@ -10,7 +10,7 @@ const PhotoGallery = () => {
     },
     {
       src: "/photos/PXL_20250622_080113338.jpg",
-      alt: "2025: Tour Dorsten Rhade",
+      alt: "2025: Tour-Start nach Dorsten Rhade",
     },
     {
       src: "/photos/95ce881c-58bc-4a88-872e-a0335e78ca06~1.jpg",
@@ -23,7 +23,7 @@ const PhotoGallery = () => {
     {
       src: "/zeitungsartikel/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg",
       alt: "2025: Tour mit Rast in Weseke",
-    },
+    }
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);

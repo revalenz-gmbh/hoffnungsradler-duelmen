@@ -83,20 +83,26 @@ const TourDates = () => {
     {
       date: "20.07.2025",
       day: "Sonntag",
-      name: "in Planung",
-      distance: " km",
+      name: "Tour nach Frettholt-Asbeck",
+      distance: "86 km",
       time: "10:00 Uhr",
       location: "Sportzentrum Süd",
-      address: "Kapellenweg, Dülmen"
+      address: "Kapellenweg, Dülmen",
+      gpxUrl: "https://drive.google.com/uc?export=download&id=12ssb84LnaH8qTjCFtm0IuMT5d5OyvGSy",
+      mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1I2dHsrcoLA_ewU4luTOrciZFvna2gyA&usp=sharing",
+      komootUrl: "https://www.komoot.com/de-de/tour/2385623782?share_token=aeq56EQxcRrX11Kt1a6TtZHyRhLvt7z3bz9wcvdOPxPYkwL6GP&ref=wtd"
     },
     {
-      date: "24.08.2025",
-      day: "Sonntag",
-      name: "in Planung",
-      distance: " km",
+      date: "23.08.2025",
+      day: "Samstag",
+      name: "Matjes Tour",
+      distance: "108 km",
       time: "10:00 Uhr",
       location: "Sportzentrum Süd",
-      address: "Kapellenweg, Dülmen"
+      address: "Kapellenweg, Dülmen",
+      gpxUrl: "https://drive.google.com/uc?export=download&id=1e2Zj8vouvXLYwX1xMxahS5SFm_Eb-aMD",
+      mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1GQIDKl03LpCZLXF68SiK_uiaGJ6VC_k&usp=sharing",
+      komootUrl: "https://www.komoot.com/de-de/tour/2359268070?share_token=aKRLKMKeEl7UUCzrAgijqnWM1k75C8SLlNZcq0fwBlJojbDnOo&ref=wtd"
     },
     {
       date: "28.09.2025",
