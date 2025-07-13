@@ -13,14 +13,10 @@ function onOpen() {
   newsletterMenu.addItem('Neue Anmeldungen verarbeiten', 'processNewSubscriptions');
   newsletterMenu.addItem('Manuelle Abonnenten hinzufügen', 'addManualSubscribers');
   newsletterMenu.addSeparator();
-  newsletterMenu.addItem('Personalisierte Abstimmungs-Links erstellen', 'generateVotingLinks');
-  newsletterMenu.addItem('Google Forms Entry-IDs ermitteln', 'getFormsEntryIds');
-  newsletterMenu.addItem('Migration: Alte Abstimmungs-Links übertragen', 'migrateVotingLinksToMainTable');
-  newsletterMenu.addSeparator();
+  newsletterMenu.addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails');
   
   const adminSubMenu = ui.createMenu('Administration');
   adminSubMenu.addItem('Backup erstellen', 'createBackup');
-  adminSubMenu.addItem('Abstimmungs-URL festlegen', 'menu_setVotingUrl');
   adminSubMenu.addSeparator();
   adminSubMenu.addItem('Trigger-Status (detailliert)', 'showDetailedTriggerStatus');
   adminSubMenu.addItem('Versand manuell fortsetzen', 'manualContinueNewsletterSend');
@@ -34,4 +30,9 @@ function onOpen() {
   newsletterMenu.addSubMenu(adminSubMenu);
   
   newsletterMenu.addToUi();
+  
+  // --- Menü für Tourplanung ---
+  const tourMenu = ui.createMenu('Tourplanung');
+  tourMenu.addItem('Neues Blatt für Tourplanung anlegen', 'menuCreateTourPlanningSheet');
+  tourMenu.addToUi();
 } 

@@ -147,41 +147,34 @@ function sendNewsletterToAllSubscribers() {
       // Prüfe zusätzliche Statusspalte, falls vorhanden
       const sendStatus = data[i][6] || "";
       
-      // Lese Abstimmungs-Link direkt aus der Zeile (Spalte 9 = Index 8)
-      const personalVotingLink = data[i][8] || '';
-      
       // Nur an aktive Abonnenten senden, die nicht als ungültig markiert sind
       if (status === 'aktiv' && sendStatus !== 'ungültig') {
         try {
           processedThisRun++;
           
-          // ==========================================================
-          // Personalisierter Abstimmungs-Link direkt aus der Tabelle
-          // ==========================================================
-          
-          // Platzhalter im Text ersetzen. Funktioniert für Plain-Text und HTML.
-          // ==========================================================
-          
           const newsletterData = {
             tourTitle: tourTitle,
-            tourDescription: tourDescription, // HIER wieder den ORIGINAL-Text übergeben
+            tourDescription: tourDescription,
             tourDate: tourDateTime,
             meetingPoint: meetingPoint,
             unsubscribeLink: unsubscribeLink,
             email: email
           };
           
-          // NEU: Der persönliche Link wird als zweiter Parameter übergeben
-          const newsletter = getNewsletterTemplate(newsletterData, personalVotingLink);
+          const newsletter = getNewsletterTemplate(newsletterData);
           
-          // E-Mail senden
+          // E-Mail senden mit verbesserter UTF-8-Unterstützung
           GmailApp.sendEmail(
             email,
             newsletterSubject,
             newsletter.plainBody,
             { 
               htmlBody: newsletter.htmlBody,
-              name: "Hoffnungsradler Dülmen" 
+              name: "Hoffnungsradler Dülmen",
+              replyTo: "hoffnungsradlerweb@gmail.com",
+              attachments: [],
+              bcc: "",
+              cc: ""
             }
           );
           logNewsletterSendTimestamp();
@@ -372,33 +365,41 @@ function onOpen() {
 }
 
 /**
- * BEISPIEL-NEWSLETTER FÜR TOUR-ABSTIMMUNG
+ * BEISPIEL-NEWSLETTER FÜR TOUR-ANKÜNDIGUNG
  * 
  * Kopiere diesen Text in das "Newsletter_aktuell" Blatt:
  * 
- * B2 (Tour-Titel): Tour-Abstimmung 2025 ist live!
+ * B2 (Tour-Titel): Frühlingstour nach Weseke
  * 
  * B3 (Tour-Beschreibung): 
 Liebe Hoffnungsradler,
 
-es ist soweit - die **Tour-Abstimmung für 2025** ist gestartet! 🚴‍♂️✨
+wir freuen uns, euch zur nächsten gemeinsamen Tour einzuladen!
 
-Wir haben **5 fantastische Touren** für euch ausgewählt und möchten von euch wissen, welche Tour euch am meisten interessiert. Eure Stimme entscheidet, welche Touren wir gemeinsam fahren werden!
+**Tour-Details:**
+» **Datum:** Samstag, 15. April 2025
+» **Uhrzeit:** 10:00 Uhr
+» **Treffpunkt:** Marktplatz Dülmen
+» **Distanz:** ca. 35 km
+» **Schwierigkeit:** Für alle geeignet
 
-**So funktioniert's:**
-✅ Klickt auf den Abstimmungs-Button unten
-✅ Wählt eure Lieblings-Tour aus
-✅ Fertig! Eure Stimme ist gezählt
+**Strecke:**
+Wir fahren über schöne Landwege nach Weseke, machen dort eine gemütliche Pause und kehren auf einer anderen Route zurück. Die Strecke ist überwiegend flach und für alle Fitness-Level geeignet.
 
-[abstimmungs_button]
+**Bitte mitbringen:**
+- Fahrradhelm (Pflicht!)
+- Wetterfeste Kleidung
+- Getränk und kleine Stärkung
+- Gute Laune!
 
-**Warum eure Stimme wichtig ist:**
-Gemeinsam planen wir die schönsten Touren für 2025. Jede Stimme hilft uns dabei, die Touren auszuwählen, die euch wirklich begeistern. Ob gemütliche Rundfahrten oder sportliche Herausforderungen - eure Präferenzen stehen im Mittelpunkt!
+**Anmeldung:**
+Bitte meldet euch bis spätestens Donnerstag, 13. April per E-Mail an info@hoffnungsradler-duelmen.de an, damit wir entsprechend planen können.
 
-Die Abstimmung läuft noch bis Ende des Monats. **Stimmt jetzt ab und seid dabei!**
+Wir freuen uns auf eine schöne gemeinsame Tour!
 
-Sportliche Grüße und vielen Dank für eure Teilnahme! 🙏
+Sportliche Grüße
+Das Team der Hoffnungsradler Dülmen
  * 
- * B4 (Datum/Zeit): [Leer lassen]
- * B5 (Treffpunkt): [Leer lassen] 
+ * B4 (Datum/Zeit): Samstag, 15. April 2025 - 10:00 Uhr
+ * B5 (Treffpunkt): Marktplatz Dülmen
  */ 

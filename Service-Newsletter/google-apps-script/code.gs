@@ -51,11 +51,16 @@ function processSubscriptionEmail(message) {
       // Verwendung der Template-Funktion
       const emailTemplate = getSubscriptionConfirmationEmail(subscriberEmail, unsubscribeLink);
       
+      // Bestätigungs-E-Mail senden mit verbesserter UTF-8-Unterstützung
       GmailApp.sendEmail(
         emailTemplate.to,
         emailTemplate.subject,
         emailTemplate.plainBody,
-        { htmlBody: emailTemplate.htmlBody }
+        { 
+          htmlBody: emailTemplate.htmlBody,
+          name: "Hoffnungsradler Dülmen",
+          replyTo: "hoffnungsradlerweb@gmail.com"
+        }
       );
       
       Logger.log("E-Mail erfolgreich gesendet!");
@@ -85,12 +90,6 @@ function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
     }
   }
   
-  // Stelle sicher, dass die Abstimmungs-Link Spalte existiert
-  ensureVotingLinkColumnInSubscriberSheet(sheet);
-  
-  // Generiere automatisch einen Abstimmungs-Link falls möglich
-  const autoVotingLink = generateVotingLinkForNewSubscriber(subscriberId);
-  
   // Neue Zeile hinzufügen
   sheet.appendRow([
     email,
@@ -100,8 +99,7 @@ function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
     'aktiv',
     '', // Letzter Versand - leer für neue Abonnenten
     '', // Sendestatus - leer für neue Abonnenten
-    '', // Newsletter-ID - leer für neue Abonnenten  
-    autoVotingLink // Abstimmungs-Link - automatisch generiert falls möglich
+    '' // Newsletter-ID - leer für neue Abonnenten  
   ]);
   
   Logger.log("Neuer Abonnent hinzugefügt: " + email);
@@ -110,26 +108,36 @@ function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
 function getSubscriptionConfirmationEmail(email, unsubscribeLink) {
   return {
     to: email,
-    subject: "Bestätigung: Tour-Newsletter Anmeldung",
+    subject: "Bestätigung: Tour-Newsletter Anmeldung - Hoffnungsradler Dülmen",
     plainBody: "Vielen Dank für deine Anmeldung zum Tour-Newsletter der Hoffnungsradler Dülmen!\n\n" +
       "Du wirst künftig Informationen zu unseren geplanten Touren erhalten.\n\n" +
       "Falls du den Newsletter abbestellen möchtest, kannst du jederzeit diesen Link verwenden:\n" + 
       unsubscribeLink,
     htmlBody: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #2E7D32;">Tour-Newsletter der Hoffnungsradler Dülmen</h1>
-        
-        <p>Hallo,</p>
-        
-        <p>vielen Dank für deine Anmeldung zum Tour-Newsletter der Hoffnungsradler Dülmen!</p>
-        
-        <p>Du wirst künftig Informationen zu unseren geplanten Touren erhalten.</p>
-        
-        <p>Mit freundlichen Grüßen,<br>
-        Das Team der Hoffnungsradler Dülmen</p>
-        
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
-          <p>Falls du den Newsletter abbestellen möchtest, kannst du jederzeit <a href="${unsubscribeLink}" style="color: #2E7D32;">diesen Link verwenden</a>.</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+        <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #2E7D32; font-size: 24px; margin-bottom: 10px;">
+              <span style="background-color: #4CAF50; color: white; padding: 5px 10px; border-radius: 15px; font-size: 14px; margin-right: 10px;">RADTOUR</span>
+              Hoffnungsradler Dülmen
+            </h1>
+            <div style="width: 50px; height: 3px; background-color: #4CAF50; margin: 0 auto;"></div>
+          </div>
+          
+          <h2 style="color: #2E7D32; font-size: 20px;">Willkommen bei den Hoffnungsradlern!</h2>
+          
+          <p>Hallo,</p>
+          
+          <p>vielen Dank für deine Anmeldung zum Tour-Newsletter der Hoffnungsradler Dülmen!</p>
+          
+          <p>Du wirst künftig Informationen zu unseren geplanten Touren erhalten.</p>
+          
+          <p>Mit freundlichen Grüßen,<br>
+          Das Team der Hoffnungsradler Dülmen</p>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; font-size: 14px; color: #666; text-align: center;">
+            <p>Falls du den Newsletter abbestellen möchtest, kannst du jederzeit <a href="${unsubscribeLink}" style="color: #2E7D32; text-decoration: none;">diesen Link verwenden</a>.</p>
+          </div>
         </div>
       </div>
     `
@@ -198,8 +206,7 @@ function ensureVotingLinkColumnInSubscriberSheet(sheet) {
     'Status', 
     'Letzter Versand',
     'Sendestatus',
-    'Newsletter-ID',
-    'Abstimmungs-Link'
+    'Newsletter-ID'
   ];
   
   let columnAdded = false;
@@ -217,7 +224,7 @@ function ensureVotingLinkColumnInSubscriberSheet(sheet) {
       sheet.getRange(1, columnIndex).setValue(expectedHeader).setFontWeight('bold');
       
       // Spaltenbreite setzen
-      if (expectedHeader === 'Abstimmungs-Link' || expectedHeader === 'Abmelde-Link') {
+      if (expectedHeader === 'Abmelde-Link') {
         sheet.setColumnWidth(columnIndex, 300);
       } else if (expectedHeader === 'Email') {
         sheet.setColumnWidth(columnIndex, 200);
@@ -235,25 +242,5 @@ function ensureVotingLinkColumnInSubscriberSheet(sheet) {
   
   if (columnAdded) {
     Logger.log('Newsletter-Abonnenten Tabelle wurde aktualisiert.');
-  }
-}
-
-/**
- * Generiert automatisch einen Abstimmungs-Link für einen neuen Abonnenten
- * @param {string} subscriberId - Die Abonnenten-ID
- * @return {string} - Der generierte Link oder leerer String
- */
-function generateVotingLinkForNewSubscriber(subscriberId) {
-  try {
-    const baseUrl = getVotingUrl(); // Ruft die gespeicherte URL ab
-    
-    if (baseUrl && baseUrl.startsWith('http') && subscriberId) {
-      return `${baseUrl}?id=${subscriberId}`;
-    }
-    
-    return ''; // Keine URL gespeichert oder ungültige Parameter
-  } catch (error) {
-    Logger.log(`Fehler beim Generieren des Abstimmungs-Links: ${error.message}`);
-    return '';
   }
 }

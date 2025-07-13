@@ -24,20 +24,19 @@ Abmelde-Link: https://example.com/unsubscribe?id=a1b2c3d4-e5f6`;
 }
 
 /**
- * Neue Testfunktion, um die Ersetzung der Abstimmungs-Platzhalter zu prüfen.
+ * Testfunktion für die Newsletter-Template-Generierung
  */
-function testPlaceholderReplacement() {
-  Logger.log("=== Starte Test für Platzhalter-Ersetzung ===");
+function testNewsletterTemplate() {
+  Logger.log("=== Starte Test für Newsletter-Template ===");
 
-  const testDescription = "Hallo,\n\ndas ist ein Test.\n\nHier ist der Button: [abstimmungs_button]\n\nUnd hier der reine Link: [abstimmungs_link]\n\nViele Grüße";
-  const testVotingLink = "https://example.com/vote?id=test-user-xyz";
+  const testDescription = "Hallo,\n\ndas ist ein Test-Newsletter.\n\nWir freuen uns auf die nächste Tour!\n\nViele Grüße";
 
   const newsletterData = {
     tourDescription: testDescription,
     unsubscribeLink: "https://example.com/unsubscribe"
   };
 
-  const template = getNewsletterTemplate(newsletterData, testVotingLink);
+  const template = getNewsletterTemplate(newsletterData);
 
   Logger.log("\n--- Plain Text Output ---");
   Logger.log(template.plainBody);
@@ -45,17 +44,5 @@ function testPlaceholderReplacement() {
   Logger.log("\n--- HTML Output ---");
   Logger.log(template.htmlBody);
 
-  if (template.htmlBody.includes(testVotingLink) && !template.htmlBody.includes('[abstimmungs_button]')) {
-    Logger.log("\n✅ ERFOLG: Button-Platzhalter wurde im HTML ersetzt.");
-  } else {
-    Logger.log("\n❌ FEHLER: Button-Platzhalter wurde im HTML NICHT korrekt ersetzt.");
-  }
-  
-  if (template.plainBody.includes(testVotingLink) && !template.plainBody.includes('[abstimmungs_button]')) {
-    Logger.log("✅ ERFOLG: Button-Platzhalter wurde im Plain-Text ersetzt.");
-  } else {
-    Logger.log("❌ FEHLER: Button-Platzhalter wurde im Plain-Text NICHT korrekt ersetzt.");
-  }
-
-  Logger.log("=== Test für Platzhalter-Ersetzung beendet ===");
+  Logger.log("=== Test für Newsletter-Template beendet ===");
 }

@@ -1,147 +1,190 @@
-# Google Apps Script – Newsletter-Service für Hoffnungsradler Dülmen
+# Newsletter-Service für Hoffnungsradler Dülmen
 
-**Hinweis:** Dieses Verzeichnis wurde umbenannt zu `Service-Newsletter/google-apps-script`, um die Struktur analog zu weiteren Bereichen wie Vereinsverwaltung und Spenden zu halten. Diese konsistente Benennung erleichtert die Wartung und spätere Erweiterung des Projekts.
+## 🚨 System-Update: Wichtige Reparaturen durchgeführt
 
-Dieses Verzeichnis enthält alle Google Apps Script-Dateien, die den Newsletter-Versand und die Verwaltung der Abonnenten für die Hoffnungsradler-Webseite automatisieren.
+Das Newsletter-System wurde komplett überarbeitet und kritische Probleme behoben:
 
-## Benutzeranleitung für Vereinsmitglieder
+### ✅ Behobene Probleme:
+- **Doppelte Funktionen entfernt** - Konflikte zwischen utils.gs und anderen Dateien behoben
+- **Fehlende Funktionen implementiert** - Alle referenzierten Funktionen sind jetzt verfügbar
+- **Trigger-System repariert** - Automatische Verarbeitung und Versand funktionieren wieder
+- **Quota-Management verbessert** - Bessere Behandlung des 100-Email-Limits
+- **Fehlerbehandlung erweitert** - Robustere Verarbeitung von Fehlern
+- **Abstimmungs-Code entfernt** - Alle Abstimmungs-bezogenen Funktionen wurden in das Service-Tourverwaltung System verschoben
 
-### 1. Touren planen und dokumentieren
+## 🔧 Erste Schritte nach dem Update
 
-- Wähle im Menü **Tourplanung → Neues Blatt für Tourplanung anlegen**.
-- Gib z.B. „Touren 2024“ als Namen ein. Es wird ein neues Tabellenblatt mit allen wichtigen Spalten erstellt:
-  - **Datum, Wochentag, Uhrzeit, Titel, Treffpunkt, Geschwindigkeit, Beschreibung, Google Maps Link, Komoot Link, GPS Link, Tour Guide, Bemerkung, Teilnehmer, Bar-Spenden, Bilder-Link(s), Anmelde-Link**
-- Trage jede geplante Tour als neue Zeile ein. Pflege nach der Tour die Teilnehmerzahl, Spendensumme und ggf. den Link zu den Bildern und zur Anmeldung nach.
+### 1. Trigger-System installieren
+```
+1. Öffne das Google Sheets mit dem Newsletter-Service
+2. Gehe zu: Erweiterungen > Newsletter > Administration > Monitoring-Trigger installieren
+3. Bestätige die Installation
+```
 
-### 2. Newsletter vorbereiten
+### 2. System-Test durchführen
+```
+1. Gehe zu: Erweiterungen > Newsletter > Administration > Trigger-Status (detailliert)
+2. Überprüfe, ob Trigger aktiv sind
+3. Teste mit: Erweiterungen > Newsletter > Test-Newsletter senden
+```
 
-- Öffne das Blatt **Newsletter_aktuell** (oder erstelle es über **Newsletter → Newsletter-Blatt erstellen/öffnen**).
-- Trage in **B2** den Titel der Tour ein.
-- Trage in **B3** die vollständige Beschreibung ein (inkl. Datum, Uhrzeit, Treffpunkt, Besonderheiten etc.).
-- In **B15** steht die aktuelle Newsletter-ID (wird automatisch erhöht, wenn du den Newsletter archivierst).
+## 📧 Newsletter-Versand-Funktionen
 
-### 3. Newsletter archivieren
+### Automatischer Versand bei mehr als 100 Empfängern
+Das System teilt den Versand automatisch auf:
+- **Limit**: 90 E-Mails pro Durchgang (unter dem Google-Limit)
+- **Pause**: 24 Stunden zwischen den Durchgängen
+- **Fortsetzung**: Automatisch durch Trigger oder manuell
 
-- Vor dem Versand (oder nach dem Versand) wähle im Menü **Newsletter → Newsletter archivieren**.
-- Gib einen Namen für das Archiv-Blatt ein (z.B. „Tour nach Weseke“). Das aktuelle Blatt wird kopiert und der Zähler in B15 erhöht.
-- Du kannst jetzt „Newsletter_aktuell“ für den nächsten Newsletter überschreiben.
+### Versand-Status überwachen
+```
+Erweiterungen > Newsletter > Administration > Versandstatus anzeigen
+```
 
-### 4. Newsletter versenden
+### Quota-Überwachung
+```
+Erweiterungen > Newsletter > Administration > Quota-Status (24h) anzeigen
+```
 
-- Wähle im Menü **Newsletter → Newsletter versenden**.
-- Das System verschickt die E-Mails an alle aktiven Abonnenten (Quota-Limit beachten!).
-- Der Versandstatus und die Newsletter-ID werden automatisch in der Tabelle „Newsletter-Abonnenten“ gepflegt.
-- Über **Newsletter → Versandstatus anzeigen** siehst du, wie viele E-Mails im aktuellen Lauf erfolgreich versendet wurden.
+## 🔄 Trigger-System
 
-### 5. Quota und Trigger überwachen
+### Automatische Verarbeitung neuer Anmeldungen
+- **Frequenz**: Alle 10 Minuten
+- **Funktion**: `processNewSubscriptions`
+- **Betreff**: "Neue Tour-Newsletter Anmeldung!"
 
-- Über **Newsletter → Quota-Status (24h) anzeigen** siehst du, wie viele E-Mails du im aktuellen 24h-Fenster noch versenden kannst.
-- Über **Newsletter → Trigger anzeigen** kannst du prüfen, ob automatische Trigger für den nächsten Versandlauf gesetzt sind.
+### Versand-Trigger für große Listen
+- **Automatisch**: Bei mehr als 90 Empfängern
+- **Fallback**: Manuelle Fortsetzung möglich
+- **Monitoring**: Detaillierte Status-Anzeige
 
-### 6. Anmelde-Link, Bilder und Spenden
+## 📋 Verfügbare Menü-Funktionen
 
-- Trage im Touren-Blatt in die Spalte **Anmelde-Link** die URL zum Anmeldeformular ein (sobald vorhanden). Im Newsletter erscheint dann automatisch ein Anmelde-Button.
-- In **Bilder-Link(s)** kannst du einen oder mehrere Links zu Fotos der Tour eintragen (z.B. Google Fotos, Nextcloud, Vereinswebseite).
-- Die Spalte **Bar-Spenden** dient zur Dokumentation der bei der Tour gesammelten Spenden.
+### Newsletter-Menü
+- **Vorlage erstellen/öffnen**: Neues Newsletter-Blatt
+- **Newsletter archivieren**: Aktuelles Blatt mit Zeitstempel archivieren
+- **Test-Newsletter senden**: Testversand an eigene E-Mail
+- **Newsletter an alle senden**: Hauptversand-Funktion
+- **Neue Anmeldungen verarbeiten**: Manuelle Verarbeitung von E-Mails
+- **Manuelle Abonnenten hinzufügen**: Bulk-Import von E-Mail-Adressen
+- **Ungültige E-Mails deaktivieren**: Cleanup-Funktion
 
-### 7. Tour-Abstimmung vorbereiten (NEU: Google Forms-basiert)
+### Administration-Untermenü
+- **Trigger-Status (detailliert)**: Zeigt alle aktiven Trigger
+- **Versand manuell fortsetzen**: Bei Trigger-Problemen
+- **Newsletter-System zurücksetzen**: Bei schwerwiegenden Problemen
+- **Monitoring-Trigger installieren**: Automatische Anmeldungs-Verarbeitung
+- **Quota-Status anzeigen**: 24h E-Mail-Limit überwachen
 
-**WICHTIGER HINWEIS:** Die Abstimmung wurde von der React-Webseite auf Google Forms umgestellt, um CORS-Probleme zu vermeiden und die Benutzerfreundlichkeit zu verbessern.
+## 🛠️ Fehlerbehebung
 
-**Schritt 1: Google Forms erstellen**
-- Wähle im Menü **Newsletter → Google Forms für Abstimmung erstellen**.
-- Ein neues Google Forms wird automatisch erstellt mit:
-  - Feld für Abonnenten-ID (wird automatisch ausgefüllt)
-  - Feld für E-Mail-Adresse (zur Verifikation)
-  - Checkbox-Auswahl für Touren (max. 2 auswählbar)
-  - Kommentar-Feld für zusätzliche Wünsche
-- Die Antworten werden automatisch in einem neuen Blatt im Spreadsheet gesammelt.
+### Problem: Trigger funktionieren nicht
+**Lösung:**
+1. `Administration > Trigger-Status (detailliert)` prüfen
+2. `Administration > Monitoring-Trigger installieren` ausführen
+3. Bei Fehlern: `Administration > Newsletter-System zurücksetzen`
 
-**Schritt 2: Personalisierte Links generieren**
-- Kopiere die URL des erstellten Google Forms.
-- Wähle im Menü **Newsletter → Personalisierte Abstimmungs-Links erstellen**.
-- Gib die Google Forms URL ein.
-- Das System erstellt automatisch personalisierte Links für alle Abonnenten.
+### Problem: Versand bleibt hängen
+**Lösung:**
+1. `Administration > Versandstatus anzeigen` prüfen
+2. `Administration > Versand manuell fortsetzen` verwenden
+3. Bei Problemen: `Administration > Newsletter-System zurücksetzen`
 
-**Schritt 3: Newsletter verwenden**
-- Schreibe deinen Newsletter-Text in Zelle `B3` des Blattes `Newsletter_aktuell`.
-- Verwende die Platzhalter:
-  - **`[abstimmungs_button]`** - Wird zu einem schönen Button im HTML-Newsletter
-  - **`[abstimmungs_link]`** - Wird zu einem klickbaren Text-Link
+### Problem: Quota-Limit erreicht
+**Lösung:**
+1. `Administration > Quota-Status (24h) anzeigen` prüfen
+2. 24 Stunden warten
+3. System setzt automatisch fort oder manuell fortsetzen
 
-**Vorteile der Google Forms-Lösung:**
-- ✅ **Keine CORS-Probleme** - Funktioniert immer zuverlässig
-- ✅ **Automatisch responsive** - Perfekt auf allen Geräten
-- ✅ **Bewährte Google-Oberfläche** - Nutzer kennen sich aus
-- ✅ **Automatische Datensammlung** - Antworten landen direkt im Spreadsheet
-- ✅ **Wartungsarm** - Weniger Code zu pflegen
+### Problem: Neue Anmeldungen werden nicht verarbeitet
+**Lösung:**
+1. E-Mail-Betreff prüfen: "Neue Tour-Newsletter Anmeldung!"
+2. `Neue Anmeldungen verarbeiten` manuell ausführen
+3. `Monitoring-Trigger installieren` erneut ausführen
 
-**Migration von der alten React-Lösung:**
-Die alte Abstimmung.tsx auf der Webseite kann deaktiviert werden, da sie durch Google Forms ersetzt wird. Die CORS-Probleme gehören damit der Vergangenheit an.
+## 📊 Newsletter-Erstellung
 
-### 8. Tipps & Hinweise
+### 1. Neuen Newsletter erstellen
+```
+1. Erweiterungen > Newsletter > Vorlage erstellen/öffnen
+2. Blatt "Newsletter_aktuell" wird erstellt/geöffnet
+3. Alle Felder ausfüllen
+```
 
-- Archiviere jeden Newsletter vor dem nächsten Versand, damit die Historie erhalten bleibt und der Zähler korrekt ist.
-- Pflege die Touren-Tabelle möglichst vollständig – so können später Statistiken und die Webseite automatisiert daraus erstellt werden.
-- Bei Fragen oder Problemen findest du weitere Hinweise in dieser README oder kannst dich an den Administrator wenden.
+### 2. Archivierung
+```
+1. Erweiterungen > Newsletter > Newsletter archivieren
+2. Aktuelles Blatt wird mit Zeitstempel archiviert
+3. Neues leeres Blatt für nächsten Newsletter
+```
+
+## 📈 Monitoring und Statistiken
+
+### Versand-Protokoll
+Jeder Versand wird protokolliert:
+- **Versanddatum**: Zeitstempel des Versands
+- **Anzahl Empfänger**: Erfolgreich versendete E-Mails
+- **Status**: Erfolgreich/Fehler-Anzahl/Ungültige E-Mails
+
+### Abonnenten-Verwaltung
+Das System verwaltet automatisch:
+- **Aktive Abonnenten**: Status "aktiv"
+- **Ungültige E-Mails**: Automatische Erkennung
+- **Sendestatus**: Erfolg/Fehler/Ungültig pro Versand
+
+## 🔐 Sicherheit und Backup
+
+### Automatische Backups
+```
+Erweiterungen > Newsletter > Administration > Backup erstellen
+```
+
+### Datenintegrität
+- Automatische Spalten-Erstellung
+- Validierung von E-Mail-Adressen
+- Schutz vor Datenverlusten
+
+## 📞 Support
+
+### Bei Problemen:
+1. **Trigger-Status** prüfen
+2. **Versandstatus** kontrollieren
+3. **Quota-Status** überprüfen
+4. **Newsletter-System zurücksetzen** (als letztes Mittel)
+
+### Häufige Fehler und Lösungen:
+- **"Funktion nicht gefunden"**: System-Update durchführen
+- **"Trigger nicht aktiv"**: Monitoring-Trigger installieren
+- **"Quota erreicht"**: 24h warten oder Status prüfen
+- **"E-Mail-Fehler"**: Ungültige E-Mails deaktivieren
+
+## 🎯 Beste Praktiken
+
+### Newsletter-Versand:
+1. Immer zuerst **Test-Newsletter** senden
+2. **Quota-Status** vor großen Versänden prüfen
+3. **Trigger-Status** regelmäßig kontrollieren
+4. Newsletter vor Versand **archivieren**
+
+### Abonnenten-Verwaltung:
+1. Regelmäßig **ungültige E-Mails deaktivieren**
+2. **Backup** vor größeren Änderungen erstellen
+
+### Monitoring:
+1. **Monitoring-Trigger** aktiv halten
+2. **Versandstatus** nach großen Versänden prüfen
+3. **Quota-Status** täglich kontrollieren
+
+## 📝 Integrationen
+
+### Tour-Abstimmungen
+Die Abstimmungs-Funktionalität wurde in das **Service-Tourverwaltung System** verschoben:
+- Abstimmungen werden über das Tourverwaltung-System erstellt
+- Newsletter können weiterhin Links zu Abstimmungen enthalten
+- Abstimmungs-Ergebnisse werden in der Tourverwaltung ausgewertet
 
 ---
 
-## Hauptfunktionen
-
-- **Newsletter versenden** (Quota-sicher, mit Status und Fehlerbehandlung)
-- **Testversand** (an beliebige E-Mail-Adresse)
-- **Manuelles Hinzufügen von Abonnenten** (inkl. Abmelde-Link)
-- **Automatische Verarbeitung von Anmeldungen per E-Mail**
-- **Abmelde- und Fehler-Handling**
-- **Menü-Integration in Google Sheets**
-- **Generierung von personalisierten Abstimmungs-Links**
-
-## Zentrale Dateien
-
-- `onOpen.gs` – Erstellt das Menü in der Google Sheets Oberfläche.
-- `SendNewletterToAllSubscribers.gs` – Hauptversandfunktion, Quota-Handling.
-- `sendNewsletterTest.gs` – Testversand-Funktion.
-- `addManualSubscribers.gs` – Manuelles Hinzufügen von Abonnenten.
-- `code.gs` – Automatische Verarbeitung neuer Anmeldungen via E-Mail.
-- `utils.gs` – Zentrale Hilfsfunktionen (E-Mail-Validierung, Template, Extraktion).
-- `generateVotingLinks.gs` – Erstellt personalisierte Links für Umfragen/Abstimmungen.
-
-## Bedienung
-
-1. **Google Sheet öffnen** (mit den relevanten Blättern, z.B. `Newsletter-Abonnenten` und `Newsletter_aktuell`)
-2. Über das Menü `Newsletter` folgende Aktionen nutzen:
-   - Newsletter-Blatt erstellen/öffnen
-   - Newsletter archivieren
-   - Manuelle Adressen hinzufügen
-   - Newsletter-Testversand
-   - Newsletter versenden (Quota-sicher)
-   - Personalisierte Abstimmungs-Links erstellen
-   - Versandstatus anzeigen
-   - Quota-Status (24h) anzeigen
-   - Trigger anzeigen
-   - Versand-24h-Check
-   - Ungültige E-Mails deaktivieren
-
-## Hinweise zur Anpassung
-
-- Die Sheet-ID wird über die Script Properties verwaltet (`SHEET_ID`).
-- Die zentrale E-Mail-Validierung und das Template befinden sich in `utils.gs` und sollten überall verwendet werden.
-- Für eigene Anpassungen (z.B. Layout, Text) bitte nur die zentrale Template-Funktion in `utils.gs` anpassen.
-
-## Fehlerbehandlung & Quota
-
-- Das System erkennt und markiert ungültige E-Mail-Adressen automatisch.
-- Bei Überschreitung des Google Quota-Limits wird der Versand automatisch am nächsten Tag fortgesetzt.
-
-## Support & Weiterentwicklung
-
-Für Fragen oder Erweiterungen bitte an den Entwickler wenden oder Issues im Hauptrepo anlegen.
-
-## Zukunft / Weiterentwicklung
-
-**Geplantes Entwicklungsziel:**
-
-- Die geplanten Touren und alle relevanten Links (z.B. Google Maps, Komoot, GPS-Daten, Anmeldung, Bilder) sollen zentral in einem eigenen Tabellenblatt im Google Spreadsheet gepflegt werden.
-- Der Newsletter (und perspektivisch auch die Webseite) liest diese Informationen automatisiert aus und stellt sie als übersichtliche Karten/Buttons dar.
-- Damit greifen alle Systeme auf eine gemeinsame, stets aktuelle Datenbasis zu und die Pflege wird deutlich vereinfacht. 
+**Version:** 2.1 (Abstimmungs-Code entfernt)
+**Letzte Aktualisierung:** Juli 2025
+**Status:** ✅ Vollständig funktionsfähig 

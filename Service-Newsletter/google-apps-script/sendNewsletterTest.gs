@@ -51,9 +51,8 @@ function sendNewsletterTest() {
     // Newsletter-Betreff erstellen
     const newsletterSubject = "[TEST] Neue Tour-Information: " + tourTitle;
     
-    // Ein Beispiel für einen Abmelde- und einen Abstimmungs-Link für den Test
+    // Ein Beispiel für einen Abmelde-Link für den Test
     const testUnsubscribeLink = "https://hoffnungs-radler-duelmen.de/unsubscribe.html?id=test-id-123456";
-    const testVotingLink = "https://hoffnungs-radler-duelmen.de/abstimmung?id=test-abonnent-123";
 
     // Newsletter-Template mit den benötigten Daten füllen
     const newsletterData = {
@@ -61,17 +60,17 @@ function sendNewsletterTest() {
       unsubscribeLink: testUnsubscribeLink
     };
     
-    // Der Test-Link für die Abstimmung wird als zweiter Parameter übergeben
-    const newsletter = getNewsletterTemplate(newsletterData, testVotingLink);
+    const newsletter = getNewsletterTemplate(newsletterData);
     
-    // Test-E-Mail senden
+    // Test-E-Mail senden mit verbesserter UTF-8-Unterstützung
     GmailApp.sendEmail(
       testEmail,
       newsletterSubject,
       newsletter.plainBody,
       { 
         htmlBody: newsletter.htmlBody,
-        name: "Hoffnungsradler Dülmen [TEST]" 
+        name: "Hoffnungsradler Dülmen [TEST]",
+        replyTo: "hoffnungsradlerweb@gmail.com"
       }
     );
     
