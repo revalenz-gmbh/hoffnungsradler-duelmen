@@ -126,6 +126,18 @@ const Footer = () => {
                   className="h-28 w-28 object-cover rounded-full bg-white"
                 />
               </a>
+              <a
+                href="https://www.djk-roedder.de/abteilungen/radsport/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:opacity-80 transition-opacity"
+              >
+                <img
+                  src="/logos/DJK-Rödder.avif"
+                  alt="DJK Rödder Logo"
+                  className="h-28 w-auto"
+                />
+              </a>
             </div>
           </div>
         </div>

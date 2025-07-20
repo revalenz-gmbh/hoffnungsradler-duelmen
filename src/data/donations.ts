@@ -1,5 +1,5 @@
 export const donations = [
-  { year: 2025, amount: 2492 }, // aktueller Stand
+  { year: 2025, amount: 2582 }, // aktueller Stand
   { year: 2024, amount: 7000 },
   { year: 2023, amount: 13000 },
   { year: 2022, amount: 4000 },
@@ -24,6 +24,6 @@ export const donations = [
 ];
 
 export const totalDonations = 91055;
-export const currentYearDonations = 2492;
+export const currentYearDonations = 2582;
 export const donationGoal = 5000;
 export const donationYear = 2025; 

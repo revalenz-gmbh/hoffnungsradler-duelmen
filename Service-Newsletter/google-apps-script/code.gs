@@ -77,9 +77,33 @@ function processSubscriptionEmail(message) {
 }
 
 function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
-  // Hier musst du deine Sheet-ID einsetzen
+  // OPTION 1: Externes Spreadsheet verwenden (aktuelle Implementierung)
+  // Sheet-ID aus den Einstellungen abrufen
   const sheetId = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
-  const sheet = SpreadsheetApp.openById(sheetId).getSheetByName('Newsletter-Abonnenten');
+  
+  // Überprüfen, ob SHEET_ID gesetzt ist
+  if (!sheetId || sheetId === 'IHRE_SPREADSHEET_ID_HIER_EINFUEGEN') {
+    Logger.log('❌ FEHLER: SHEET_ID ist nicht konfiguriert!');
+    Logger.log('Führen Sie zunächst setupNewsletterSettings() in settings.gs aus.');
+    throw new Error('SHEET_ID ist nicht konfiguriert. Führen Sie setupNewsletterSettings() aus.');
+  }
+  
+  let sheet;
+  try {
+    sheet = SpreadsheetApp.openById(sheetId).getSheetByName('Newsletter-Abonnenten');
+  } catch (error) {
+    Logger.log('❌ FEHLER beim Öffnen des externen Spreadsheets: ' + error.toString());
+    Logger.log('Versuche als Fallback das aktuelle Spreadsheet...');
+    
+    // FALLBACK: Versuche das aktuelle Spreadsheet zu verwenden
+    try {
+      sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Newsletter-Abonnenten');
+      Logger.log('✅ Fallback erfolgreich: Verwende das aktuelle Spreadsheet');
+    } catch (fallbackError) {
+      Logger.log('❌ FEHLER auch beim aktuellen Spreadsheet: ' + fallbackError.toString());
+      throw new Error('Konnte weder auf externes noch aktuelles Spreadsheet zugreifen: ' + error.message);
+    }
+  }
   
   // Überprüfen, ob die E-Mail bereits existiert
   const data = sheet.getDataRange().getValues();
@@ -90,19 +114,37 @@ function saveSubscriberToSheet(email, subscriberId, unsubscribeLink) {
     }
   }
   
-  // Neue Zeile hinzufügen
-  sheet.appendRow([
-    email,
-    new Date(), // Anmeldedatum
-    subscriberId,
-    unsubscribeLink,
-    'aktiv',
-    '', // Letzter Versand - leer für neue Abonnenten
-    '', // Sendestatus - leer für neue Abonnenten
-    '' // Newsletter-ID - leer für neue Abonnenten  
-  ]);
+  // Neue E-Mail hinzufügen
+  const newRow = [email, new Date(), subscriberId, unsubscribeLink, 'aktiv'];
+  sheet.appendRow(newRow);
+  Logger.log("Neue E-Mail hinzugefügt: " + email);
+}
+
+/**
+ * ALTERNATIVE FUNKTION: Nur für lokales Spreadsheet (sicherer)
+ * Verwenden Sie diese Funktion, wenn das Newsletter-Sheet im gleichen Spreadsheet ist!
+ */
+function saveSubscriberToSheetLocal(email, subscriberId, unsubscribeLink) {
+  // Verwendet das aktuelle Spreadsheet - keine externen Berechtigungen nötig
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Newsletter-Abonnenten');
   
-  Logger.log("Neuer Abonnent hinzugefügt: " + email);
+  if (!sheet) {
+    throw new Error('Sheet "Newsletter-Abonnenten" nicht gefunden im aktuellen Spreadsheet');
+  }
+  
+  // Überprüfen, ob die E-Mail bereits existiert
+  const data = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === email) {
+      Logger.log("E-Mail existiert bereits: " + email);
+      return; // E-Mail existiert bereits, nichts tun
+    }
+  }
+  
+  // Neue E-Mail hinzufügen
+  const newRow = [email, new Date(), subscriberId, unsubscribeLink, 'aktiv'];
+  sheet.appendRow(newRow);
+  Logger.log("Neue E-Mail hinzugefügt: " + email);
 }
 
 function getSubscriptionConfirmationEmail(email, unsubscribeLink) {

@@ -16,6 +16,13 @@ function onOpen() {
   newsletterMenu.addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails');
   
   const adminSubMenu = ui.createMenu('Administration');
+  adminSubMenu.addItem('⚙️ System-Setup durchführen', 'setupNewsletterSettings');
+  adminSubMenu.addItem('📋 Einstellungen anzeigen', 'showCurrentSettings');
+  adminSubMenu.addItem('✅ Einstellungen prüfen', 'validateSettings');
+  adminSubMenu.addSeparator();
+  adminSubMenu.addItem('🏠 Auf lokales Sheet umstellen', 'switchToLocalMode');
+  adminSubMenu.addItem('📊 Lokales Newsletter-Sheet erstellen', 'createLocalNewsletterSheet');
+  adminSubMenu.addSeparator();
   adminSubMenu.addItem('Backup erstellen', 'createBackup');
   adminSubMenu.addSeparator();
   adminSubMenu.addItem('Trigger-Status (detailliert)', 'showDetailedTriggerStatus');

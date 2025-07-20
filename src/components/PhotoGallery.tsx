@@ -17,6 +17,10 @@ const PhotoGallery = () => {
       alt: "2025: Pause bei Landhaus Föcker",
     },
     {
+      src: "/photos/Asbeck-Freckhold.jpg",
+      alt: "2025: Pause in Ledgen bei Cafe Ebbing",
+    },
+    {
       src: "/photos/PXL_20250418_080335661.MP.jpg",
       alt: "2025: Bürgermeister Carsten Hövekamp ehrt Josef Friedag zum Saisonauftakt",
     },
