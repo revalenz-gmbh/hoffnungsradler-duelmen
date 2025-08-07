@@ -64,15 +64,16 @@ const Hero = () => {
           alt="Hoffnungsradler cycling group"
           className="w-full h-full object-cover absolute inset-0 z-0"
         />
-        <div className="absolute inset-0 bg-black/60 z-10" />
         <div className="relative z-20 flex flex-col items-center w-full px-4 h-full">
           <div className="text-center mt-12 md:mt-0 flex-1 flex flex-col justify-center">
-            <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in">
+            <h1 className="font-anton text-4xl md:text-6xl lg:text-7xl text-white mb-6 animate-fade-in drop-shadow-lg">
               Hoffnungsradler Dülmen
             </h1>
-            <p className="font-inter text-xl md:text-2xl text-white/90 animate-fade-in-up mb-8">
-              Gemeinsam bewegen wir mehr.
-            </p>
+            <div className="inline-block bg-black/30 backdrop-blur-sm rounded-lg px-6 py-3 mb-8">
+              <p className="font-inter text-xl md:text-2xl text-white animate-fade-in-up drop-shadow-md">
+                Gemeinsam bewegen wir mehr.
+              </p>
+            </div>
 
             {/* NEUER BUTTON FÜR DIE ABSTIMMUNG - VORÜBERGEHEND AUSKOMMENTIERT
             <Dialog>

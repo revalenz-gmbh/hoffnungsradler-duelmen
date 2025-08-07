@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from './components/Header';
+import TourBanner from './components/TourBanner';
 import Index from "./pages/Index";
 import UeberUns from "./pages/UeberUns";
 import TourTermine from "./pages/TourTermine";
@@ -27,7 +28,8 @@ const App = () => (
       <Sonner />
       <Router>
         <Header />
-        <main className="mt-20">
+        <TourBanner />
+        <main>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/presse" element={<Presse />} />
