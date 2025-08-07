@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Calendar, MapPin, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { tours2025 } from './TourDates';
 
 const TourBanner = () => {
@@ -75,12 +76,12 @@ const TourBanner = () => {
           </div>
           
           <div className="ml-4">
-            <a 
-              href="/tour-termine" 
+            <Link 
+              to="/tour-termine" 
               className="bg-white/20 hover:bg-white/30 transition-colors px-3 py-1 rounded text-sm"
             >
               Mehr Infos →
-            </a>
+            </Link>
           </div>
         </div>
       </div>
