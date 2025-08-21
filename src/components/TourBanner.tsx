@@ -42,13 +42,13 @@ const TourBanner = () => {
   return (
     <div className="fixed top-20 w-full z-40 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 md:py-4 shadow-xl">
       <div className="container mx-auto px-4">
-        {/* Mobile: Kompakte einfache Anzeige */}
-        <div className="md:hidden flex items-center justify-center gap-3">
+        {/* Mobile: Kompakte einfache Anzeige (klickbar) */}
+        <Link to="/tour-termine" aria-label="Zu den Tour-Terminen" className="md:hidden flex items-center justify-center gap-3 active:opacity-80">
           <Calendar className="w-4 h-4" />
           <div className="text-center">
             <span className="font-anton text-sm">{formatDate(nextTour.date)}: {nextTour.name}</span>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop: Kompakte Anzeige */}
         <div className="hidden md:flex items-center justify-center gap-6">

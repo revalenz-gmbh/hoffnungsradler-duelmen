@@ -99,7 +99,7 @@ export const tours2025: TourDate[] = [
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
-    gpxUrl: "https://drive.google.com/file/d/1UE00r_AOBPoEzYZgafy3TFOlXwhaW7XL/view?usp=sharing",
+    gpxUrl: "https://drive.google.com/uc?export=download&id=1UE00r_AOBPoEzYZgafy3TFOlXwhaW7XL",
     mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1GQIDKl03LpCZLXF68SiK_uiaGJ6VC_k&usp=sharing",
     komootUrl: "https://www.komoot.com/de-de/tour/2359268070?share_token=aKRLKMKeEl7UUCzrAgijqnWM1k75C8SLlNZcq0fwBlJojbDnOo&ref=wtd"
   },
