@@ -1,4 +1,4 @@
-import { ArrowRightIcon, CalendarIcon } from "lucide-react";
+import { ArrowRightIcon, CalendarIcon, Heart } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,20 @@ const News = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const newsItems = [
+    {
+      date: "24.08.2025",
+      title: "Herzlichen Glückwunsch, Ludger Dey, zum 65. Geburtstag!",
+      excerpt: `Die Hoffnungsradler gratulieren ihrem langjährigen Organisator Ludger Dey ganz herzlich zum 65. Geburtstag. Anlässlich seiner Feier wünschte er sich statt Geschenken Spenden – dadurch kamen weitere 1.500 € für den guten Zweck zusammen. Damit sind wir unserem diesjährigen Spendenziel bereits sehr nahe gekommen.`,
+      type: "internal",
+      highlight: true
+    },
+    {
+      date: "23.08.2025",
+      title: "Gemeinsame Matjes-Tour nach Winterswijk",
+      excerpt: `Am 23. August fand unsere Matjes-Tour nach Winterswijk statt. Bei bestem Radfahrwetter ging es gemeinsam über ruhige Straßen zum Wochenmarkt – ein toller Tag mit starker Gruppe und guter Stimmung!`,
+      images: ["/photos/Matjes 25_1.jpg"],
+      type: "internal"
+    },
     {
       date: "17.05.2025",
       source: "Dülmenplus",
@@ -42,7 +56,7 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                 key={index}
                 className={`bg-white rounded-lg shadow-sm overflow-hidden flex flex-col ${
                   item.type === "internal" ? "p-8" : "p-6"
-                }`}
+                } ${('highlight' in item && (item as any).highlight) ? 'border-l-4 border-amber-400' : ''}`}
               >
                 {/* Text Content */}
                 <div className="flex-grow">
@@ -50,6 +64,12 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                   <div className="text-sm text-gray-500 mb-2">
                     {item.date}
                     {item.source && ` | ${item.source}`}
+                    {('highlight' in item && (item as any).highlight) && (
+                      <span className="ml-2 inline-flex items-center gap-1 text-amber-800 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full text-xs font-medium">
+                        <Heart className="w-3 h-3" />
+                        Spenden-Highlight
+                      </span>
+                    )}
                   </div>
                   
                   {/* Title */}
