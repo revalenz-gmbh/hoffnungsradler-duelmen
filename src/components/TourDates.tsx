@@ -9,8 +9,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 // Einfache Struktur für aktuelle Touren
+interface TourVariant {
+  label: string; // z.B. "48 km"
+  gpxUrl?: string;
+  mapUrl?: string;
+  komootUrl?: string;
+}
+
 interface TourDate {
   date: string;
   day?: string;
@@ -24,6 +32,7 @@ interface TourDate {
   mapUrl?: string;
   komootUrl?: string;
   cancelled?: boolean;
+  variants?: TourVariant[]; // Optional: mehrere Streckenvarianten
 }
 
 // Exportierte Tour-Daten für 2025
@@ -111,11 +120,67 @@ export const tours2025: TourDate[] = [
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
-    speed: "frei"
+    speed: "frei",
+    variants: [
+      { label: "48 km" },
+      { label: "78 km" },
+      { label: "106 km" }
+    ]
   }
 ];
 
+interface ArchiveTour {
+  name: string;
+  distance: string;
+  year: number;
+  downloadUrl: string;
+}
+
 const TourDates = () => {
+  const [tourList, setTourList] = useState<TourDate[]>(tours2025);
+
+  useEffect(() => {
+    const loadVariantLinks = async () => {
+      try {
+        const res = await fetch('https://script.google.com/macros/s/AKfycbyu5QQ6_cSw4lCfVyqNyIxfYH1aKsYvft6NnDzrZDP5vxcRZZH3xgkuVadRN1iEunkA/exec');
+        if (!res.ok) return;
+        const data: ArchiveTour[] = await res.json();
+
+        const normalize = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const isBaumberge = (name: string) => {
+          const n = normalize(name);
+          return n.includes('baumbergealpintour') || n.includes('baumbergeralpintour');
+        };
+
+        const baumberge = data.filter(t => isBaumberge(t.name));
+        if (baumberge.length === 0) return;
+
+        // Mappe Distanz -> Download-URL (z. B. "48 km")
+        const variantMap: Record<string, string> = {};
+        for (const t of baumberge) {
+          const fromName = (t.name || '').match(/(48|78|106)(?=\D|$)/);
+          const fromDistance = String(t.distance || '').match(/(48|78|106)(?=\D|$)/);
+          const num = (fromName?.[1] || fromDistance?.[1]) as string | undefined;
+          if (num) {
+            const label = `${num} km`;
+            if (!variantMap[label]) variantMap[label] = t.downloadUrl;
+          }
+        }
+
+        setTourList(prev => prev.map(td => {
+          if (td.date !== '28.09.2025') return td;
+          const desiredLabels = ['48 km', '78 km', '106 km'];
+          const existing = td.variants && td.variants.length ? td.variants : desiredLabels.map(l => ({ label: l }));
+          const merged = existing.map(v => ({ ...v, gpxUrl: variantMap[v.label] || v.gpxUrl }));
+          return { ...td, variants: merged };
+        }));
+      } catch (e) {
+        console.error('Konnte Varianten-Links nicht laden', e);
+      }
+    };
+    loadVariantLinks();
+  }, []);
+
   return (
     <section className="bg-snow py-32">
       <div className="container mx-auto px-4">
@@ -135,7 +200,7 @@ const TourDates = () => {
                 </tr>
               </thead>
               <tbody>
-                {tours2025.map((tour, index) => (
+                {tourList.map((tour, index) => (
                   <tr 
                     key={index}
                     className={`border-t border-forest/10 ${
@@ -165,59 +230,128 @@ const TourDates = () => {
                       <div className="text-sm text-gray-600">{tour.speed}</div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        {tour.gpxUrl && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-forest hover:text-forest hover:bg-forest/5"
-                            asChild
-                          >
-                            <a 
-                              href={tour.gpxUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="GPX herunterladen"
+                      {tour.variants && tour.variants.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          {tour.variants.map((variant, vIdx) => (
+                            <div key={vIdx} className="border border-forest/10 rounded-lg p-2">
+                              <div className="text-sm font-medium mb-2">{variant.label}</div>
+                              <div className="flex flex-wrap gap-2">
+                                {variant.gpxUrl ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-forest hover:text-forest hover:bg-forest/5"
+                                    asChild
+                                  >
+                                    <a 
+                                      href={variant.gpxUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="GPX herunterladen"
+                                    >
+                                      <Download className="w-4 h-4" />
+                                    </a>
+                                  </Button>
+                                ) : (
+                                  <span className="text-xs text-gray-400">GPX bald verfügbar</span>
+                                )}
+                                {variant.mapUrl ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-forest hover:text-forest hover:bg-forest/5"
+                                    asChild
+                                  >
+                                    <a 
+                                      href={variant.mapUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="Route auf Google Maps ansehen"
+                                    >
+                                      <Map className="w-4 h-4" />
+                                    </a>
+                                  </Button>
+                                ) : (
+                                  <span className="text-xs text-gray-400">Map bald verfügbar</span>
+                                )}
+                                {variant.komootUrl ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-forest hover:text-forest hover:bg-forest/5"
+                                    asChild
+                                  >
+                                    <a 
+                                      href={variant.komootUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="Route auf Komoot ansehen"
+                                    >
+                                      <Link2 className="w-4 h-4" />
+                                    </a>
+                                  </Button>
+                                ) : (
+                                  <span className="text-xs text-gray-400">Komoot bald verfügbar</span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          {tour.gpxUrl && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-forest hover:text-forest hover:bg-forest/5"
+                              asChild
                             >
-                              <Download className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        )}
-                        {tour.mapUrl && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-forest hover:text-forest hover:bg-forest/5"
-                            asChild
-                          >
-                            <a 
-                              href={tour.mapUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Route auf Google Maps ansehen"
+                              <a 
+                                href={tour.gpxUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="GPX herunterladen"
+                              >
+                                <Download className="w-4 h-4" />
+                              </a>
+                            </Button>
+                          )}
+                          {tour.mapUrl && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-forest hover:text-forest hover:bg-forest/5"
+                              asChild
                             >
-                              <Map className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        )}
-                        {tour.komootUrl && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-forest hover:text-forest hover:bg-forest/5"
-                            asChild
-                          >
-                            <a 
-                              href={tour.komootUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Route auf Komoot ansehen"
+                              <a 
+                                href={tour.mapUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Route auf Google Maps ansehen"
+                              >
+                                <Map className="w-4 h-4" />
+                              </a>
+                            </Button>
+                          )}
+                          {tour.komootUrl && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-forest hover:text-forest hover:bg-forest/5"
+                              asChild
                             >
-                              <Link2 className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        )}
-                      </div>
+                              <a 
+                                href={tour.komootUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Route auf Komoot ansehen"
+                              >
+                                <Link2 className="w-4 h-4" />
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

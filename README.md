@@ -324,3 +324,63 @@ Bei Fragen zur Tourpflege oder technischen Problemen:
 - E-Mail: [E-Mail-Adresse]
 - Telefon: [Telefonnummer]
 - WhatsApp-Gruppe: [Link]
+
+## Tourverwaltung (aktuelle Termine + Varianten & automatische GPX-Links)
+
+Dieser Abschnitt beschreibt, wie die Touren gepflegt werden und wie die Webseite automatisch GPX-Links je Streckenvariante anzeigt.
+
+### Bausteine
+- `src/components/TourDates.tsx`: Anzeige der aktuellen Termine des Jahres (Tabelle auf der Seite „Tour-Termine“).
+- `src/pages/UnsereTouren.tsx`: Archivseite. Lädt per Google Apps Script Endpoint eine Liste historischer Touren inkl. direktem `downloadUrl`.
+- Google Apps Script (Service-Tourverwaltung): Pflegt/ermittelt die Daten für das Tour-Archiv (u. a. GPX-Downloads) und stellt sie als JSON bereit.
+
+### Datenmodell (vereinfacht)
+```ts
+interface TourVariant {
+  label: string;        // „48 km“, „78 km“, „106 km“
+  gpxUrl?: string;      // Direktdownload-URL einer GPX-Datei
+  mapUrl?: string;      // optional
+  komootUrl?: string;   // optional
+}
+
+interface TourDate {
+  date: string;         // TT.MM.JJJJ
+  day?: string;         // optional
+  name: string;
+  distance: string;     // Anzeige in der Tabelle (z. B. „48/78/106km“)
+  time: string;
+  location: string;
+  address: string;
+  speed?: string;
+  gpxUrl?: string;      // für einfache Touren ohne Varianten
+  mapUrl?: string;
+  komootUrl?: string;
+  variants?: TourVariant[]; // für Touren mit mehreren Streckenvarianten
+}
+```
+
+### Ablauf für Varianten (Beispiel: 28.09.2025 – Baumberger Alpin‑Tour)
+1. In `tours2025` ist die Tour mit `variants` vordefiniert (Labels „48 km“, „78 km“, „106 km“).
+2. Beim Laden der Seite „Tour‑Termine“ ruft ein `useEffect` in `TourDates.tsx` den gleichen Endpoint ab wie die Seite „Unsere Touren“.
+3. Alle Archiv‑Einträge, deren Name (normalisiert) „baumbergealpintour“ bzw. „baumbergeralpintour“ enthält, werden gefiltert.
+4. Aus Name oder Distance wird die Zahl (48/78/106) extrahiert und pro Label die `downloadUrl` als `gpxUrl` hinterlegt.
+5. Ergebnis: In der Tabelle erscheinen pro Variante automatisch die GPX‑Download‑Buttons, sobald die Daten im Service verfügbar sind.
+
+### Pflege‑Workflow
+- Neue/aktualisierte GPX‑Dateien im Service (Google Apps Script / Spreadsheet) pflegen.
+- Darauf achten, dass im Archiv‑Datensatz
+  - der Name die Zeichenkette „BaumbergeAlpintour“ (oder „Baumberger Alpin‑Tour“) enthält, und
+  - die Distanzzahl (48/78/106) entweder im Namen oder im Distance‑Feld vorkommt.
+- `downloadUrl` sollte ein Direktdownload sein (z. B. Google Drive: `https://drive.google.com/uc?export=download&id=DATEI_ID`) und öffentlich zugänglich.
+- Optional können künftig `mapUrl`/`komootUrl` je Variante ergänzt werden. Die Tabelle zeigt dann zusätzlich Buttons für Maps/Komoot an.
+
+### Einfache Tour ohne Varianten
+- Für alle anderen Termine reicht `gpxUrl` direkt am Terminobjekt (kein `variants`).
+- Buttons erscheinen automatisch, wenn `gpxUrl`/`mapUrl`/`komootUrl` gesetzt sind.
+
+### Neue Tour mit Varianten anlegen
+1. In `tours2025` eine Tour mit `variants: [{ label: "XX km" }, ...]` anlegen.
+2. Im Service drei Archiv‑Einträge mit passendem Namen (enthält „BaumbergeAlpintour“) und den Distanzen (z. B. 48/78/106) pflegen.
+3. Nach dem Deployment/Reload werden die GPX‑Buttons je Variante automatisch sichtbar.
+
+> Vorteil: Inhalte werden zentral im Service gepflegt. Das Frontend übernimmt sie dynamisch – weniger Pflegeaufwand und konsistente Daten.
