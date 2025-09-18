@@ -121,10 +121,11 @@ export const tours2025: TourDate[] = [
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
     speed: "frei",
+    mapUrl: "https://www.google.com/maps/d/edit?mid=1oyrlz9R1EAoHARdRyp4icMReQLZEThQ&ll=51.89805594931107%2C7.311132499999986&z=11",
     variants: [
-      { label: "48 km" },
-      { label: "78 km" },
-      { label: "106 km" }
+      { label: "48 km", komootUrl: "https://www.komoot.com/de-de/tour/1877164999" },
+      { label: "78 km", komootUrl: "https://www.komoot.com/de-de/tour/1319782395" },
+      { label: "106 km", komootUrl: "https://www.komoot.com/de-de/tour/1861946972" }
     ]
   }
 ];
@@ -255,7 +256,7 @@ const TourDates = () => {
                                 ) : (
                                   <span className="text-xs text-gray-400">GPX bald verfügbar</span>
                                 )}
-                                {variant.mapUrl ? (
+                                {(variant.mapUrl || tour.mapUrl) ? (
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -263,7 +264,7 @@ const TourDates = () => {
                                     asChild
                                   >
                                     <a 
-                                      href={variant.mapUrl}
+                                      href={variant.mapUrl || tour.mapUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       title="Route auf Google Maps ansehen"
