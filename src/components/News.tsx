@@ -11,6 +11,13 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "28.09.2025",
+      title: "Baumberge Alpin‑Tour – aus dem Nebel hinauf in die Sonne",
+      excerpt: `Besonders in diesem Jahr: Wir starteten im Nebel und erst in den Baumbergen zeigte sich die Sonne. Bei km 30 wartete unser Verpflegungsteam und versorgte alle mit Obst und Getränken – vielen Dank! Drei Varianten (48/78/106 km) boten sportliche Herausforderungen und großartige Ausblicke.`,
+      images: ["/photos/Alpin25b.jpg", "/photos/Alpin25D.jpg"],
+      type: "internal"
+    },
+    {
       date: "24.08.2025",
       title: "Herzlichen Glückwunsch, Ludger Dey, zum 65. Geburtstag!",
       excerpt: `Die Hoffnungsradler gratulieren ihrem langjährigen Organisator Ludger Dey ganz herzlich zum 65. Geburtstag. Anlässlich seiner Feier wünschte er sich statt Geschenken Spenden – dadurch kamen weitere 1.500 € für den guten Zweck zusammen. Damit sind wir unserem diesjährigen Spendenziel bereits sehr nahe gekommen.`,
@@ -90,16 +97,20 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                 {/* Image / Link Section */}
                 <div className="mt-4 space-y-4">
                   {/* Image display logic for internal articles */}
-                  {item.type === 'internal' && item.images && (
-                    <DialogTrigger asChild>
-                      <button onClick={() => setSelectedImage(item.images![0])} className="block w-full">
-                        <img
-                          src={item.images[0]}
-                          alt={`News vom ${item.date}`}
-                          className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity"
-                        />
-                      </button>
-                    </DialogTrigger>
+                  {item.type === 'internal' && item.images && item.images.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {item.images.map((img, i) => (
+                        <DialogTrigger asChild key={i}>
+                          <button onClick={() => setSelectedImage(img)} className="block w-full">
+                            <img
+                              src={img}
+                              alt={`News vom ${item.date} – Bild ${i + 1}`}
+                              className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity"
+                            />
+                          </button>
+                        </DialogTrigger>
+                      ))}
+                    </div>
                   )}
 
                   {/* Link / Image trigger logic for press articles */}
