@@ -1,0 +1,122 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Monorepo-Patterns für die Revalenz Platform
+
+## Ziel
+Diese Regeln stellen sicher, dass die Entwicklung in der Monorepo-Struktur mit Frontend (React/Vite), Backend (Express.js/Prisma) und Shared Package konsistent und effizient erfolgt.
+
+## Monorepo-Struktur
+
+### Package-Verantwortlichkeiten
+- **`shared/`**: Types, Schemas, Constants, Utilities - **NUR HIER** zentrale Definitionen
+- **`revalenz-takeaction/`**: React/Vite Frontend - verwendet `@revalenz/shared`
+- **`revalenz-backend/`**: Express.js Backend mit Prisma - verwendet `@revalenz/shared`
+
+## Shared Package Regeln
+
+### Wann Shared Package verwenden
+- **IMMER**: Types, Interfaces, API-Endpunkt-Konstanten
+- **IMMER**: Zod-Validierungsschemas  
+- **IMMER**: Benutzerrollen und Berechtigungen
+- **NIEMALS**: React-Komponenten oder Express-Middleware
+
+### Build-Reihenfolge beachten
+1. **Shared Package** muss ZUERST gebaut werden: `npm run build:shared`
+2. Dann Frontend/Backend
+3. Bei Type-Änderungen: Shared rebuilden → alle abhängigen Packages testen
+
+## Cross-Package Entwicklung
+
+### Type-Konsistenz
+- **Verwende AUSSCHLIESSLICH** Shared Types für API-Kommunikation
+- **Keine Duplikation** von Types zwischen Frontend/Backend
+- **Beispiel**: `import { User, CreateUserData } from '@revalenz/shared'`
+
+### API-Endpunkte
+- **Verwende** `API_ENDPOINTS` Konstanten aus Shared Package
+- **Beispiel**: `fetch(API_ENDPOINTS.AUTH.LOGIN)` statt hardcodierte URLs
+
+### Validierung
+- **Frontend**: Zod-Schemas für Formular-Validierung
+- **Backend**: Gleiche Zod-Schemas für Request-Validierung
+- **Beispiel**: `LoginSchema.parse(formData)`
+
+## Workflow-Regeln
+
+### Bei Frontend-Änderungen
+- **Prüfe** ob Backend-API betroffen ist
+- **Teste** API-Integration nach Shared-Type-Änderungen
+- **Verwende** TypeScript für End-to-End Type-Safety
+
+### Bei Backend-Änderungen  
+- **Aktualisiere** Shared Types bei Datenmodel-Änderungen
+- **Regeneriere** Prisma Client: `npx prisma generate`
+- **Teste** Frontend-Integration
+
+### Bei Shared-Änderungen
+- **Rebuilde** Shared Package: `npm run build:shared`
+- **Teste** BEIDE Services: Frontend UND Backend
+- **Dokumentiere** Breaking Changes
+
+## Package-spezifische Patterns
+
+### Frontend (`revalenz-takeaction/`)
+- **React/Vite** Patterns (nicht Next.js!)
+- **Komponenten** unter 300 Zeilen
+- **API-Calls** mit Shared Constants und Types
+- **State Management** einfach halten (useState/useContext)
+
+### Backend (`revalenz-backend/`)
+- **Express.js** mit modularen Routen
+- **Prisma** für Datenbankzugriff
+- **DTOs** basieren auf Shared Types
+- **Middleware** für Authentifizierung/Validierung
+
+### Shared (`shared/`)
+- **Nur reine TypeScript** - keine Framework-Dependencies
+- **Zod** für Validierung
+- **Strikte Type-Definitionen**
+- **Semantic Versioning** bei Änderungen
+
+## Dateipfad-Konventionen
+
+### Imports
+```typescript
+// ✅ Korrekt
+import { User, API_ENDPOINTS } from '@revalenz/shared';
+
+// ❌ Falsch
+import { User } from '../../../shared/src/types/user';
+```
+
+### Pfad-Referenzen in Dokumentation
+- **Frontend**: `revalenz-takeaction/src/components/`
+- **Backend**: `revalenz-backend/src/api/`
+- **Shared**: `shared/src/types/`
+
+## Testing-Strategie
+
+### Unit Tests
+- **Shared Package**: Tests für Validierungslogik
+- **Frontend**: Komponent-Tests mit React Testing Library
+- **Backend**: API-Route-Tests mit Jest/Supertest
+
+### Integration Tests
+- **Cross-Package**: Frontend-Backend API-Integration
+- **Type-Safety**: Shared Types in beiden Umgebungen
+
+## Environment-Spezifische Regeln
+
+### Development
+- **Concurrently**: Beide Services mit `npm run dev`
+- **Hot Reload**: Shared-Änderungen erfordern manuellen Rebuild
+
+### Build/Deployment
+- **Reihenfolge**: Shared → Frontend → Backend
+- **Dependency-Check**: Workspace-Abhängigkeiten prüfen
+
+Diese Regeln ergänzen die bestehenden Coding-Patterns und stellen sicher, dass die Monorepo-Architektur optimal genutzt wird.
+

@@ -13,8 +13,35 @@ const News = () => {
     {
       date: "28.09.2025",
       title: "Baumberge Alpin‑Tour – aus dem Nebel hinauf in die Sonne",
-      excerpt: `Besonders in diesem Jahr: Wir starteten im Nebel und erst in den Baumbergen zeigte sich die Sonne. Bei km 30 wartete unser Verpflegungsteam und versorgte alle mit Obst und Getränken – vielen Dank! Drei Varianten (48/78/106 km) boten sportliche Herausforderungen und großartige Ausblicke.`,
-      images: ["/photos/Alpin25b.jpg", "/photos/Alpin25D.jpg"],
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Besonders in diesem Jahr: Wir starteten im Nebel und erst in den Baumbergen zeigte sich die Sonne.
+          </p>
+          <DialogTrigger asChild>
+            <button onClick={() => setSelectedImage("/photos/Alpin25b.jpg")} className="block w-full">
+              <figure>
+                <img src="/photos/Alpin25b.jpg" alt="Start im Nebel" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <figcaption className="text-xs text-gray-500 mt-1">Start im Nebel – später Sonne in den Baumbergen</figcaption>
+              </figure>
+            </button>
+          </DialogTrigger>
+          <p className="text-gray-700">
+            Bei km 30 wartete unser Verpflegungsteam und versorgte alle mit Obst und Getränken – vielen Dank!
+          </p>
+          <DialogTrigger asChild>
+            <button onClick={() => setSelectedImage("/photos/Alpin25D.jpg")} className="block w-full">
+              <figure>
+                <img src="/photos/Alpin25D.jpg" alt="Verpflegungsstation bei km 30" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <figcaption className="text-xs text-gray-500 mt-1">Verpflegungsstation bei km 30 in der Sonne</figcaption>
+              </figure>
+            </button>
+          </DialogTrigger>
+          <p className="text-gray-700">
+            Drei Varianten (48/78/106 km) boten sportliche Herausforderungen und großartige Ausblicke.
+          </p>
+        </div>
+      ),
       type: "internal"
     },
     {
@@ -86,18 +113,20 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                     {item.title}
                   </h3>
 
-                  {/* Excerpt - Unified Styling */}
-                  {item.excerpt && (
+                  {/* Content or Excerpt */}
+                  {('content' in item && (item as any).content) ? (
+                    (item as any).content
+                  ) : item.excerpt ? (
                     <p className="text-gray-700 mb-4">
                       {item.excerpt}
                     </p>
-                  )}
+                  ) : null}
                 </div>
                 
                 {/* Image / Link Section */}
                 <div className="mt-4 space-y-4">
-                  {/* Image display logic for internal articles */}
-                  {item.type === 'internal' && item.images && item.images.length > 0 && (
+                  {/* Interne Beiträge: Galerie nur, wenn kein Inline-Content vorhanden */}
+                  {item.type === 'internal' && item.images && item.images.length > 0 && !('content' in item) && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {item.images.map((img, i) => (
                         <DialogTrigger asChild key={i}>
