@@ -62,13 +62,48 @@ Nach dem Öffnen des Spreadsheets finden Sie oben ein Menü **"📊 Buchhaltung"
   - Dashboard aktualisieren
   - Jahresabschluss erstellen
   - Quittung ausstellen
+  - 📧 Quittung per E-Mail versenden
+  - Mitglieder-Zuordnung aktualisieren
+- **👥 Mitglieder**:
+  - Mitglieder-Info erstellen
+  - 📧 Test-E-Mail senden
+  - Mitglieder-Info versenden
+- **🔄 Import**:
+  - Import-Regeln bearbeiten
+  - Bekannte Spender anzeigen
+- **💾 Backup**:
+  - Backup jetzt erstellen
+  - Automatisches Backup einrichten
 - **Alle Tabellen neu anlegen**: Setzt das komplette System auf
+
+**Dokumentation**: 
+- [MITGLIEDER_INFO.md](MITGLIEDER_INFO.md) - E-Mail-Versand an Mitglieder
+- [BACKUP_SYSTEM.md](BACKUP_SYSTEM.md) - Datensicherung
+- [SPENDENQUITTUNGEN_EMAIL.md](SPENDENQUITTUNGEN_EMAIL.md) - Quittungen per E-Mail versenden
 
 ---
 
 ## Tägliche Aufgaben
 
 ### Spende über Bankkonto erhalten
+
+**Zwei Methoden:**
+
+#### **Methode 1: Copy & Paste (Empfohlen) ⭐**
+
+1. Sparkassen-Export herunterladen: **Excel (CSV - gefilterte Einträge)**
+2. CSV mit Excel öffnen
+3. Daten markieren (ohne Kopfzeile) und kopieren (Strg+C)
+4. In Spreadsheet → **"Zahlungseingänge Konto"** → Erste freie Zeile → Einfügen (Strg+V)
+5. ✅ Fertig!
+
+**Vorteil:** Super schnell - alle Daten auf einmal!
+
+📖 **Detaillierte Anleitung:** [COPY_PASTE_IMPORT.md](./COPY_PASTE_IMPORT.md)
+
+---
+
+#### **Methode 2: Manuelle Eingabe**
 
 **Schritt 1: Kontoauszug prüfen**
 - Öffnen Sie Ihr Online-Banking
@@ -201,13 +236,27 @@ Belegnummer: R-2025-001
 
 **Wichtig:** Spenden ab 300 € benötigen eine Zuwendungsbestätigung!
 
-**Methode 1: Über Menü (empfohlen)**
+**Methode 1: Über Menü (empfohlen)** ⭐
 
 1. **📊 Buchhaltung** → **Aktionen** → **Quittung ausstellen**
 2. Im Dialog eingeben: `Zahlungseingänge Konto,5`
    - Format: `Tabellenname,Zeilennummer`
 3. System generiert automatisch eine Quittungsnummer (z.B. 2025-0001)
-4. Beide Tabellen werden automatisch aktualisiert
+4. **Automatischer E-Mail-Versand**:
+   - ✅ Wenn E-Mail-Adresse gefunden → Quittung wird automatisch per E-Mail versendet
+   - ℹ️ Wenn keine E-Mail-Adresse → Hinweis wird angezeigt (manueller Versand möglich)
+5. Beide Tabellen werden automatisch aktualisiert
+
+**Automatischer E-Mail-Versand:**
+- System sucht E-Mail-Adresse in Mitglieder-Tabelle
+- Wenn gefunden: Quittung wird automatisch per E-Mail versendet
+- Professionelle HTML-E-Mail mit allen Quittungsdetails
+- Versand-Status wird in Quittungstabelle dokumentiert
+
+**Manueller E-Mail-Versand:**
+- Wenn automatischer Versand fehlgeschlagen ist
+- **📊 Buchhaltung** → **Aktionen** → **📧 Quittung per E-Mail versenden**
+- Quittungsnummer eingeben, E-Mail-Adresse eingeben, versenden
 
 **Methode 2: Manuell**
 
@@ -216,20 +265,15 @@ Belegnummer: R-2025-001
 3. Setzen Sie **"Quittung ausgestellt"** auf **"Ja"**
 4. Tragen Sie eine Quittungsnummer ein (Format: JAHR-XXXX, z.B. 2025-0012)
 5. Öffnen Sie **Spendenquittungen**
-6. Fügen Sie manuell einen Eintrag hinzu:
-   - Quittungsnummer: 2025-0012
-   - Datum Ausstellung: Heute
-   - Jahr der Spende: 2025
-   - Spender Name: [Name]
-   - Betrag: [Betrag]
-   - Quelltabelle: Zahlungseingänge Konto
-   - Zeile: [Zeilennummer]
-   - Status: Ausgestellt
+6. Fügen Sie manuell einen Eintrag hinzu
 
 **Wichtig:**
-- Bewahren Sie eine Kopie der Quittung auf
-- Versenden Sie die Quittung per Post an den Spender
+- ✅ **E-Mail-Versand**: Quittungen werden automatisch per E-Mail versendet (wenn E-Mail-Adresse vorhanden)
+- ✅ **Alternative**: Bei fehlender E-Mail-Adresse per Post versenden
+- ✅ **Dokumentation**: Versand-Status wird in Quittungstabelle dokumentiert
 - Bei Spenden unter 300 €: Vereinfachter Nachweis genügt
+
+**Siehe auch:** [SPENDENQUITTUNGEN_EMAIL.md](SPENDENQUITTUNGEN_EMAIL.md) für detaillierte Anleitung zum E-Mail-Versand
 
 ---
 
@@ -329,7 +373,7 @@ Bemerkung: Pressetermin mit Foto, Artikel in Dülmen+
 
 ### Wie stelle ich eine Spendenquittung aus?
 
-**Antwort:** Nutzen Sie das Menü **📊 Buchhaltung → Aktionen → Quittung ausstellen**. Geben Sie Tabellenname und Zeile an (z.B. `Zahlungseingänge Konto,5`). Das System generiert automatisch die Quittungsnummer.
+**Antwort:** Nutzen Sie das Menü **📊 Buchhaltung → Aktionen → Quittung ausstellen**. Geben Sie Tabellenname und Zeile an (z.B. `Zahlungseingänge Konto,5`). Das System generiert automatisch die Quittungsnummer und sendet sie per E-Mail (wenn E-Mail-Adresse vorhanden).
 
 ---
 

@@ -12,9 +12,12 @@ Das Buchhaltungssystem für die Hoffnungsradler Dülmen e.V. ist eine vollständ
 
 ✅ **Automatisches Dashboard** mit Echtzeit-Übersicht über alle Finanzen  
 ✅ **CSV-Import** für Kontoauszüge mit intelligenter Kategorisierung  
+✅ **Copy & Paste Import** für Sparkassen-Exporte (direkt aus Excel)  
 ✅ **Regelbasierte Zuordnung** mit Lern-Effekt (bekannte Spender)  
 ✅ **Spendenquittungs-System** mit fortlaufender Nummerierung  
 ✅ **Jahresabschluss-Funktion** (Einnahmen-Überschuss-Rechnung)  
+✅ **Mitglieder-Info-Versand** per E-Mail an alle aktiven Mitglieder  
+✅ **Backup-System** mit automatischen täglichen Backups  
 ✅ **API-Integration** für die Website  
 ✅ **Strukturierte Tabellen** für alle Buchungen  
 ✅ **Gemeinnützigkeits-konform**  
@@ -89,6 +92,62 @@ Sicherheits-Dokumentation und Best Practices:
 - Notfall-Maßnahmen
 
 📖 **Wichtig: Bitte lesen Sie dies für sicheren Betrieb!**
+
+---
+
+### 6. [MITGLIEDERVERWALTUNG.md](./MITGLIEDERVERWALTUNG.md) 👥
+**Für: Schatzmeister & Vorstand**
+
+Mitgliederverwaltung mit automatischer Zuordnung:
+- Mitgliedertabelle verwalten
+- Automatische Mitgliedsnummer-Zuordnung
+- IBAN/Name-basierte Erkennung
+- Beitragsstatus-Tracking
+- Workflows & Best Practices
+
+📖 **Für Vereine mit Mitgliedern - automatische Zuordnung!**
+
+---
+
+### 7. [MITGLIEDER_INFO.md](./MITGLIEDER_INFO.md) 📧
+**Für: Vorstand & Kommunikationsverantwortliche**
+
+Mitglieder-Info-Versand per E-Mail:
+- E-Mails an alle aktiven Mitglieder versenden
+- Professionelle E-Mail-Templates
+- Automatische Empfänger-Filterung
+- Versand-Statistiken
+- Archivierung
+
+📖 **Für wichtige Vereinsmitteilungen!**
+
+---
+
+### 8. [BACKUP_SYSTEM.md](./BACKUP_SYSTEM.md) 💾
+**Für: Alle Administratoren**
+
+Backup-System für Datensicherung:
+- Manuelle Backups erstellen
+- Automatische tägliche Backups
+- E-Mail-Benachrichtigungen
+- Backup-Verwaltung & Wiederherstellung
+- Best Practices
+
+📖 **Wichtig: Schützen Sie Ihre Daten mit regelmäßigen Backups!**
+
+---
+
+### 9. [SPENDENQUITTUNGEN_EMAIL.md](./SPENDENQUITTUNGEN_EMAIL.md) 📧
+**Für: Schatzmeister & Buchhalter**
+
+Automatischer Versand von Spendenquittungen per E-Mail:
+- Automatischer Versand beim Ausstellen
+- Professionelle HTML-E-Mails
+- Manueller Nachversand
+- E-Mail-Adressen aus Mitglieder-Tabelle
+- Versand-Status Dokumentation
+
+📖 **Zeit sparen mit automatischem Quittungsversand!**
 
 ---
 

@@ -302,8 +302,12 @@ Das Projekt verfügt über ein vollständiges Buchhaltungssystem basierend auf G
 
 ### Features
 - ✅ **Automatisches Dashboard** mit Echtzeit-Übersicht über Einnahmen, Ausgaben und Saldo
+- ✅ **CSV-Import & Copy & Paste** für Kontoauszüge mit intelligenter Kategorisierung
 - ✅ **Spendenquittungs-System** mit automatischer fortlaufender Nummerierung
+- ✅ **Automatischer E-Mail-Versand von Spendenquittungen** (wenn E-Mail-Adresse vorhanden)
 - ✅ **Jahresabschluss-Funktion** (Einnahmen-Überschuss-Rechnung)
+- ✅ **Mitglieder-Info-Versand** per E-Mail an alle aktiven Mitglieder
+- ✅ **Backup-System** mit automatischen täglichen Backups
 - ✅ **API-Integration** für dynamische Anzeige auf der Website
 - ✅ **Strukturierte Tabellen** für:
   - Zahlungseingänge (Konto)
@@ -318,6 +322,9 @@ Die komplette Dokumentation finden Sie unter:
 - **📖 [Buchhaltung Übersicht](docs/README.md)** - Gesamtübersicht & Navigation
 - **🚀 [Installation](docs/INSTALLATION.md)** - Schritt-für-Schritt Setup-Anleitung
 - **📚 [Benutzerhandbuch](docs/BUCHHALTUNG_HANDBUCH.md)** - Tägliche Arbeit mit dem System
+- **📧 [Mitglieder-Info](docs/MITGLIEDER_INFO.md)** - E-Mail-Versand an Mitglieder
+- **📧 [Spendenquittungen E-Mail](docs/SPENDENQUITTUNGEN_EMAIL.md)** - Automatischer Quittungsversand per E-Mail
+- **💾 [Backup-System](docs/BACKUP_SYSTEM.md)** - Datensicherung & Wiederherstellung
 - **✅ [Jahresabschluss-Checkliste](docs/JAHRESABSCHLUSS_CHECKLISTE.md)** - Kompletter Workflow für Jahresende
 
 ### Schnellstart
