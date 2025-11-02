@@ -296,7 +296,58 @@ Die React-Webseite (speziell die `AbstimmungPage.tsx`) kommuniziert direkt mit d
 
 Damit die domainübergreifende Anfrage vom Frontend zum Google-Server funktioniert (Stichwort: CORS), sendet das Google Apps Script bei jeder Antwort den `Access-Control-Allow-Origin: *` Header mit. Dies wird in der `createJsonResponse`-Funktion zentral gesteuert.
 
-## Spenden-Verwaltung
+## Buchhaltung & Spenden-Verwaltung
+
+Das Projekt verfügt über ein vollständiges Buchhaltungssystem basierend auf Google Spreadsheets mit automatisierten Funktionen:
+
+### Features
+- ✅ **Automatisches Dashboard** mit Echtzeit-Übersicht über Einnahmen, Ausgaben und Saldo
+- ✅ **Spendenquittungs-System** mit automatischer fortlaufender Nummerierung
+- ✅ **Jahresabschluss-Funktion** (Einnahmen-Überschuss-Rechnung)
+- ✅ **API-Integration** für dynamische Anzeige auf der Website
+- ✅ **Strukturierte Tabellen** für:
+  - Zahlungseingänge (Konto)
+  - Bargeldspenden
+  - Ausgaben
+  - Übergebene Spenden
+  - Spendenquittungen
+
+### Dokumentation
+Die komplette Dokumentation finden Sie unter:
+
+- **📖 [Buchhaltung Übersicht](docs/README.md)** - Gesamtübersicht & Navigation
+- **🚀 [Installation](docs/INSTALLATION.md)** - Schritt-für-Schritt Setup-Anleitung
+- **📚 [Benutzerhandbuch](docs/BUCHHALTUNG_HANDBUCH.md)** - Tägliche Arbeit mit dem System
+- **✅ [Jahresabschluss-Checkliste](docs/JAHRESABSCHLUSS_CHECKLISTE.md)** - Kompletter Workflow für Jahresende
+
+### Schnellstart
+1. Lesen Sie die [Installation](docs/INSTALLATION.md)
+2. Richten Sie das Google Spreadsheet mit Apps Script ein
+3. Konfigurieren Sie die Website-Integration
+4. Beginnen Sie mit der Datenpflege
+
+### Technische Integration
+Das System besteht aus zwei Komponenten:
+
+**Backend (Google Apps Script):**
+- Liegt in `Service-Vereinsverwaltung/google-apps-script/Code.gs`
+- Stellt REST-API bereit (nur aggregierte, nicht-personenbezogene Daten)
+- Verwaltet alle Buchhaltungsdaten
+- 🔒 Sensible Endpunkte blockiert (Datenschutz)
+
+**Frontend (React):**
+- `src/lib/buchhaltung-api.ts` - API-Client
+- `src/lib/api-config.ts` - Konfiguration
+- `src/components/Hero.tsx` - Zeigt Spenden-Fortschritt
+- `src/pages/Spenden.tsx` - Zeigt übergebene Spenden
+
+Die Website lädt die Daten automatisch aus dem Google Spreadsheet und zeigt sie in Echtzeit an.
+
+**Sicherheit:**
+- ✅ Nur aggregierte Daten über API verfügbar
+- ✅ Keine personenbezogenen Daten (Namen, IBANs) öffentlich
+- ✅ Schreib-Operationen nur im Spreadsheet
+- 📖 Siehe [docs/SICHERHEIT.md](docs/SICHERHEIT.md) für Details
 
 ## Technische Details
 

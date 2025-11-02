@@ -4,8 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getDashboard, getUebergabeSummen } from "../lib/buchhaltung-api";
 
 const Hero = () => {
+  // Spendendaten - Start mit statischen Werten, werden dann durch API aktualisiert
+  const [currentDonations, setCurrentDonations] = useState(currentYearDonations);
+  const [totalDonationsValue, setTotalDonationsValue] = useState(totalDonations);
+  
   // Animierte Zahlen
   const [animatedCurrent, setAnimatedCurrent] = useState(0);
   const [animatedTotal, setAnimatedTotal] = useState(0);
@@ -13,17 +18,41 @@ const Hero = () => {
   // Banner-Steuerung
   const showCancellationBanner = false; // Auf true setzen, um den Banner anzuzeigen
 
+  // Lade aktuelle Daten von der API
+  useEffect(() => {
+    const fetchDonationData = async () => {
+      try {
+        // Versuche Dashboard-Daten zu laden (aktuelles Jahr)
+        const dashboard = await getDashboard();
+        if (dashboard && dashboard.einnahmen) {
+          setCurrentDonations(dashboard.einnahmen.gesamt);
+        }
+        
+        // Lade Gesamtsumme aller übergebenen Spenden
+        const uebergabe = await getUebergabeSummen();
+        if (uebergabe && uebergabe.gesamt) {
+          setTotalDonationsValue(uebergabe.gesamt);
+        }
+      } catch (error) {
+        console.log('Verwende statische Spendendaten als Fallback');
+        // Bei Fehler: Behalte die statischen Werte
+      }
+    };
+
+    fetchDonationData();
+  }, []);
+
   useEffect(() => {
     // Animation für aktuelle Spendensumme
     let start = 0;
     const duration = 1200;
     const step = (timestamp: number, startTime: number) => {
       const progress = Math.min((timestamp - startTime) / duration, 1);
-      setAnimatedCurrent(Math.floor(progress * currentYearDonations));
+      setAnimatedCurrent(Math.floor(progress * currentDonations));
       if (progress < 1) {
         requestAnimationFrame((t) => step(t, startTime));
       } else {
-        setAnimatedCurrent(currentYearDonations);
+        setAnimatedCurrent(currentDonations);
       }
     };
     requestAnimationFrame((t) => step(t, t));
@@ -32,15 +61,15 @@ const Hero = () => {
     const durationTotal = 1500;
     const stepTotal = (timestamp: number, startTime: number) => {
       const progress = Math.min((timestamp - startTime) / durationTotal, 1);
-      setAnimatedTotal(Math.floor(progress * totalDonations));
+      setAnimatedTotal(Math.floor(progress * totalDonationsValue));
       if (progress < 1) {
         requestAnimationFrame((t) => stepTotal(t, startTime));
       } else {
-        setAnimatedTotal(totalDonations);
+        setAnimatedTotal(totalDonationsValue);
       }
     };
     requestAnimationFrame((t) => stepTotal(t, t));
-  }, []);
+  }, [currentDonations, totalDonationsValue]);
 
   // Fortschritt für Balken
   const progress = Math.min(animatedCurrent / donationGoal, 1);

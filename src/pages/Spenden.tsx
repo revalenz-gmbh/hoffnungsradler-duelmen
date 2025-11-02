@@ -10,35 +10,63 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { fetchUebergabeSummen } from "../lib/fetchUebergabeSummen";
+import { getUebergabeSummen } from "../lib/buchhaltung-api";
+import type { UebergabeSummen } from "../lib/buchhaltung-api";
+
+// Statische Daten für Empfänger-Organisationen (werden mit API-Daten kombiniert)
+const recipientMapping: { [year: number]: string } = {
+  2024: "Datteln Elterninitiative krebskranker Kinder",
+  2023: "Datteln Elterninitiative krebskranker Kinder",
+  2022: "Datteln Elterninitiative krebskranker Kinder",
+  2021: "Kinderkrebshilfe Münster",
+  2020: "Datteln Elterninitiative krebskranker Kinder",
+  2019: "Datteln Elterninitiative krebskranker Kinder",
+  2018: "Kinderkrebshilfe Münster",
+  2017: "Kinder u. Jugendliche-Krebsberatung-Münster",
+  2016: "Datteln Elterninitiative krebskranker Kinder",
+  2015: "Datteln Elterninitiative krebskranker Kinder",
+  2014: "Datteln Elterninitiative krebskranker Kinder",
+  2013: "Datteln Elterninitiative krebskranker Kinder / Tour der Hoffnung",
+  2012: "Tour der Hoffnung",
+  2011: "Tour der Hoffnung",
+  2010: "Tour der Hoffnung",
+  2009: "Tour der Hoffnung",
+  2008: "Tour der Hoffnung",
+  2007: "Tour der Hoffnung",
+  2006: "Tour der Hoffnung",
+  2005: "Tour der Hoffnung",
+  2004: "Tour der Hoffnung",
+};
 
 const Spenden = () => {
-  const donations = [
-    { year: 2024, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 7000.0 },
-    { year: 2023, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 13000.0 },
-    { year: 2022, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 4000.0 },
-    { year: 2021, recipient: "Kinderkrebshilfe Münster", amount: 4500.0 },
-    { year: 2020, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5600.0 },
-    { year: 2019, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5500.0 },
-    { year: 2018, recipient: "Kinderkrebshilfe Münster", amount: 5000.0 },
-    { year: 2017, recipient: "Kinder u. Jugendliche-Krebsberatung-Münster", amount: 5000.0 },
-    { year: 2016, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 7000.0 },
-    { year: 2015, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5600.0 },
-    { year: 2014, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 5555.0 },
-    { year: 2013, recipient: "Datteln Elterninitiative krebskranker Kinder", amount: 2000.0 },
-    { year: 2013, recipient: "Tour der Hoffnung", amount: 3000.0 },
-    { year: 2012, recipient: "Tour der Hoffnung", amount: 4000.0 },
-    { year: 2011, recipient: "Tour der Hoffnung", amount: 4000.0 },
-    { year: 2010, recipient: "Tour der Hoffnung", amount: 3000.0 },
-    { year: 2009, recipient: "Tour der Hoffnung", amount: 2500.0 },
-    { year: 2008, recipient: "Tour der Hoffnung", amount: 1700.0 },
-    { year: 2007, recipient: "Tour der Hoffnung", amount: 1300.0 },
-    { year: 2006, recipient: "Tour der Hoffnung", amount: 1200.0 },
-    { year: 2005, recipient: "Tour der Hoffnung", amount: 500.0 },
-    { year: 2004, recipient: "Tour der Hoffnung", amount: 100.0 },
-  ];
+  const [donationsData, setDonationsData] = useState<UebergabeSummen | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getUebergabeSummen();
+        setDonationsData(data);
+      } catch (error) {
+        console.error("Fehler beim Laden der Spendendaten:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Konvertiere API-Daten in Tabellen-Format
+  const donations = donationsData
+    ? Object.entries(donationsData.summen).map(([year, amount]) => ({
+        year: parseInt(year),
+        recipient: recipientMapping[parseInt(year)] || "Kinderkrebshilfe",
+        amount: amount,
+      }))
+    : [];
+
+  const totalDonations = donationsData?.gesamt || 91055;
   const tableData = [...donations].sort((a, b) => b.year - a.year);
 
   const organizations = [
@@ -193,26 +221,41 @@ Spende Hoffnungsradler
 
             {/* Tabelle der übergebenen Spenden */}
             <div className="bg-white rounded-lg shadow-lg border border-forest/10 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-24">Jahr</TableHead>
-                    <TableHead className="min-w-[300px]">Organisation</TableHead>
-                    <TableHead className="text-right w-32">Betrag</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tableData.map((donation, index) => (
-                    <TableRow key={`${donation.year}-${index}`}>
-                      <TableCell className="font-medium">{donation.year}</TableCell>
-                      <TableCell>{donation.recipient}</TableCell>
-                      <TableCell className="text-right">
-                        {donation.amount.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
-                      </TableCell>
+              {loading ? (
+                <div className="p-12 text-center">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-forest"></div>
+                  <p className="mt-4 text-text">Lade Spendendaten...</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-24">Jahr</TableHead>
+                      <TableHead className="min-w-[300px]">Organisation</TableHead>
+                      <TableHead className="text-right w-32">Betrag</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {tableData.length > 0 ? (
+                      tableData.map((donation, index) => (
+                        <TableRow key={`${donation.year}-${index}`}>
+                          <TableCell className="font-medium">{donation.year}</TableCell>
+                          <TableCell>{donation.recipient}</TableCell>
+                          <TableCell className="text-right">
+                            {donation.amount.toLocaleString("de-DE", { style: "currency", currency: "EUR" })}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center text-text/60 py-8">
+                          Keine Spendendaten verfügbar
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              )}
             </div>
           </div>
         </div>
