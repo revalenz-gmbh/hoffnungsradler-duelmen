@@ -1,0 +1,92 @@
+# Claude Skills Configuration für Cursor
+
+Du hast Zugriff auf spezialisierte Skills im `.claude/skills` Ordner. Nutze diese aktiv, wenn relevante Aufgaben anstehen.
+
+## 🎨 Frontend Enhancer
+**Pfad:** `.claude/skills/frontend-enhancer/`
+
+Nutze diesen Skill für:
+- UI/UX Verbesserungen und moderne Design-Patterns
+- Performance-Optimierung (Lazy Loading, Code Splitting)
+- Accessibility (ARIA, Semantic HTML, Keyboard Navigation)
+- Responsive Design und Mobile-First Ansätze
+- React/Vue/Angular Best Practices
+- CSS/Tailwind/Styled-Components Optimierung
+- Animation und Interaktivität
+
+**Vorgehen:** Schaue in die SKILL.md für spezifische Guidelines und Patterns.
+
+---
+
+## 🎯 Pitch Deck Generator
+**Pfad:** `.claude/skills/pitch-deck/`
+
+Nutze diesen Skill für:
+- Erstellung von Investor-Präsentationen
+- Startup-Story und Value Proposition
+- Marktanalyse und Wettbewerbsübersicht
+- Finanzprojektionen und Business Model
+- Problem-Solution-Framework
+- Team und Roadmap Slides
+
+**Vorgehen:** Folge der Struktur in SKILL.md für überzeugende Pitch Decks.
+
+---
+
+## 🔍 SEO Optimizer
+**Pfad:** `.claude/skills/seo-optimizer/`
+
+Nutze diesen Skill für:
+- Meta-Tags Optimierung (Title, Description, OG-Tags)
+- Semantic HTML und Strukturierte Daten (Schema.org)
+- Sitemap und robots.txt Generierung
+- Performance-Optimierung (Core Web Vitals)
+- Keyword-Analyse und Content-Optimierung
+- Internal Linking Strategie
+- Mobile SEO und Indexierung
+
+**Vorgehen:** Analysiere die SKILL.md für SEO-Checklisten und Best Practices.
+
+---
+
+## 🧪 Test Specialist
+**Pfad:** `.claude/skills/test-specialist/`
+
+Nutze diesen Skill für:
+- Unit Tests (Jest, Vitest, Mocha)
+- Integration Tests
+- E2E Tests (Playwright, Cypress)
+- Test Coverage Analyse
+- Mocking und Stubbing Strategien
+- TDD/BDD Ansätze
+- Snapshot Testing
+- Performance und Load Testing
+
+**Vorgehen:** Referenziere die SKILL.md für Testing-Patterns und Beispiele.
+
+---
+
+## 📋 Allgemeine Nutzungsregeln
+
+1. **Skill-Aktivierung:** Wenn eine Aufgabe zu einem dieser Bereiche gehört, konsultiere zuerst die entsprechende SKILL.md Datei im `.claude/skills/[skill-name]/` Ordner.
+
+2. **Best Practices:** Folge den in den Skills definierten Standards und Patterns.
+
+3. **Kombination:** Skills können kombiniert werden (z.B. Frontend Enhancer + Test Specialist für getestete UI-Komponenten).
+
+4. **Dokumentation:** Verweise bei Bedarf auf die Skill-Dokumentation für Details.
+
+5. **Proaktiv:** Schlage relevante Skills vor, wenn du Verbesserungspotenzial siehst.
+
+---
+
+## 🚀 Beispiel-Prompts
+
+- "Nutze den frontend-enhancer Skill um diese Komponente zu verbessern"
+- "Mit dem seo-optimizer: Analysiere die Meta-Tags dieser Seite"
+- "Verwende test-specialist um Tests für diese Funktion zu schreiben"
+- "Erstelle mit pitch-deck einen Investor-Pitch für mein Startup"
+
+---
+
+**Hinweis:** Alle Skills befinden sich im `.claude/skills/` Ordner. Bei Unsicherheiten schaue in die jeweilige SKILL.md Datei für detaillierte Anleitungen.

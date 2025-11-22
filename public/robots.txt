@@ -1,0 +1,16 @@
+# robots.txt für Hoffnungsradler Dülmen e.V.
+# https://www.hoffnungs-radler-duelmen.de
+
+User-agent: *
+Allow: /
+
+# Verhindere Indexierung von Admin- oder privaten Bereichen (falls vorhanden)
+# Disallow: /admin/
+# Disallow: /api/
+
+# Sitemap-Verweis
+Sitemap: https://www.hoffnungs-radler-duelmen.de/sitemap.xml
+
+# Crawl-Delay für höfliche Crawler (optional)
+Crawl-delay: 1
+

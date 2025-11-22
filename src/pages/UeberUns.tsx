@@ -1,9 +1,21 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 const UeberUns = () => {
   return (
     <div className="min-h-screen bg-snow">
+      <SEOHead 
+        title="Über uns - Unsere Geschichte und Mission"
+        description="Die Hoffnungsradler Dülmen wurden 2003 gegründet und sammeln durch Rennradtouren Spenden für krebskranke Kinder. Lernen Sie unsere Geschichte, Mission und das Team kennen."
+        url="https://www.hoffnungs-radler-duelmen.de/ueber-uns"
+        keywords="Hoffnungsradler Geschichte, Vereinsgründung Dülmen, Josef Friedag, Carlo Hüwe, gemeinnütziger Verein"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Über uns", url: "https://www.hoffnungs-radler-duelmen.de/ueber-uns" }
+      ]} />
       {/* Header with Back Navigation */}
       <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4">

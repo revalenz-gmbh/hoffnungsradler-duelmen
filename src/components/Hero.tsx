@@ -90,7 +90,7 @@ const Hero = () => {
       <div className="relative h-screen flex flex-col justify-center items-center">
         <img
           src="/photos/Hoffnungsradler Titelphoto.png"
-          alt="Hoffnungsradler cycling group"
+          alt="Hoffnungsradler Dülmen Rennradgruppe - Gemeinsam Radfahren für krebskranke Kinder im Münsterland"
           className="w-full h-full object-cover absolute inset-0 z-0"
         />
         <div className="relative z-20 flex flex-col items-center w-full px-4 h-full">

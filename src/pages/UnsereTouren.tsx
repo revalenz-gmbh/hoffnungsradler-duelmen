@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../components/MainLayout';
 import { FaDownload, FaSpinner } from 'react-icons/fa';
+import SEOHead from '@/components/SEOHead';
+import BreadcrumbSchema from '@/components/schemas/BreadcrumbSchema';
 
 interface Tour {
   name: string;
@@ -56,6 +58,17 @@ const UnsereTouren: React.FC = () => {
 
   return (
     <MainLayout>
+      <SEOHead 
+        title="Unsere Touren - Tour-Archiv mit GPX-Downloads"
+        description="Entdecken Sie unser umfangreiches Tour-Archiv mit allen bisherigen Rennradtouren der Hoffnungsradler Dülmen. Inklusive GPX-Downloads für Ihre nächste Tour."
+        url="https://www.hoffnungs-radler-duelmen.de/unsere-touren"
+        keywords="Tour-Archiv, GPX Downloads, Rennradstrecken Münsterland, historische Touren"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Unsere Touren", url: "https://www.hoffnungs-radler-duelmen.de/unsere-touren" }
+      ]} />
+      
       <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center">

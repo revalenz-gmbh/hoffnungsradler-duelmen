@@ -3,6 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import emailjs from '@emailjs/browser';
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const NewsletterUnsubscribe = () => {
   const [searchParams] = useSearchParams();
@@ -62,6 +63,12 @@ const NewsletterUnsubscribe = () => {
   
   return (
     <div className="min-h-screen bg-snow">
+      <SEOHead 
+        title="Newsletter abmelden"
+        description="Newsletter der Hoffnungsradler Dülmen abmelden. Sie können sich jederzeit wieder für unseren Newsletter anmelden."
+        url="https://www.hoffnungs-radler-duelmen.de/newsletter/abmelden"
+      />
+      
       {/* Header mit Zurück-Navigation */}
       <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4">

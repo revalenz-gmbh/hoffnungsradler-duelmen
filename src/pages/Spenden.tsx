@@ -12,6 +12,8 @@ import {
 import { useEffect, useState } from "react";
 import { getUebergabeSummen } from "../lib/buchhaltung-api";
 import type { UebergabeSummen } from "../lib/buchhaltung-api";
+import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 // Statische Daten für Empfänger-Organisationen (werden mit API-Daten kombiniert)
 const recipientMapping: { [year: number]: string } = {
@@ -115,6 +117,17 @@ Spende Hoffnungsradler
 
   return (
     <div className="min-h-screen bg-snow">
+      <SEOHead 
+        title="Spenden für krebskranke Kinder - Über 90.000€ gesammelt"
+        description="Die Hoffnungsradler Dülmen haben über 90.000 Euro für krebskranke Kinder gesammelt. Erfahren Sie mehr über unsere Spenden-Historie und wie Sie helfen können."
+        url="https://www.hoffnungs-radler-duelmen.de/spenden"
+        keywords="Spenden krebskranke Kinder, Elterninitiative Datteln, Kinderkrebshilfe Münster, Spendenquittung, Bankverbindung"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Spenden", url: "https://www.hoffnungs-radler-duelmen.de/spenden" }
+      ]} />
+      
       {/* Header with Back Navigation */}
       <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4">

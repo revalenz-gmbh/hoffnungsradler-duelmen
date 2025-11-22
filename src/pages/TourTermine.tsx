@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import TourDates from "@/components/TourDates";
+import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 interface WeatherData {
   temperature: number;
@@ -66,6 +68,17 @@ const TourTermine = () => {
 
   return (
     <div className="min-h-screen bg-snow">
+      <SEOHead 
+        title="Tour-Termine 2025 - Aktuelle Rennradtouren"
+        description="Alle aktuellen Tour-Termine der Hoffnungsradler Dülmen 2025. Gemeinsame Rennradtouren im Münsterland für den guten Zweck. Inkl. Wetterdaten und GPX-Downloads."
+        url="https://www.hoffnungs-radler-duelmen.de/tour-termine"
+        keywords="Rennradtouren 2025, Tour-Termine Dülmen, Baumberge Alpin-Tour, Münsterland Radtouren, GPX Download"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Tour-Termine", url: "https://www.hoffnungs-radler-duelmen.de/tour-termine" }
+      ]} />
+      
       {/* Header with Back Navigation */}
       <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4">

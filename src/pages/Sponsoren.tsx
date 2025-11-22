@@ -1,5 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 const Sponsoren = () => {
   const sponsors = [
@@ -49,6 +51,17 @@ const Sponsoren = () => {
 
   return (
     <div className="min-h-screen bg-snow">
+      <SEOHead 
+        title="Unsere Sponsoren und Partner"
+        description="Danke an unsere Sponsoren und Partner, die die Hoffnungsradler Dülmen unterstützen: DÜMO Reisemobile, Kes Thiel & Co, Fahrrad XXL Hürter, Stadtwerke Dülmen und viele mehr."
+        url="https://www.hoffnungs-radler-duelmen.de/sponsoren"
+        keywords="Sponsoren Hoffnungsradler, Partner Dülmen, DÜMO, Stadtwerke Dülmen, Fahrrad XXL"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Sponsoren", url: "https://www.hoffnungs-radler-duelmen.de/sponsoren" }
+      ]} />
+      
       {/* Header with Back Navigation */}
       <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4">

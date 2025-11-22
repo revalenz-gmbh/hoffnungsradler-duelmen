@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 interface PressArticle {
   date: string;
@@ -81,6 +83,17 @@ const Presse = () => {
 
   return (
     <Dialog onOpenChange={(isOpen) => !isOpen && setSelectedImage(null)}>
+      <SEOHead 
+        title="Presse & Medienberichte über die Hoffnungsradler"
+        description="Presseberichte und Medienecho über die Hoffnungsradler Dülmen in der Dülmener Zeitung, DÜLMENplus und weiteren Medien. Aktuelle Artikel und Berichte."
+        url="https://www.hoffnungs-radler-duelmen.de/presse"
+        keywords="Hoffnungsradler Presse, Dülmener Zeitung, DÜLMENplus, Medienberichte, Presseecho"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Presse", url: "https://www.hoffnungs-radler-duelmen.de/presse" }
+      ]} />
+      
       <div className="container mx-auto py-8 px-4">
         <h1 className="text-4xl font-bold mb-8">Pressespiegel</h1>
         

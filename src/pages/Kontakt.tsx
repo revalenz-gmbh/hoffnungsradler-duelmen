@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import emailjs from '@emailjs/browser';
 import { useToast } from "@/components/ui/use-toast";
+import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 const Kontakt = () => {
   const { toast } = useToast();
@@ -65,6 +67,16 @@ const Kontakt = () => {
 
   return (
     <div className="min-h-screen bg-snow">
+      <SEOHead 
+        title="Kontakt - Hoffnungsradler Dülmen erreichen"
+        description="Kontaktieren Sie die Hoffnungsradler Dülmen e.V. Wir freuen uns auf Ihre Nachricht, Fragen oder Anregungen. E-Mail: hoffnungsradlerinfo@gmail.com"
+        url="https://www.hoffnungs-radler-duelmen.de/kontakt"
+        keywords="Kontakt Hoffnungsradler, Hoffnungsradlerinfo, Dülmen Kontakt, Kontaktformular"
+      />
+      <BreadcrumbSchema items={[
+        { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
+        { name: "Kontakt", url: "https://www.hoffnungs-radler-duelmen.de/kontakt" }
+      ]} />
       {/* Header with Back Navigation */}
       <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4">

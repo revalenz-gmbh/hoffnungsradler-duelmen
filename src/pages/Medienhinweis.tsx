@@ -1,8 +1,14 @@
 import { Camera } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const Medienhinweis = () => {
   return (
     <div className="container mx-auto px-4 py-12">
+      <SEOHead 
+        title="Medienhinweis - Foto- und Videoaufnahmen"
+        description="Hinweise zu Foto- und Videoaufnahmen bei Veranstaltungen der Hoffnungsradler Dülmen e.V. Informationen zum Umgang mit Bildrechten."
+        url="https://www.hoffnungs-radler-duelmen.de/medienhinweis"
+      />
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <h1 className="font-anton text-3xl text-forestDark">

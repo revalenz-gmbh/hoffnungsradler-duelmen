@@ -38,9 +38,11 @@ var VEREIN_SATZUNGSPARAGRAPHEN = '§ 52 Abs. 2 Satz 1 Nr. 3 AO';
 // Unterzeichner für Spendenbescheinigungen
 var UNTERZEICHNER_NAME = 'Martin Stolz';
 var UNTERZEICHNER_FUNKTION = '1. Vorsitzender';
+var UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID = '1bv2OuuTh0NcCrwCxR7gTzRH5O1W2PKkt'; // Unterschrift aus Google Drive (privat & sicher)
 
-// Logo-URL (wird in Google Docs eingebettet)
-var VEREIN_LOGO_URL = 'https://hoffnungsradler-duelmen.de/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png';
+// Vereinslogo aus Google Drive (privat & sicher)
+var VEREIN_LOGO_DRIVE_ID = '1TicglZ0oYXaxXvLQDAwyU9Rz1WK7NLap'; // Hoffnungsradler Logo
+var VEREIN_LOGO_URL = 'https://hoffnungsradler-duelmen.de/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png'; // Fallback für Website
 
 // Spaltenindizes für "Kontobewegungen" (0-basiert)
 var KONTO_COL_AUFTRAGSKONTO = 0;      // Spalte A
@@ -196,6 +198,8 @@ function onOpen() {
     .addSeparator()
     .addSubMenu(ui.createMenu('📄 Spendenquittungen')
       .addItem('✏️ Quittung ausstellen', 'showQuittungDialog')
+      .addItem('📊 Sammelquittung erstellen', 'showSammelquittungDialog')
+      .addSeparator()
       .addItem('❌ Quittung stornieren', 'showStornierungDialog')
       .addItem('📧 Quittung per E-Mail versenden', 'sendReceiptEmailManual'))
     .addSeparator()
@@ -278,7 +282,7 @@ function createDashboardSheet() {
   // Spalte I (9) = Betrag, nur positive Werte (>0) zählen
   // "Intern" wird NICHT gezählt, um Doppelzählung zu vermeiden (Bargeldeinzahlungen auf das Konto)
   // WICHTIG: Nur BARGELD-Spenden zählen zu Einnahmen, Sachspenden werden separat ausgewiesen
-  // INDIRECT() verhindert, dass Google Sheets die Formeln beim Sortieren automatisch anpasst
+  // Custom Functions (z.B. EINNAHMEN_KONTO_JAHR) ermöglichen robuste Berechnungen über dynamische Bereiche
   // WICHTIG: Deutsche Formel-Syntax mit Semikolon statt Komma!
   // HINWEIS: WENNFEHLER weggelassen, da es bei leeren Tabellen automatisch 0 zurückgibt
   var einnahmenRows = [
@@ -353,10 +357,10 @@ function createDashboardSheet() {
     .setHorizontalAlignment('center');
   
   // ACHTUNG: Neue Spaltenstruktur - Quittung ist jetzt Spalte M (13), Quittungsnummer ist Spalte N (14)
-  // INDIRECT() verhindert, dass Google Sheets die Formeln beim Sortieren automatisch anpasst
+  // Dynamische Bereiche (z.B. M2:M) beziehen sich automatisch auf alle Daten ohne feste Zeilenanzahl
   var quittungRows = [
-    ['Konto-Quittungen', '=ZÄHLENWENN(INDIREKT("Kontobewegungen!M2:M1000");"Ja")', '=ZÄHLENWENNS(INDIREKT("Kontobewegungen!M2:M1000");"<>Ja";INDIREKT("Kontobewegungen!M2:M1000");"<>")', '=MAX(INDIREKT("Kontobewegungen!N2:N1000"))', '✅'],
-    ['Bar-/Sachspenden-Quittungen', '=ZÄHLENWENN(INDIREKT("' + "'Bar- und Sachspenden'!F2:F1000" + '");"Ja")', '=ZÄHLENWENNS(INDIREKT("' + "'Bar- und Sachspenden'!F2:F1000" + '");"<>Ja";INDIREKT("' + "'Bar- und Sachspenden'!F2:F1000" + '");"<>")', '=MAX(INDIREKT("' + "'Bar- und Sachspenden'!G2:G1000" + '"))', '✅'],
+    ['Konto-Quittungen', '=ZÄHLENWENN(Kontobewegungen!M2:M;"Ja")', '=ZÄHLENWENNS(Kontobewegungen!M2:M;"<>Ja";Kontobewegungen!M2:M;"<>")', '=MAX(Kontobewegungen!N2:N)', '✅'],
+    ['Bar-/Sachspenden-Quittungen', '=ZÄHLENWENN(' + "'Bar- und Sachspenden'!F2:F" + ';"Ja")', '=ZÄHLENWENNS(' + "'Bar- und Sachspenden'!F2:F" + ';"<>Ja";' + "'Bar- und Sachspenden'!F2:F" + ';"<>")', '=MAX(' + "'Bar- und Sachspenden'!G2:G" + ')', '✅'],
     ['Gesamt', '=B27+B28', '=C27+C28', '', '']
   ];
   sheet.getRange('A27:E29').setValues(quittungRows);
@@ -619,6 +623,7 @@ function createSpenderadressenSheet() {
     'Email',
     'Telefon',
     'IBAN',
+    'Zugehörige Kontonamen',  // NEU: Für Familien/Mehrfachspender (komma-getrennt)
     'Notizen',
     'Erstellt am'
   ];
@@ -643,6 +648,7 @@ function createSpenderadressenSheet() {
     200,  // Email
     120,  // Telefon
     200,  // IBAN
+    250,  // Zugehörige Kontonamen (z.B. "Hans Müller, Maria Müller")
     250,  // Notizen
     120   // Erstellt am
   ];
@@ -657,7 +663,7 @@ function createSpenderadressenSheet() {
   // Dropdown für Anrede
   var anredeRange = sheet.getRange('B2:B1000');
   var anredeRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Herr', 'Frau', 'Firma', 'Familie', ''], true)
+    .requireValueInList(['Herr', 'Frau', 'Ehepaar', 'Familie', 'Firma', ''], true)
     .build();
   anredeRange.setDataValidation(anredeRule);
   
@@ -1132,11 +1138,12 @@ function normalizeName(name) {
  * Generiert Spendenbescheinigung als PDF (NEUE VERSION - Template-basiert)
  * Basierend auf dem Rotary Club Beispiel, angepasst für Hoffnungsradler Dülmen e.V.
  */
-function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum) {
+function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum, istSachspende) {
   Logger.log('=== NEUE PDF-Generierung gestartet ===');
   Logger.log('Quittungsnummer: ' + receiptNumber);
   Logger.log('Spender: ' + spenderName);
   Logger.log('Betrag: ' + betrag);
+  Logger.log('Sachspende: ' + (istSachspende ? 'JA' : 'NEIN'));
   
   // WICHTIG: Prüfe Gültigkeit des Feststellungsbescheids
   var gueltigBis = new Date(VEREIN_FESTSTELLUNGSBESCHEID_GUELTIG_BIS.split('.').reverse().join('-'));
@@ -1176,41 +1183,76 @@ function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, qu
   body.setMarginLeft(70);
   body.setMarginRight(70);
   
-  // === HEADER MIT LOGO ===
+  // === HEADER MIT LOGO RECHTS UND AUSSTELLER LINKS (nebeneinander) ===
+  var headerTable = body.appendTable();
+  var headerRow = headerTable.appendTableRow();
+  
+  // Linke Spalte: Aussteller-Informationen + Titel + Bescheinigungsnummer
+  var leftCell = headerRow.appendTableCell();
+  leftCell.appendParagraph('Aussteller (Bezeichnung und Anschrift der steuerbegünstigten Einrichtung):')
+    .setFontSize(8).setBold(false).setSpacingBefore(0).setSpacingAfter(3);
+  leftCell.appendParagraph(VEREIN_NAME)
+    .setFontSize(11).setBold(true).setSpacingAfter(2);
+  leftCell.appendParagraph(VEREIN_STRASSE + ' ' + VEREIN_HAUSNUMMER + ', ' + VEREIN_PLZ + ' ' + VEREIN_ORT)
+    .setFontSize(10).setBold(true).setSpacingAfter(8);
+  
+  // Trennlinie in der Zelle
+  leftCell.appendParagraph('─────────────────────────────────────')
+    .setFontSize(8).setSpacingAfter(8);
+  
+  // Titel in der linken Zelle (dynamisch je nach Art der Spende)
+  var titel = istSachspende ? 'Bestätigung über Sachzuwendungen' : 'Bestätigung über Geldzuwendungen/Spende';
+  leftCell.appendParagraph(titel)
+    .setFontSize(12).setBold(true).setSpacingAfter(3);
+  
+  // Bescheinigungsnummer in der linken Zelle
+  leftCell.appendParagraph('(Bescheinigung Nr. ' + receiptNumber + ')')
+    .setFontSize(9).setSpacingAfter(0);
+  
+  leftCell.setWidth(350);
+  leftCell.setPaddingTop(0).setPaddingBottom(5);
+  
+  // Rechte Spalte: Logo
+  var rightCell = headerRow.appendTableCell();
+  rightCell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
+  rightCell.setWidth(120);
+  rightCell.setPaddingTop(0).setPaddingBottom(5);
+  
   try {
-    var logoResponse = UrlFetchApp.fetch(VEREIN_LOGO_URL, {muteHttpExceptions: true});
-    if (logoResponse.getResponseCode() === 200) {
-    var logoBlob = logoResponse.getBlob();
-      var logoPara = body.appendParagraph('');
+    if (VEREIN_LOGO_DRIVE_ID && VEREIN_LOGO_DRIVE_ID.length > 0) {
+      var logoFile = DriveApp.getFileById(VEREIN_LOGO_DRIVE_ID);
+      var logoBlob = logoFile.getBlob();
+      var logoPara = rightCell.appendParagraph('');
       var logoImg = logoPara.appendInlineImage(logoBlob);
-      logoImg.setWidth(80);
-      logoImg.setHeight(80 * (logoBlob.getHeight() / logoBlob.getWidth()));
+      
+      // WICHTIG: Seitenverhältnis beibehalten, keine Verzerrung!
+      // Zuerst Originalgröße auslesen (vom eingefügten Image-Objekt)
+      var originalWidth = logoImg.getWidth();
+      var originalHeight = logoImg.getHeight();
+      var aspectRatio = originalHeight / originalWidth;
+      
+      // Auf Zielbreite skalieren (100px) mit korrektem Seitenverhältnis
+      var targetWidth = 100;
+      var targetHeight = targetWidth * aspectRatio;
+      
+      logoImg.setWidth(targetWidth);
+      logoImg.setHeight(targetHeight);
       logoPara.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
-      logoPara.setSpacingAfter(10);
-      Logger.log('✅ Logo geladen');
+      Logger.log('✅ Logo geladen: ' + originalWidth + 'x' + originalHeight + ' → ' + targetWidth + 'x' + Math.round(targetHeight) + ' (Verhältnis beibehalten)');
     } else {
-      Logger.log('⚠️ Logo nicht verfügbar (HTTP ' + logoResponse.getResponseCode() + ')');
+      rightCell.appendParagraph('').setFontSize(1); // Leere Zelle bei fehlender ID
+      Logger.log('⚠️ Keine Logo-ID konfiguriert');
     }
   } catch (e) {
+    rightCell.appendParagraph('').setFontSize(1); // Leere Zelle bei Fehler
     Logger.log('⚠️ Logo konnte nicht geladen werden: ' + e.toString());
   }
   
-  // === KOPFZEILE - AUSSTELLER (gemäß amtlichem Muster) ===
-  body.appendParagraph('Aussteller (Bezeichnung und Anschrift der steuerbegünstigten Einrichtung):')
-    .setFontSize(8).setBold(false).setSpacingBefore(5).setSpacingAfter(3);
-  
-  body.appendParagraph(VEREIN_NAME + ', ' + VEREIN_STRASSE + ' ' + VEREIN_HAUSNUMMER + ', ' + VEREIN_PLZ + ' ' + VEREIN_ORT)
-    .setFontSize(10).setBold(true).setSpacingAfter(10);
-  
-  body.appendParagraph('─────────────────────────────────────────────────────────────')
-    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(10);
-  
-  // === TITEL (zentriert, wie amtliches Muster) ===
-  body.appendParagraph('Bestätigung über Geldzuwendungen/Spende')
-    .setFontSize(12).setBold(true).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(3);
-  
-  body.appendParagraph('(Bescheinigung Nr. ' + receiptNumber + ')')
-    .setFontSize(9).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(10);
+  // Tabelle ohne Rahmen (unsichtbar)
+  headerTable.setBorderWidth(0);
+  headerTable.setAttributes({
+    [DocumentApp.Attribute.SPACING_AFTER]: 15
+  });
   
   // === RECHTLICHE GRUNDLAGE (wie amtliches Muster) ===
   body.appendParagraph('im Sinne des § 10b des Einkommensteuergesetzes an eine der in § 5 Abs. 1 Nr. 9 des Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen oder Vermögensmassen')
@@ -1233,7 +1275,7 @@ function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, qu
     .setFontSize(8).setBold(false).setSpacingAfter(3);
   
   body.appendParagraph('- in Ziffern: ' + formattedBetrag)
-    .setFontSize(10).setSpacingAfter(2);
+    .setFontSize(10).setBold(true).setSpacingAfter(2);
   
   body.appendParagraph('- in Buchstaben: ' + betragInWort)
     .setFontSize(10).setSpacingAfter(8);
@@ -1264,10 +1306,43 @@ function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, qu
   
   // === ORT, DATUM, UNTERSCHRIFT (gemäß amtlichem Muster) ===
   body.appendParagraph(VEREIN_ORT + ', den ' + formattedQuittungsDatum)
-    .setFontSize(9).setSpacingBefore(10).setSpacingAfter(30);
+    .setFontSize(9).setSpacingBefore(10).setSpacingAfter(15);
   
-  body.appendParagraph('_______________________________________')
-    .setFontSize(9).setSpacingAfter(5);
+  // Unterschrift als Bild einfügen (falls vorhanden)
+  // SICHERHEIT: Die Unterschrift wird aus Google Drive geladen (PRIVAT, keine öffentliche Freigabe nötig!)
+  try {
+    if (UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID && UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID.length > 0) {
+      var unterschriftFile = DriveApp.getFileById(UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID);
+      var unterschriftBlob = unterschriftFile.getBlob();
+      var unterschriftPara = body.appendParagraph('');
+      var unterschriftImg = unterschriftPara.appendInlineImage(unterschriftBlob);
+      
+      // WICHTIG: Seitenverhältnis beibehalten, keine Verzerrung!
+      // Zuerst Originalgröße auslesen (vom eingefügten Image-Objekt)
+      var originalWidth = unterschriftImg.getWidth();
+      var originalHeight = unterschriftImg.getHeight();
+      var aspectRatio = originalWidth / originalHeight;
+      
+      // Auf Zielhöhe skalieren (80px) mit korrektem Seitenverhältnis
+      var targetHeight = 80;
+      var targetWidth = targetHeight * aspectRatio;
+      
+      unterschriftImg.setWidth(targetWidth);
+      unterschriftImg.setHeight(targetHeight);
+      unterschriftPara.setSpacingAfter(5);
+      Logger.log('✅ Unterschrift geladen: ' + originalWidth + 'x' + originalHeight + ' → ' + Math.round(targetWidth) + 'x' + targetHeight + ' (Verhältnis beibehalten)');
+    } else {
+      // Fallback: Trennlinie wenn keine Unterschrift-ID konfiguriert
+      body.appendParagraph('_______________________________________')
+        .setFontSize(9).setSpacingAfter(5);
+      Logger.log('⚠️ Keine Unterschrift-ID konfiguriert - verwende Trennlinie');
+    }
+  } catch (e) {
+    // Fallback: Trennlinie bei Fehler
+    body.appendParagraph('_______________________________________')
+      .setFontSize(9).setSpacingAfter(5);
+    Logger.log('⚠️ Unterschrift konnte nicht geladen werden: ' + e.toString() + ' - verwende Trennlinie');
+  }
   
   body.appendParagraph('Unterschrift des Zuwendungsempfängers')
     .setFontSize(7).setSpacingAfter(2);
@@ -1277,56 +1352,19 @@ function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, qu
   
   // === HINWEISE (gemäß amtlichem Muster) ===
   body.appendParagraph('─────────────────────────────────────────────────────────────')
-    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(8);
+    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(6);
   
   body.appendParagraph('Hinweis:')
-    .setFontSize(7).setBold(true).setSpacingAfter(3);
+    .setFontSize(6).setBold(false).setSpacingAfter(2);
   
   body.appendParagraph('Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen steuerbegünstigten Zwecken verwendet werden, haftet für die entgangene Steuer (§ 10b Abs. 4 EStG, § 9 Abs. 3 KStG, § 9 Nr. 5 GewStG).')
-    .setFontSize(6).setLineSpacing(1.1).setSpacingAfter(6);
+    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(4);
   
   body.appendParagraph('Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt, wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der Feststellung der Einhaltung der satzungsmäßigen Voraussetzungen nach § 60a Abs. 1 AO (Datum: ' + VEREIN_FESTSTELLUNGSBESCHEID_DATUM + ') länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt (§ 63 Abs. 5 AO).')
-    .setFontSize(6).setLineSpacing(1.1).setSpacingAfter(0);
+    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(0);
   
-  // WICHTIG: Dokument speichern und schließen, bevor es zu PDF konvertiert wird
-  Logger.log('Speichere Dokument...');
-  tempDoc.saveAndClose();
-  
-  // Warte kurz, damit Google die Änderungen verarbeiten kann
-  Utilities.sleep(1000);
-  
-  // Exportiere als PDF - öffne das Dokument erneut für die Konvertierung
-  Logger.log('Konvertiere Dokument zu PDF...');
-  var reopenedDoc = DocumentApp.openById(tempDoc.getId());
-  var pdfBlob = reopenedDoc.getAs('application/pdf');
-  pdfBlob.setName('Spendenquittung_' + receiptNumber + '.pdf');
-  Logger.log('PDF-Konvertierung erfolgreich');
-  
-  // Speichere PDF in Google Drive
-  // Erstelle Ordner "Spendenquittungen" falls nicht vorhanden
-  var folders = DriveApp.getFoldersByName('Spendenquittungen');
-  var folder;
-  if (folders.hasNext()) {
-    folder = folders.next();
-    Logger.log('Ordner "Spendenquittungen" gefunden');
-  } else {
-    folder = DriveApp.createFolder('Spendenquittungen');
-    Logger.log('Ordner "Spendenquittungen" erstellt');
-  }
-  
-  // Speichere PDF im Ordner
-  Logger.log('Speichere PDF in Google Drive...');
-  var pdfFile = folder.createFile(pdfBlob);
-  Logger.log('✅ PDF gespeichert in Google Drive: ' + pdfFile.getName() + ' (ID: ' + pdfFile.getId() + ')');
-  
-  // Lösche temporäres Dokument
-  Logger.log('Lösche temporäres Dokument...');
-  DriveApp.getFileById(tempDoc.getId()).setTrashed(true);
-  Logger.log('Temporäres Dokument gelöscht');
-  
-  // Gebe sowohl File als auch Blob zurück (für Kompatibilität)
-  pdfFile.blob = pdfBlob;
-  return pdfFile;
+  // Speichere PDF und gib File-Objekt zurück (verwendet gemeinsame Hilfsfunktion)
+  return savePDFToDrive(tempDoc, 'Spendenquittung_' + receiptNumber + '.pdf');
 }
 
 /**
@@ -1359,7 +1397,7 @@ function generateReceiptEmail(receiptNumber, spenderName, betrag, spendenDatum, 
 /**
  * Sendet Quittung per E-Mail mit PDF-Anhang
  */
-function sendReceiptByEmail(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum, recipientEmail, pdfFile) {
+function sendReceiptByEmail(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum, recipientEmail, pdfFile, istSachspende) {
   try {
     // Verwende vorhandenes PDF oder erstelle neues
     var pdfBlob;
@@ -1368,7 +1406,7 @@ function sendReceiptByEmail(receiptNumber, spenderName, betrag, spendenDatum, qu
       pdfBlob = pdfFile.getBlob();
     } else {
       Logger.log('Erstelle neues PDF für E-Mail-Versand');
-      var newPdfFile = generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum);
+      var newPdfFile = generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum, istSachspende || false);
       pdfBlob = newPdfFile.getBlob();
     }
     
@@ -1462,22 +1500,26 @@ function issueReceipt(rowIndex, sheetName) {
   Logger.log('Daten erfolgreich gelesen: ' + data.length + ' Spalten');
   
   // ACHTUNG: Neue Spaltenstruktur für "Kontobewegungen"
-  var datum, betrag, spenderName;
+  var datum, betrag, spenderName, istSachspende;
   
   if (sheetName === SHEET_KONTO) {
     datum = data[1]; // Spalte B: Buchungstag
     betrag = data[8]; // Spalte I: Betrag
     spenderName = data[5]; // Spalte F: Begünstigter
+    istSachspende = false; // Kontobewegungen sind immer Geldzuwendungen
     Logger.log('Kontobewegungen - Datum: ' + datum + ', Betrag: ' + betrag + ', Spender: ' + spenderName);
   } else if (sheetName === SHEET_BARGELD) {
     datum = data[0]; // Spalte A: Datum
     betrag = data[1]; // Spalte B: Betrag
-    spenderName = data[3]; // Spalte D: Spender (Spalte C ist jetzt "Art")
-    Logger.log('Bar-/Sachspenden - Datum: ' + datum + ', Betrag: ' + betrag + ', Spender: ' + spenderName);
+    var art = data[2]; // Spalte C: Art (Bargeld/Sachspende)
+    spenderName = data[3]; // Spalte D: Spender
+    istSachspende = (art === 'Sachspende'); // Prüfe ob es sich um eine Sachspende handelt
+    Logger.log('Bar-/Sachspenden - Datum: ' + datum + ', Betrag: ' + betrag + ', Art: ' + art + ', Spender: ' + spenderName + ', Sachspende: ' + istSachspende);
   } else {
     datum = data[0];
     betrag = data[1];
     spenderName = data[3]; // Angepasst an neue Struktur
+    istSachspende = false; // Default: Geldzuwendung
     Logger.log('Andere Tabelle - Datum: ' + datum + ', Betrag: ' + betrag + ', Spender: ' + spenderName);
   }
   
@@ -1501,7 +1543,7 @@ function issueReceipt(rowIndex, sheetName) {
   
   // WICHTIG: PDF IMMER erstellen und speichern
   Logger.log('Erstelle PDF für Quittung: ' + receiptNumber);
-  var pdfFile = generateReceiptPDF(receiptNumber, spenderName, betrag, datum, quittungsDatum);
+  var pdfFile = generateReceiptPDF(receiptNumber, spenderName, betrag, datum, quittungsDatum, istSachspende);
   Logger.log('PDF erstellt: ' + pdfFile.getName() + ' (ID: ' + pdfFile.getId() + ')');
   
   // Versuche E-Mail-Adresse zu finden
@@ -1512,7 +1554,7 @@ function issueReceipt(rowIndex, sheetName) {
   // Wenn E-Mail gefunden, automatisch versenden (PDF als Anhang)
   if (spenderEmail) {
     Logger.log('E-Mail gefunden für ' + spenderName + ': ' + spenderEmail);
-    var emailErfolg = sendReceiptByEmail(receiptNumber, spenderName, betrag, datum, quittungsDatum, spenderEmail, pdfFile);
+    var emailErfolg = sendReceiptByEmail(receiptNumber, spenderName, betrag, datum, quittungsDatum, spenderEmail, pdfFile, istSachspende);
     if (emailErfolg) {
       emailVersendet = 'Ja';
       versanddatum = Utilities.formatDate(quittungsDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy HH:mm');
@@ -1671,9 +1713,10 @@ function logQuittungToProtokoll(quittung) {
  * Erstellt ein storniertes PDF mit Wasserzeichen
  * Basiert auf dem Original-PDF, aber mit rotem "STORNIERT" Wasserzeichen
  */
-function generateStorniertePDF(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum, stornierungsGrund) {
+function generateStorniertePDF(receiptNumber, spenderName, betrag, spendenDatum, quittungsDatum, stornierungsGrund, istSachspende) {
   Logger.log('=== Erstelle STORNIERTES PDF ===');
   Logger.log('Quittungsnummer: ' + receiptNumber);
+  Logger.log('Sachspende: ' + (istSachspende ? 'JA' : 'NEIN'));
   
   // Spenderadresse abrufen
   var spenderAdresse = getSpenderAdresse(spenderName);
@@ -1699,21 +1742,57 @@ function generateStorniertePDF(receiptNumber, spenderName, betrag, spendenDatum,
   body.setMarginLeft(70);
   body.setMarginRight(70);
   
-  // === HEADER MIT LOGO ===
+  // === HEADER MIT LOGO RECHTS (analog zur normalen Quittung) ===
+  var headerTable = body.appendTable();
+  var headerRow = headerTable.appendTableRow();
+  
+  // Linke Spalte: Aussteller-Informationen (ausgegraut)
+  var leftCell = headerRow.appendTableCell();
+  leftCell.appendParagraph('Aussteller (Bezeichnung und Anschrift der steuerbegünstigten Einrichtung):')
+    .setFontSize(8).setBold(false).setForegroundColor('#9e9e9e').setSpacingBefore(0).setSpacingAfter(3);
+  leftCell.appendParagraph(VEREIN_NAME)
+    .setFontSize(11).setBold(true).setForegroundColor('#9e9e9e').setSpacingAfter(2);
+  leftCell.appendParagraph(VEREIN_STRASSE + ' ' + VEREIN_HAUSNUMMER + ', ' + VEREIN_PLZ + ' ' + VEREIN_ORT)
+    .setFontSize(10).setBold(true).setForegroundColor('#9e9e9e').setSpacingAfter(0);
+  leftCell.setWidth(350);
+  leftCell.setPaddingTop(0).setPaddingBottom(5);
+  
+  // Rechte Spalte: Logo
+  var rightCell = headerRow.appendTableCell();
+  rightCell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
+  rightCell.setWidth(120);
+  rightCell.setPaddingTop(0).setPaddingBottom(5);
+  
   try {
-    var logoResponse = UrlFetchApp.fetch(VEREIN_LOGO_URL, {muteHttpExceptions: true});
-    if (logoResponse.getResponseCode() === 200) {
-      var logoBlob = logoResponse.getBlob();
-      var logoPara = body.appendParagraph('');
+    if (VEREIN_LOGO_DRIVE_ID && VEREIN_LOGO_DRIVE_ID.length > 0) {
+      var logoFile = DriveApp.getFileById(VEREIN_LOGO_DRIVE_ID);
+      var logoBlob = logoFile.getBlob();
+      var logoPara = rightCell.appendParagraph('');
       var logoImg = logoPara.appendInlineImage(logoBlob);
-      logoImg.setWidth(80);
-      logoImg.setHeight(80 * (logoBlob.getHeight() / logoBlob.getWidth()));
+      
+      // WICHTIG: Seitenverhältnis beibehalten, keine Verzerrung!
+      var originalWidth = logoImg.getWidth();
+      var originalHeight = logoImg.getHeight();
+      var aspectRatio = originalHeight / originalWidth;
+      var targetWidth = 100;
+      var targetHeight = targetWidth * aspectRatio;
+      
+      logoImg.setWidth(targetWidth);
+      logoImg.setHeight(targetHeight);
       logoPara.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
-      logoPara.setSpacingAfter(10);
+    } else {
+      rightCell.appendParagraph('').setFontSize(1);
     }
   } catch (e) {
+    rightCell.appendParagraph('').setFontSize(1);
     Logger.log('⚠️ Logo konnte nicht geladen werden');
   }
+  
+  // Tabelle ohne Rahmen (unsichtbar)
+  headerTable.setBorderWidth(0);
+  headerTable.setAttributes({
+    [DocumentApp.Attribute.SPACING_AFTER]: 10
+  });
   
   // === STORNIERUNGSVERMERK (GROSS UND ROT) ===
   var storniertPara = body.appendParagraph('═══════════════════════════════════════════');
@@ -1739,17 +1818,13 @@ function generateStorniertePDF(receiptNumber, spenderName, betrag, spendenDatum,
   storniertPara2.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
   storniertPara2.setFontSize(10).setForegroundColor('#d32f2f').setSpacingAfter(20);
   
-  // === ORIGINALE QUITTUNG (ausgegraut) ===
-  body.appendParagraph('Aussteller (Bezeichnung und Anschrift der steuerbegünstigten Einrichtung):')
-    .setFontSize(8).setForegroundColor('#9e9e9e').setSpacingBefore(5).setSpacingAfter(3);
-  
-  body.appendParagraph(VEREIN_NAME + ', ' + VEREIN_STRASSE + ' ' + VEREIN_HAUSNUMMER + ', ' + VEREIN_PLZ + ' ' + VEREIN_ORT)
-    .setFontSize(10).setBold(true).setForegroundColor('#9e9e9e').setSpacingAfter(10);
-  
+  // === ORIGINALE QUITTUNG (ausgegraut, Aussteller ist bereits oben in Tabelle) ===
   body.appendParagraph('─────────────────────────────────────────────────────────────')
     .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setForegroundColor('#9e9e9e').setSpacingAfter(10);
   
-  body.appendParagraph('Bestätigung über Geldzuwendungen/Spende')
+  // Titel (dynamisch je nach Art der Spende, ausgegraut)
+  var titelStorniert = istSachspende ? 'Bestätigung über Sachzuwendungen' : 'Bestätigung über Geldzuwendungen/Spende';
+  body.appendParagraph(titelStorniert)
     .setFontSize(12).setBold(true).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setForegroundColor('#9e9e9e').setSpacingAfter(3);
   
   body.appendParagraph('(Bescheinigung Nr. ' + receiptNumber + ')')
@@ -1770,7 +1845,7 @@ function generateStorniertePDF(receiptNumber, spenderName, betrag, spendenDatum,
     .setFontSize(8).setForegroundColor('#9e9e9e').setSpacingAfter(3);
   
   body.appendParagraph('- in Ziffern: ' + formattedBetrag)
-    .setFontSize(10).setForegroundColor('#9e9e9e').setSpacingAfter(2);
+    .setFontSize(10).setBold(true).setForegroundColor('#9e9e9e').setSpacingAfter(2);
   
   body.appendParagraph('- in Buchstaben: ' + betragInWort)
     .setFontSize(10).setForegroundColor('#9e9e9e').setSpacingAfter(8);
@@ -1781,35 +1856,8 @@ function generateStorniertePDF(receiptNumber, spenderName, betrag, spendenDatum,
   body.appendParagraph('Diese Bescheinigung ist UNGÜLTIG und darf nicht für steuerliche Zwecke verwendet werden.')
     .setFontSize(9).setBold(true).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setForegroundColor('#d32f2f').setSpacingAfter(0);
   
-  // WICHTIG: Dokument speichern und schließen
-  Logger.log('Speichere storniertes Dokument...');
-  tempDoc.saveAndClose();
-  Utilities.sleep(1000);
-  
-  // Exportiere als PDF
-  Logger.log('Konvertiere zu PDF...');
-  var reopenedDoc = DocumentApp.openById(tempDoc.getId());
-  var pdfBlob = reopenedDoc.getAs('application/pdf');
-  pdfBlob.setName('Spendenquittung_' + receiptNumber + '_STORNIERT.pdf');
-  Logger.log('PDF-Konvertierung erfolgreich');
-  
-  // Speichere PDF in Google Drive
-  var folders = DriveApp.getFoldersByName('Spendenquittungen');
-  var folder;
-  if (folders.hasNext()) {
-    folder = folders.next();
-  } else {
-    folder = DriveApp.createFolder('Spendenquittungen');
-  }
-  
-  var pdfFile = folder.createFile(pdfBlob);
-  Logger.log('✅ Storniertes PDF gespeichert: ' + pdfFile.getName());
-  
-  // Lösche temporäres Dokument
-  DriveApp.getFileById(tempDoc.getId()).setTrashed(true);
-  
-  pdfFile.blob = pdfBlob;
-  return pdfFile;
+  // Speichere PDF und gib File-Objekt zurück (verwendet gemeinsame Hilfsfunktion)
+  return savePDFToDrive(tempDoc, 'Spendenquittung_' + receiptNumber + '_STORNIERT.pdf');
 }
 
 /**
@@ -1859,6 +1907,19 @@ function stornierQuittung(quittungsNummer, stornierungsGrund, neueQuittungErstel
   var betrag = quittungData[4];
   var spendenDatum = quittungData[2];
   var quittungsDatum = quittungData[1];
+  var quelleTabelle = quittungData[11];
+  var quelleZeile = quittungData[12];
+  
+  // Ermittle ob es eine Sachspende war (aus Quelltabelle)
+  var istSachspende = false;
+  if (quelleTabelle === SHEET_BARGELD && quelleZeile) {
+    var sourceSheet = ss.getSheetByName(quelleTabelle);
+    if (sourceSheet && quelleZeile > 1 && quelleZeile <= sourceSheet.getLastRow()) {
+      var artValue = sourceSheet.getRange(quelleZeile, 3).getValue(); // Spalte C: Art
+      istSachspende = (artValue === 'Sachspende');
+      Logger.log('Quelle: ' + quelleTabelle + ', Zeile: ' + quelleZeile + ', Art: ' + artValue + ', Sachspende: ' + istSachspende);
+    }
+  }
   
   // Erstelle storniertes PDF
   var storniertePDF = generateStorniertePDF(
@@ -1867,7 +1928,8 @@ function stornierQuittung(quittungsNummer, stornierungsGrund, neueQuittungErstel
     betrag,
     spendenDatum,
     quittungsDatum,
-    stornierungsGrund
+    stornierungsGrund,
+    istSachspende
   );
   
   // Aktualisiere Protokoll
@@ -4934,14 +4996,53 @@ function parseCSVLine(line, delimiter) {
 }
 
 /**
- * Custom Function: Summiert positive Beträge aus Kontobewegungen für ein bestimmtes Jahr,
+ * Hilfsfunktion: Extrahiert das Jahr aus verschiedenen Eingabetypen
+ * Akzeptiert: Zahl (z.B. 2025), Datum-Objekt, oder String
+ * 
+ * @param {*} input - Jahr als Zahl, Datum oder String
+ * @return {number} Jahr als Zahl
+ */
+function extractJahr(input) {
+  if (!input && input !== 0) return new Date().getFullYear(); // Fallback: aktuelles Jahr
+  
+  // Wenn es bereits eine Zahl ist
+  if (typeof input === 'number') {
+    return Math.floor(input);
+  }
+  
+  // Wenn es ein Datum-Objekt ist
+  if (input instanceof Date) {
+    return input.getFullYear();
+  }
+  
+  // Wenn es ein String ist, versuche es zu konvertieren
+  if (typeof input === 'string') {
+    // Versuche direkt als Zahl zu parsen
+    var num = parseFloat(input);
+    if (!isNaN(num) && num > 1900 && num < 2100) {
+      return Math.floor(num);
+    }
+    // Versuche als Datum zu parsen
+    var date = new Date(input);
+    if (!isNaN(date.getTime())) {
+      return date.getFullYear();
+    }
+  }
+  
+  // Fallback: aktuelles Jahr
+  return new Date().getFullYear();
+}
+
+/**
+ * Custom Function: Summiert positive Beträge (Einnahmen) aus Kontobewegungen für ein bestimmtes Jahr,
  * OHNE "Intern"-Kategorie (um Doppelzählungen zu vermeiden)
  * 
- * @param {number} jahr - Das Jahr für die Filterung
- * @return {number} Summe der positiven Beträge (ohne Intern)
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
+ * @return {number} Summe der Einnahmen (ohne Intern)
  * @customfunction
  */
 function EINNAHMEN_KONTO_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_KONTO);
   if (!sheet) return 0;
@@ -4957,7 +5058,7 @@ function EINNAHMEN_KONTO_JAHR(jahr) {
     
     if (datum && betrag && betrag > 0 && kategorie !== "Intern") {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         summe += parseFloat(betrag);
       }
     }
@@ -4974,7 +5075,16 @@ function EINNAHMEN_KONTO_JAHR(jahr) {
  * @return {number} Anzahl der positiven Einträge (ohne Intern)
  * @customfunction
  */
+/**
+ * Custom Function: Zählt positive Einträge aus Kontobewegungen für ein bestimmtes Jahr,
+ * OHNE "Intern"-Kategorie (um Doppelzählungen zu vermeiden)
+ * 
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
+ * @return {number} Anzahl der positiven Einträge (ohne Intern)
+ * @customfunction
+ */
 function ANZAHL_EINNAHMEN_KONTO_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_KONTO);
   if (!sheet) return 0;
@@ -4990,7 +5100,7 @@ function ANZAHL_EINNAHMEN_KONTO_JAHR(jahr) {
     
     if (datum && betrag && betrag > 0 && kategorie !== "Intern") {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         anzahl++;
       }
     }
@@ -5002,11 +5112,12 @@ function ANZAHL_EINNAHMEN_KONTO_JAHR(jahr) {
 /**
  * Custom Function: Summiert Bargeldspenden für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der Bargeldspenden
  * @customfunction
  */
 function BARGELDSPENDEN_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_BARGELD);
   if (!sheet) return 0;
@@ -5022,7 +5133,7 @@ function BARGELDSPENDEN_JAHR(jahr) {
     
     if (datum && betrag && art === 'Bargeld') {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         summe += parseFloat(betrag);
       }
     }
@@ -5034,11 +5145,12 @@ function BARGELDSPENDEN_JAHR(jahr) {
 /**
  * Custom Function: Zählt Bargeldspenden für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der Bargeldspenden
  * @customfunction
  */
 function ANZAHL_BARGELDSPENDEN_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_BARGELD);
   if (!sheet) return 0;
@@ -5054,7 +5166,7 @@ function ANZAHL_BARGELDSPENDEN_JAHR(jahr) {
     
     if (datum && betrag && art === 'Bargeld') {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         anzahl++;
       }
     }
@@ -5066,11 +5178,12 @@ function ANZAHL_BARGELDSPENDEN_JAHR(jahr) {
 /**
  * Custom Function: Summiert Sachspenden für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der Sachspenden
  * @customfunction
  */
 function SACHSPENDEN_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_BARGELD);
   if (!sheet) return 0;
@@ -5086,7 +5199,7 @@ function SACHSPENDEN_JAHR(jahr) {
     
     if (datum && betrag && art === 'Sachspende') {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         summe += parseFloat(betrag);
       }
     }
@@ -5098,11 +5211,12 @@ function SACHSPENDEN_JAHR(jahr) {
 /**
  * Custom Function: Zählt Sachspenden für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der Sachspenden
  * @customfunction
  */
 function ANZAHL_SACHSPENDEN_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_BARGELD);
   if (!sheet) return 0;
@@ -5118,7 +5232,7 @@ function ANZAHL_SACHSPENDEN_JAHR(jahr) {
     
     if (datum && betrag && art === 'Sachspende') {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         anzahl++;
       }
     }
@@ -5130,11 +5244,12 @@ function ANZAHL_SACHSPENDEN_JAHR(jahr) {
 /**
  * Custom Function: Summiert negative Beträge (Ausgaben) aus Kontobewegungen für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der Ausgaben (als positive Zahl)
  * @customfunction
  */
 function AUSGABEN_KONTO_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_KONTO);
   if (!sheet) return 0;
@@ -5149,7 +5264,7 @@ function AUSGABEN_KONTO_JAHR(jahr) {
     
     if (datum && betrag && betrag < 0) {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         summe += Math.abs(parseFloat(betrag)); // Als positive Zahl
       }
     }
@@ -5161,11 +5276,12 @@ function AUSGABEN_KONTO_JAHR(jahr) {
 /**
  * Custom Function: Zählt negative Beträge (Ausgaben) aus Kontobewegungen für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der Ausgaben
  * @customfunction
  */
 function ANZAHL_AUSGABEN_KONTO_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_KONTO);
   if (!sheet) return 0;
@@ -5180,7 +5296,7 @@ function ANZAHL_AUSGABEN_KONTO_JAHR(jahr) {
     
     if (datum && betrag && betrag < 0) {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         anzahl++;
       }
     }
@@ -5192,11 +5308,12 @@ function ANZAHL_AUSGABEN_KONTO_JAHR(jahr) {
 /**
  * Custom Function: Summiert Barausgaben für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der Barausgaben
  * @customfunction
  */
 function BARAUSGABEN_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_AUSGABEN);
   if (!sheet) return 0;
@@ -5211,7 +5328,7 @@ function BARAUSGABEN_JAHR(jahr) {
     
     if (datum && betrag) {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         summe += parseFloat(betrag);
       }
     }
@@ -5223,11 +5340,12 @@ function BARAUSGABEN_JAHR(jahr) {
 /**
  * Custom Function: Zählt Barausgaben für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der Barausgaben
  * @customfunction
  */
 function ANZAHL_BARAUSGABEN_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_AUSGABEN);
   if (!sheet) return 0;
@@ -5242,7 +5360,7 @@ function ANZAHL_BARAUSGABEN_JAHR(jahr) {
     
     if (datum && betrag) {
       var rowYear = new Date(datum).getFullYear();
-      if (rowYear == jahr) {
+      if (rowYear == targetYear) {
         anzahl++;
       }
     }
@@ -5254,11 +5372,12 @@ function ANZAHL_BARAUSGABEN_JAHR(jahr) {
 /**
  * Custom Function: Summiert übergebene Spenden für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der übergebenen Spenden
  * @customfunction
  */
 function UEBERGABE_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_UEBERGABE);
   if (!sheet) return 0;
@@ -5271,7 +5390,10 @@ function UEBERGABE_JAHR(jahr) {
     var jahrWert = data[i][0]; // Spalte A
     var betrag = data[i][1];   // Spalte B
     
-    if (jahrWert && betrag && jahrWert == jahr) {
+    // Jahr-Wert aus der Tabelle ebenfalls extrahieren (kann Zahl oder Datum sein)
+    var rowYear = extractJahr(jahrWert);
+    
+    if (jahrWert && betrag && rowYear == targetYear) {
       summe += parseFloat(betrag);
     }
   }
@@ -5282,11 +5404,12 @@ function UEBERGABE_JAHR(jahr) {
 /**
  * Custom Function: Zählt übergebene Spenden für ein bestimmtes Jahr
  * 
- * @param {number} jahr - Das Jahr für die Filterung
+ * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der übergebenen Spenden
  * @customfunction
  */
 function ANZAHL_UEBERGABE_JAHR(jahr) {
+  var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_UEBERGABE);
   if (!sheet) return 0;
@@ -5299,7 +5422,10 @@ function ANZAHL_UEBERGABE_JAHR(jahr) {
     var jahrWert = data[i][0]; // Spalte A
     var betrag = data[i][1];   // Spalte B
     
-    if (jahrWert && betrag && jahrWert == jahr) {
+    // Jahr-Wert aus der Tabelle ebenfalls extrahieren (kann Zahl oder Datum sein)
+    var rowYear = extractJahr(jahrWert);
+    
+    if (jahrWert && betrag && rowYear == targetYear) {
       anzahl++;
     }
   }
@@ -5684,4 +5810,721 @@ function extractNachname(vollName) {
     var parts = vollName.trim().split(' ');
     return parts.slice(1).join(' ') || '';
   }
+}
+
+// =============================================================================
+// HILFSFUNKTIONEN FÜR PDF-GENERIERUNG
+// =============================================================================
+
+/**
+ * Speichert ein PDF-Dokument in Google Drive
+ * Gemeinsame Funktion für alle Quittungstypen
+ */
+function savePDFToDrive(tempDoc, pdfName) {
+  Logger.log('Speichere Dokument...');
+  tempDoc.saveAndClose();
+  Utilities.sleep(1000);
+  
+  Logger.log('Konvertiere Dokument zu PDF...');
+  var reopenedDoc = DocumentApp.openById(tempDoc.getId());
+  var pdfBlob = reopenedDoc.getAs('application/pdf');
+  pdfBlob.setName(pdfName);
+  Logger.log('PDF-Konvertierung erfolgreich');
+  
+  // Erstelle Ordner "Spendenquittungen" falls nicht vorhanden
+  var folders = DriveApp.getFoldersByName('Spendenquittungen');
+  var folder;
+  if (folders.hasNext()) {
+    folder = folders.next();
+    Logger.log('Ordner "Spendenquittungen" gefunden');
+  } else {
+    folder = DriveApp.createFolder('Spendenquittungen');
+    Logger.log('Ordner "Spendenquittungen" erstellt');
+  }
+  
+  Logger.log('Speichere PDF in Google Drive...');
+  var pdfFile = folder.createFile(pdfBlob);
+  Logger.log('✅ PDF gespeichert in Google Drive: ' + pdfFile.getName() + ' (ID: ' + pdfFile.getId() + ')');
+  
+  Logger.log('Lösche temporäres Dokument...');
+  DriveApp.getFileById(tempDoc.getId()).setTrashed(true);
+  Logger.log('✅ Temporäres Dokument gelöscht');
+  
+  return pdfFile;
+}
+
+// =============================================================================
+// SAMMELQUITTUNGEN
+// =============================================================================
+
+/**
+ * Findet alle nicht-quittierten Buchungen für eine Spenderadresse
+ * Berücksichtigt auch "Zugehörige Kontonamen" für Familien/Mehrfachspender
+ */
+function getNichtQuittierteZahlungenFuerSpender(spenderAdresseZeile) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var spenderSheet = ss.getSheetByName(SHEET_SPENDERADRESSEN);
+  var kontoSheet = ss.getSheetByName(SHEET_KONTO);
+  var bargeldSheet = ss.getSheetByName(SHEET_BARGELD);
+  
+  if (!spenderSheet || !spenderAdresseZeile) {
+    throw new Error('Spenderadressen-Tabelle nicht gefunden oder keine Zeile angegeben');
+  }
+  
+  // Spenderdaten lesen
+  var spenderData = spenderSheet.getRange(spenderAdresseZeile, 1, 1, 14).getValues()[0];
+  var vorname = spenderData[2] || '';
+  var nachname = spenderData[3] || '';
+  var spenderName = (vorname + ' ' + nachname).trim();
+  var zugehoerigeKontonamen = spenderData[11] || ''; // Spalte L (12)
+  
+  Logger.log('Suche Buchungen für: ' + spenderName);
+  Logger.log('Zugehörige Kontonamen: ' + zugehoerigeKontonamen);
+  
+  // Liste aller zu suchenden Namen erstellen
+  var suchNamen = [spenderName];
+  if (zugehoerigeKontonamen) {
+    var zusatzNamen = zugehoerigeKontonamen.split(',').map(function(n) { return n.trim(); });
+    suchNamen = suchNamen.concat(zusatzNamen);
+  }
+  
+  Logger.log('Suche nach folgenden Namen: ' + JSON.stringify(suchNamen));
+  
+  var buchungen = [];
+  
+  // 1. KONTOBEWEGUNGEN durchsuchen
+  if (kontoSheet) {
+    var kontoData = kontoSheet.getDataRange().getValues();
+    for (var i = 1; i < kontoData.length; i++) {
+      var row = kontoData[i];
+      var datum = row[1]; // Spalte B
+      var verwendungszweck = (row[4] || '').toString(); // Spalte E
+      var auftraggeber = (row[5] || '').toString(); // Spalte F
+      var betrag = parseFloat(row[8]) || 0; // Spalte I
+      var quittung = (row[12] || '').toString(); // Spalte M
+      
+      // Nur positive Beträge ohne Quittung
+      if (betrag > 0 && quittung !== 'Ja') {
+        // Prüfen ob einer der Suchnamen vorkommt
+        for (var j = 0; j < suchNamen.length; j++) {
+          if (nameMatchesApproximate(auftraggeber, suchNamen[j]) || 
+              verwendungszweck.toLowerCase().includes(suchNamen[j].toLowerCase())) {
+            buchungen.push({
+              quelle: 'Kontobewegungen',
+              zeile: i + 1,
+              datum: datum,
+              betrag: betrag,
+              beschreibung: auftraggeber || verwendungszweck,
+              originalName: auftraggeber
+            });
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  // 2. BAR- UND SACHSPENDEN durchsuchen
+  if (bargeldSheet) {
+    var bargeldData = bargeldSheet.getDataRange().getValues();
+    for (var i = 1; i < bargeldData.length; i++) {
+      var row = bargeldData[i];
+      var datum = row[0]; // Spalte A
+      var spender = (row[1] || '').toString(); // Spalte B
+      var betrag = parseFloat(row[2]) || 0; // Spalte C
+      var art = (row[3] || '').toString(); // Spalte D
+      var quittung = (row[5] || '').toString(); // Spalte F
+      
+      // Nur Bargeld (nicht Sachspenden) ohne Quittung
+      if (art === 'Bargeld' && betrag > 0 && quittung !== 'Ja') {
+        // Prüfen ob einer der Suchnamen vorkommt
+        for (var j = 0; j < suchNamen.length; j++) {
+          if (nameMatchesApproximate(spender, suchNamen[j])) {
+            buchungen.push({
+              quelle: 'Bar- und Sachspenden',
+              zeile: i + 1,
+              datum: datum,
+              betrag: betrag,
+              beschreibung: spender,
+              originalName: spender
+            });
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  // Sortieren nach Datum (älteste zuerst)
+  buchungen.sort(function(a, b) {
+    return new Date(a.datum) - new Date(b.datum);
+  });
+  
+  Logger.log('Gefundene Buchungen: ' + buchungen.length);
+  
+  return {
+    spenderName: spenderName,
+    spenderZeile: spenderAdresseZeile,
+    buchungen: buchungen
+  };
+}
+
+/**
+ * Zeigt Dialog zur Auswahl einer Spenderadresse für Sammelquittung
+ */
+function showSammelquittungDialog() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var spenderSheet = ss.getSheetByName(SHEET_SPENDERADRESSEN);
+  
+  if (!spenderSheet) {
+    SpreadsheetApp.getUi().alert('❌ Fehler', 'Spenderadressen-Tabelle nicht gefunden.\n\nBitte erstellen Sie zuerst die Tabelle über:\nVereinserwaltung → Spenderadressen anlegen', SpreadsheetApp.getUi().ButtonSet.OK);
+    return;
+  }
+  
+  var spenderData = spenderSheet.getDataRange().getValues();
+  if (spenderData.length <= 1) {
+    SpreadsheetApp.getUi().alert('❌ Fehler', 'Keine Spenderadressen vorhanden.\n\nBitte tragen Sie zuerst Spender in die Tabelle "Spenderadressen" ein.', SpreadsheetApp.getUi().ButtonSet.OK);
+    return;
+  }
+  
+  // Liste aller Spender erstellen
+  var spenderListe = [];
+  for (var i = 1; i < spenderData.length; i++) {
+    var vorname = spenderData[i][2] || '';
+    var nachname = spenderData[i][3] || '';
+    var name = (vorname + ' ' + nachname).trim();
+    if (name) {
+      spenderListe.push({
+        zeile: i + 1,
+        name: name,
+        displayName: (i) + '. ' + name
+      });
+    }
+  }
+  
+  if (spenderListe.length === 0) {
+    SpreadsheetApp.getUi().alert('❌ Fehler', 'Keine Spender mit Namen gefunden.', SpreadsheetApp.getUi().ButtonSet.OK);
+    return;
+  }
+  
+  // HTML-Dialog erstellen
+  var html = '<style>' +
+    'body { font-family: Arial, sans-serif; padding: 15px; }' +
+    'select, button { width: 100%; padding: 10px; margin: 10px 0; font-size: 14px; }' +
+    'button { background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; }' +
+    'button:hover { background-color: #45a049; }' +
+    '.info { background: #e3f2fd; padding: 10px; border-radius: 4px; margin-bottom: 15px; }' +
+    '</style>' +
+    '<div class="info">📊 <strong>Sammelquittung erstellen</strong><br>Wählen Sie einen Spender aus, für den Sie alle nicht-quittierten Buchungen zusammenfassen möchten.</div>' +
+    '<label for="spender">Spenderadresse:</label>' +
+    '<select id="spender" size="10">';
+  
+  for (var i = 0; i < spenderListe.length; i++) {
+    html += '<option value="' + spenderListe[i].zeile + '">' + spenderListe[i].displayName + '</option>';
+  }
+  
+  html += '</select>' +
+    '<button onclick="weiterZuBuchungen()">➡️ Weiter zu Buchungen</button>' +
+    '<script>' +
+    'function weiterZuBuchungen() {' +
+    '  var spenderZeile = document.getElementById("spender").value;' +
+    '  if (!spenderZeile) { alert("Bitte wählen Sie einen Spender aus."); return; }' +
+    '  google.script.run.withSuccessHandler(function() {' +
+    '    google.script.host.close();' +
+    '  }).showBuchungenAuswahlDialog(parseInt(spenderZeile));' +
+    '}' +
+    '</script>';
+  
+  var htmlOutput = HtmlService.createHtmlOutput(html)
+    .setWidth(500)
+    .setHeight(500);
+  SpreadsheetApp.getUi().showModalDialog(htmlOutput, '📊 Sammelquittung - Spender auswählen');
+}
+
+/**
+ * Zeigt Dialog zur Auswahl der Buchungen für Sammelquittung
+ */
+function showBuchungenAuswahlDialog(spenderZeile) {
+  try {
+    var ergebnis = getNichtQuittierteZahlungenFuerSpender(spenderZeile);
+    
+    if (ergebnis.buchungen.length === 0) {
+      SpreadsheetApp.getUi().alert('ℹ️ Keine Buchungen', 
+        'Für ' + ergebnis.spenderName + ' wurden keine nicht-quittierten Buchungen gefunden.\n\n' +
+        'Alle Buchungen wurden bereits quittiert oder es liegen keine Buchungen vor.', 
+        SpreadsheetApp.getUi().ButtonSet.OK);
+      return;
+    }
+    
+    // Gesamtsumme berechnen
+    var gesamtsumme = 0;
+    for (var i = 0; i < ergebnis.buchungen.length; i++) {
+      gesamtsumme += ergebnis.buchungen[i].betrag;
+    }
+    
+    // HTML-Dialog erstellen
+    var html = '<style>' +
+      'body { font-family: Arial, sans-serif; padding: 15px; }' +
+      'table { width: 100%; border-collapse: collapse; margin: 15px 0; }' +
+      'th { background: #4CAF50; color: white; padding: 8px; text-align: left; }' +
+      'td { padding: 8px; border-bottom: 1px solid #ddd; }' +
+      'tr:hover { background: #f5f5f5; }' +
+      'button { width: 100%; padding: 12px; margin: 10px 0; font-size: 14px; border: none; cursor: pointer; border-radius: 4px; }' +
+      '.primary { background-color: #4CAF50; color: white; }' +
+      '.primary:hover { background-color: #45a049; }' +
+      '.secondary { background-color: #9E9E9E; color: white; }' +
+      '.secondary:hover { background-color: #757575; }' +
+      '.info { background: #e3f2fd; padding: 10px; border-radius: 4px; margin-bottom: 15px; }' +
+      '.summary { background: #fff3e0; padding: 10px; border-radius: 4px; margin: 15px 0; font-weight: bold; }' +
+      'input[type="checkbox"] { transform: scale(1.3); margin-right: 5px; }' +
+      '</style>' +
+      '<div class="info">📊 <strong>Sammelquittung für: ' + ergebnis.spenderName + '</strong><br>' +
+      'Wählen Sie die Buchungen aus, die in der Sammelquittung zusammengefasst werden sollen.</div>' +
+      '<div class="summary">💶 Gesamtsumme (alle): ' + gesamtsumme.toFixed(2).replace('.', ',') + ' € (' + ergebnis.buchungen.length + ' Buchungen)</div>' +
+      '<table>' +
+      '<tr><th>✓</th><th>Datum</th><th>Quelle</th><th>Betrag</th></tr>';
+    
+    for (var i = 0; i < ergebnis.buchungen.length; i++) {
+      var b = ergebnis.buchungen[i];
+      var datumStr = Utilities.formatDate(new Date(b.datum), Session.getScriptTimeZone(), 'dd.MM.yyyy');
+      var betragStr = b.betrag.toFixed(2).replace('.', ',') + ' €';
+      html += '<tr>' +
+        '<td><input type="checkbox" id="buch_' + i + '" checked /></td>' +
+        '<td>' + datumStr + '</td>' +
+        '<td>' + b.quelle + ' (Zeile ' + b.zeile + ')</td>' +
+        '<td style="text-align: right; font-weight: bold;">' + betragStr + '</td>' +
+        '</tr>';
+    }
+    
+    html += '</table>' +
+      '<div id="selectedSum" class="summary">💰 Ausgewählte Summe: ' + gesamtsumme.toFixed(2).replace('.', ',') + ' €</div>' +
+      '<button class="primary" onclick="erstelleSammelquittung()">✅ Sammelquittung erstellen</button>' +
+      '<button class="secondary" onclick="google.script.host.close()">❌ Abbrechen</button>' +
+      '<script>' +
+      'var buchungen = ' + JSON.stringify(ergebnis.buchungen) + ';' +
+      'var spenderZeile = ' + spenderZeile + ';' +
+      'var spenderName = "' + ergebnis.spenderName + '";' +
+      '' +
+      'function updateSum() {' +
+      '  var sum = 0;' +
+      '  for (var i = 0; i < buchungen.length; i++) {' +
+      '    if (document.getElementById("buch_" + i).checked) {' +
+      '      sum += buchungen[i].betrag;' +
+      '    }' +
+      '  }' +
+      '  document.getElementById("selectedSum").innerHTML = "💰 Ausgewählte Summe: " + sum.toFixed(2).replace(".", ",") + " €";' +
+      '}' +
+      '' +
+      'for (var i = 0; i < buchungen.length; i++) {' +
+      '  document.getElementById("buch_" + i).addEventListener("change", updateSum);' +
+      '}' +
+      '' +
+      'function erstelleSammelquittung() {' +
+      '  var ausgewaehlteBuchungen = [];' +
+      '  for (var i = 0; i < buchungen.length; i++) {' +
+      '    if (document.getElementById("buch_" + i).checked) {' +
+      '      ausgewaehlteBuchungen.push(buchungen[i]);' +
+      '    }' +
+      '  }' +
+      '  if (ausgewaehlteBuchungen.length === 0) {' +
+      '    alert("❌ Bitte wählen Sie mindestens eine Buchung aus.");' +
+      '    return;' +
+      '  }' +
+      '  if (!confirm("Sammelquittung für " + ausgewaehlteBuchungen.length + " Buchung(en) erstellen?")) return;' +
+      '  document.body.innerHTML = "<div style=\\"text-align:center; padding:50px;\\"><h2>⏳ Erstelle Sammelquittung...</h2><p>Bitte warten Sie einen Moment.</p></div>";' +
+      '  google.script.run.withSuccessHandler(function(result) {' +
+      '    alert("✅ " + result);' +
+      '    google.script.host.close();' +
+      '  }).withFailureHandler(function(error) {' +
+      '    alert("❌ Fehler: " + error.message);' +
+      '    google.script.host.close();' +
+      '  }).issueSammelquittung(spenderZeile, ausgewaehlteBuchungen);' +
+      '}' +
+      '</script>';
+    
+    var htmlOutput = HtmlService.createHtmlOutput(html)
+      .setWidth(700)
+      .setHeight(600);
+    SpreadsheetApp.getUi().showModalDialog(htmlOutput, '📊 Sammelquittung - Buchungen auswählen');
+    
+  } catch (e) {
+    SpreadsheetApp.getUi().alert('❌ Fehler', 'Fehler beim Laden der Buchungen:\n\n' + e.toString(), SpreadsheetApp.getUi().ButtonSet.OK);
+    Logger.log('Fehler in showBuchungenAuswahlDialog: ' + e.toString());
+  }
+}
+
+/**
+ * Erstellt eine Sammelquittung für ausgewählte Buchungen
+ */
+function issueSammelquittung(spenderZeile, buchungen) {
+  Logger.log('=== Erstelle Sammelquittung ===');
+  Logger.log('Spenderzeile: ' + spenderZeile);
+  Logger.log('Anzahl Buchungen: ' + buchungen.length);
+  
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var spenderSheet = ss.getSheetByName(SHEET_SPENDERADRESSEN);
+    var quittungenSheet = ss.getSheetByName('Spendenquittungen');
+    
+    if (!quittungenSheet) {
+      createQuittungenSheet();
+      quittungenSheet = ss.getSheetByName('Spendenquittungen');
+    }
+    
+    // Spenderadresse abrufen
+    var spenderData = spenderSheet.getRange(spenderZeile, 1, 1, 14).getValues()[0];
+    var anrede = spenderData[1] || '';
+    var vorname = spenderData[2] || '';
+    var nachname = spenderData[3] || '';
+    var strasse = spenderData[4] || '';
+    var hausnummer = spenderData[5] || '';
+    var plz = spenderData[6] || '';
+    var ort = spenderData[7] || '';
+    
+    var spenderName = (vorname + ' ' + nachname).trim();
+    
+    // Gesamtsumme berechnen
+    var gesamtsumme = 0;
+    for (var i = 0; i < buchungen.length; i++) {
+      gesamtsumme += buchungen[i].betrag;
+    }
+    
+    // Zeitraum ermitteln
+    var fruehstesDatum = new Date(buchungen[0].datum);
+    var spaetestesDatum = new Date(buchungen[buchungen.length - 1].datum);
+    var heute = new Date();
+    var jahr = heute.getFullYear();
+    
+    // Quittungsnummer generieren (verwendet dieselbe Funktion wie normale Quittungen)
+    var quittungsNummer = generateReceiptNumber(jahr);
+    Logger.log('Neue Quittungsnummer: ' + quittungsNummer);
+    
+    // PDF generieren
+    var pdfFile = generateSammelquittungPDF(
+      quittungsNummer,
+      {
+        anrede: anrede,
+        vollstaendigerName: spenderName,
+        strasse: strasse,
+        hausnummer: hausnummer,
+        plz: plz,
+        ort: ort
+      },
+      gesamtsumme,
+      buchungen,
+      fruehstesDatum,
+      spaetestesDatum,
+      heute
+    );
+    
+    Logger.log('PDF erstellt: ' + pdfFile.getName());
+    
+    // Alle Buchungen in den Ursprungstabellen markieren
+    var kontoSheet = ss.getSheetByName(SHEET_KONTO);
+    var bargeldSheet = ss.getSheetByName(SHEET_BARGELD);
+    var buchungsVerweise = [];
+    
+    for (var i = 0; i < buchungen.length; i++) {
+      var b = buchungen[i];
+      var sheet = (b.quelle === 'Kontobewegungen') ? kontoSheet : bargeldSheet;
+      
+      if (sheet) {
+        sheet.getRange(b.zeile, 13).setValue('Ja'); // Spalte M: Quittung = "Ja"
+        sheet.getRange(b.zeile, 14).setValue(quittungsNummer + ' (Sammelquittung)'); // Spalte N: Quittungsnummer
+        buchungsVerweise.push(b.quelle + ' Zeile ' + b.zeile);
+      }
+    }
+    
+    Logger.log('Alle Buchungen markiert: ' + buchungsVerweise.join(', '));
+    
+    // Eintrag in Spendenquittungen-Tabelle (wie normale Quittung)
+    quittungenSheet.appendRow([
+      quittungsNummer,
+      heute, // Ausstellungsdatum
+      jahr,
+      spenderName,
+      gesamtsumme,
+      'Sammelquittung (' + buchungen.length + ' Buchungen)',
+      '', // E-Mail (nicht relevant bei Sammelquittung)
+      'Gültig', // Status
+      Utilities.formatDate(fruehstesDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy') + ' - ' + 
+      Utilities.formatDate(spaetestesDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy'), // Bemerkung: Zeitraum
+      pdfFile.getUrl() // PDF-Link
+    ]);
+    
+    // Protokoll aktualisieren (mit detaillierten Infos)
+    logQuittungToProtokoll({
+      quittungsNummer: quittungsNummer,
+      datum: heute,
+      spender: spenderName,
+      betrag: gesamtsumme,
+      art: 'Sammelquittung (' + buchungen.length + ' Buchungen)',
+      status: 'Gültig',
+      pdfLink: pdfFile.getUrl(),
+      bemerkung: 'Zeitraum: ' + Utilities.formatDate(fruehstesDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy') + 
+                 ' bis ' + Utilities.formatDate(spaetestesDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy') + 
+                 ' | Buchungen: ' + buchungsVerweise.join(', ')
+    });
+    
+    return 'Sammelquittung ' + quittungsNummer + ' erfolgreich erstellt!\n\n' +
+           '💰 Gesamtsumme: ' + gesamtsumme.toFixed(2).replace('.', ',') + ' €\n' +
+           '📊 Anzahl Buchungen: ' + buchungen.length + '\n' +
+           '📅 Zeitraum: ' + Utilities.formatDate(fruehstesDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy') + 
+           ' bis ' + Utilities.formatDate(spaetestesDatum, Session.getScriptTimeZone(), 'dd.MM.yyyy') + '\n\n' +
+           '✅ PDF gespeichert in Google Drive';
+    
+  } catch (e) {
+    Logger.log('Fehler beim Erstellen der Sammelquittung: ' + e.toString());
+    throw e;
+  }
+}
+
+/**
+ * Generiert PDF für Sammelquittung
+ * Ähnlich wie normale Quittung, aber mit Auflistung der Einzelzahlungen
+ */
+function generateSammelquittungPDF(receiptNumber, spenderAdresse, gesamtbetrag, buchungen, fruehstesDatum, spaetestesDatum, quittungsDatum) {
+  Logger.log('=== Generiere Sammelquittung-PDF ===');
+  Logger.log('Quittungsnummer: ' + receiptNumber);
+  Logger.log('Gesamtbetrag: ' + gesamtbetrag);
+  Logger.log('Anzahl Buchungen: ' + buchungen.length);
+  
+  // Prüfe ob alle Buchungen von derselben Art sind (Geld oder Sach)
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var alleSachspenden = true;
+  var alleGeldspenden = true;
+  
+  for (var i = 0; i < buchungen.length; i++) {
+    var quelle = buchungen[i].quelle;
+    var zeile = buchungen[i].zeile;
+    
+    if (quelle === SHEET_BARGELD) {
+      var sourceSheet = ss.getSheetByName(quelle);
+      if (sourceSheet && zeile > 1 && zeile <= sourceSheet.getLastRow()) {
+        var art = sourceSheet.getRange(zeile, 3).getValue(); // Spalte C: Art
+        if (art === 'Sachspende') {
+          alleGeldspenden = false;
+        } else {
+          alleSachspenden = false;
+        }
+      }
+    } else {
+      // Kontobewegungen sind immer Geldspenden
+      alleSachspenden = false;
+    }
+  }
+  
+  var istReineSachspende = alleSachspenden && !alleGeldspenden;
+  Logger.log('Reine Sachspenden: ' + istReineSachspende + ', Reine Geldspenden: ' + alleGeldspenden);
+  
+  // WICHTIG: Prüfe Gültigkeit des Feststellungsbescheids
+  var gueltigBis = new Date(VEREIN_FESTSTELLUNGSBESCHEID_GUELTIG_BIS.split('.').reverse().join('-'));
+  var heute = new Date();
+  var tageVerbleibend = Math.ceil((gueltigBis - heute) / (1000 * 60 * 60 * 24));
+  
+  if (heute > gueltigBis) {
+    throw new Error('⚠️ ACHTUNG: Der Feststellungsbescheid ist abgelaufen!\n\nGültig bis: ' + VEREIN_FESTSTELLUNGSBESCHEID_GUELTIG_BIS + '\n\nBitte beantragen Sie einen neuen Feststellungsbescheid beim Finanzamt, bevor Sie weitere Spendenbescheinigungen ausstellen.');
+  }
+  
+  if (tageVerbleibend < 90) {
+    Logger.log('⚠️ WARNUNG: Feststellungsbescheid läuft in ' + tageVerbleibend + ' Tagen ab! Bitte rechtzeitig neuen Bescheid beantragen.');
+  }
+  
+  // Formatierungen
+  var formattedBetrag = parseFloat(gesamtbetrag).toFixed(2).replace('.', ',') + ' €';
+  var betragInWort = betragInWorten(gesamtbetrag);
+  var formattedZeitraumVon = Utilities.formatDate(new Date(fruehstesDatum), Session.getScriptTimeZone(), 'dd.MM.yyyy');
+  var formattedZeitraumBis = Utilities.formatDate(new Date(spaetestesDatum), Session.getScriptTimeZone(), 'dd.MM.yyyy');
+  var formattedQuittungsDatum = Utilities.formatDate(new Date(quittungsDatum), Session.getScriptTimeZone(), 'dd.MM.yyyy');
+  
+  // Erstelle temporäres Google Docs-Dokument
+  var tempDoc = DocumentApp.create('Temp_Sammelquittung_' + receiptNumber);
+  var body = tempDoc.getBody();
+  body.clear();
+  
+  // Setze Dokumenten-Formatierung
+  body.setMarginTop(50);
+  body.setMarginBottom(50);
+  body.setMarginLeft(70);
+  body.setMarginRight(70);
+  
+  // === HEADER MIT LOGO RECHTS UND AUSSTELLER LINKS (nebeneinander) ===
+  var headerTable = body.appendTable();
+  var headerRow = headerTable.appendTableRow();
+  
+  // Linke Spalte: Aussteller-Informationen + Titel + Bescheinigungsnummer
+  var leftCell = headerRow.appendTableCell();
+  leftCell.appendParagraph('Aussteller (Bezeichnung und Anschrift der steuerbegünstigten Einrichtung):')
+    .setFontSize(8).setBold(false).setSpacingBefore(0).setSpacingAfter(3);
+  leftCell.appendParagraph(VEREIN_NAME)
+    .setFontSize(11).setBold(true).setSpacingAfter(2);
+  leftCell.appendParagraph(VEREIN_STRASSE + ' ' + VEREIN_HAUSNUMMER + ', ' + VEREIN_PLZ + ' ' + VEREIN_ORT)
+    .setFontSize(10).setBold(true).setSpacingAfter(8);
+  
+  // Trennlinie in der Zelle
+  leftCell.appendParagraph('─────────────────────────────────────')
+    .setFontSize(8).setSpacingAfter(8);
+  
+  // Titel in der linken Zelle (dynamisch je nach Art der Spenden)
+  var titelSammel = istReineSachspende ? 'Sammelbestätigung über Sachzuwendungen' : 'Sammelbestätigung über Geldzuwendungen/Spenden';
+  leftCell.appendParagraph(titelSammel)
+    .setFontSize(12).setBold(true).setSpacingAfter(3);
+  
+  // Bescheinigungsnummer in der linken Zelle
+  leftCell.appendParagraph('(Bescheinigung Nr. ' + receiptNumber + ')')
+    .setFontSize(9).setSpacingAfter(0);
+  
+  leftCell.setWidth(350);
+  leftCell.setPaddingTop(0).setPaddingBottom(5);
+  
+  // Rechte Spalte: Logo
+  var rightCell = headerRow.appendTableCell();
+  rightCell.setVerticalAlignment(DocumentApp.VerticalAlignment.CENTER);
+  rightCell.setWidth(120);
+  rightCell.setPaddingTop(0).setPaddingBottom(5);
+  
+  try {
+    if (VEREIN_LOGO_DRIVE_ID && VEREIN_LOGO_DRIVE_ID.length > 0) {
+      var logoFile = DriveApp.getFileById(VEREIN_LOGO_DRIVE_ID);
+      var logoBlob = logoFile.getBlob();
+      var logoPara = rightCell.appendParagraph('');
+      var logoImg = logoPara.appendInlineImage(logoBlob);
+      var originalWidth = logoImg.getWidth();
+      var originalHeight = logoImg.getHeight();
+      var aspectRatio = originalHeight / originalWidth;
+      var targetWidth = 100;
+      var targetHeight = targetWidth * aspectRatio;
+      logoImg.setWidth(targetWidth);
+      logoImg.setHeight(targetHeight);
+      logoPara.setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+      Logger.log('✅ Logo geladen');
+    } else {
+      rightCell.appendParagraph('').setFontSize(1);
+    }
+  } catch (e) {
+    rightCell.appendParagraph('').setFontSize(1);
+    Logger.log('⚠️ Logo konnte nicht geladen werden');
+  }
+  
+  // Tabelle ohne Rahmen (unsichtbar)
+  headerTable.setBorderWidth(0);
+  headerTable.setAttributes({
+    [DocumentApp.Attribute.SPACING_AFTER]: 15
+  });
+  
+  // === RECHTLICHE GRUNDLAGE (wie amtliches Muster) ===
+  body.appendParagraph('im Sinne des § 10b des Einkommensteuergesetzes an eine der in § 5 Abs. 1 Nr. 9 des Körperschaftsteuergesetzes bezeichneten Körperschaften, Personenvereinigungen oder Vermögensmassen')
+    .setFontSize(8).setLineSpacing(1.15).setSpacingAfter(12);
+  
+  // === NAME UND ANSCHRIFT DES ZUWENDENDEN (gemäß amtlichem Muster) ===
+  body.appendParagraph('Name und Anschrift des Zuwendenden:')
+    .setFontSize(8).setBold(false).setSpacingAfter(3);
+  
+  var spenderAdresseText = (spenderAdresse.anrede ? spenderAdresse.anrede + ' ' : '') + 
+                           spenderAdresse.vollstaendigerName + ', ' + 
+                           spenderAdresse.strasse + ' ' + spenderAdresse.hausnummer + ', ' + 
+                           spenderAdresse.plz + ' ' + spenderAdresse.ort;
+  
+  body.appendParagraph(spenderAdresseText)
+    .setFontSize(10).setBold(true).setSpacingAfter(12);
+  
+  // === GESAMTBETRAG UND ZEITRAUM ===
+  body.appendParagraph('Gesamtbetrag der Zuwendungen:')
+    .setFontSize(8).setBold(false).setSpacingAfter(3);
+  
+  body.appendParagraph('- in Ziffern: ' + formattedBetrag)
+    .setFontSize(10).setBold(true).setSpacingAfter(2);
+  
+  body.appendParagraph('- in Buchstaben: ' + betragInWort)
+    .setFontSize(10).setSpacingAfter(8);
+  
+  body.appendParagraph('Zeitraum der Zuwendungen: ' + formattedZeitraumVon + ' bis ' + formattedZeitraumBis)
+    .setFontSize(10).setSpacingAfter(12);
+  
+  // === AUFLISTUNG DER EINZELZAHLUNGEN ===
+  body.appendParagraph('Zusammensetzung der Zuwendungen:')
+    .setFontSize(8).setBold(true).setSpacingAfter(5);
+  
+  for (var i = 0; i < buchungen.length; i++) {
+    var b = buchungen[i];
+    var datumStr = Utilities.formatDate(new Date(b.datum), Session.getScriptTimeZone(), 'dd.MM.yyyy');
+    var betragStr = b.betrag.toFixed(2).replace('.', ',') + ' €';
+    body.appendParagraph('• ' + datumStr + ': ' + betragStr)
+      .setFontSize(9).setSpacingAfter(2);
+  }
+  
+  body.appendParagraph('').setSpacingAfter(8); // Leerzeile
+  
+  // === VERZICHT AUF ERSTATTUNG (gemäß amtlichem Muster) ===
+  body.appendParagraph('Es handelt sich um den Verzicht auf Erstattung von Aufwendungen:    ☐ Ja    ☒ Nein')
+    .setFontSize(9).setSpacingAfter(15);
+  
+  // === GEMEINNÜTZIGKEIT (gemäß amtlichem Muster) ===
+  body.appendParagraph('Wir sind wegen Förderung (Angabe des begünstigten Zwecks / der begünstigten Zwecke):')
+    .setFontSize(8).setBold(false).setSpacingAfter(3);
+  
+  body.appendParagraph(VEREIN_SATZUNGSZWECK)
+    .setFontSize(9).setItalic(true).setSpacingAfter(8);
+  
+  body.appendParagraph('nach dem letzten uns zugegangenen Bescheid nach § 60a Abs. 1 AO über die gesonderte Feststellung der Einhaltung der satzungsmäßigen Voraussetzungen nach § 51, 59, 60 und 61 AO vom ' + VEREIN_FESTSTELLUNGSBESCHEID_DATUM + ' (Steuernummer ' + VEREIN_STEUERNUMMER + ') für die Satzung in der Fassung vom ' + VEREIN_SATZUNG_FASSUNG_VOM + ' als steuerbegünstigt anerkannt.')
+    .setFontSize(8).setLineSpacing(1.15).setSpacingAfter(8);
+  
+  body.appendParagraph('Es wird bestätigt, dass die Zuwendung nur zur Förderung ' + VEREIN_SATZUNGSPARAGRAPHEN + ' verwendet wird.')
+    .setFontSize(8).setLineSpacing(1.15).setSpacingAfter(15);
+  
+  // === TRENNLINIE ===
+  body.appendParagraph('─────────────────────────────────────────────────────────────')
+    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(15);
+  
+  // === ORT, DATUM, UNTERSCHRIFT (gemäß amtlichem Muster) ===
+  body.appendParagraph(VEREIN_ORT + ', den ' + formattedQuittungsDatum)
+    .setFontSize(9).setSpacingBefore(10).setSpacingAfter(15);
+  
+  // Unterschrift als Bild einfügen (falls vorhanden)
+  try {
+    if (UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID && UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID.length > 0) {
+      var unterschriftFile = DriveApp.getFileById(UNTERZEICHNER_UNTERSCHRIFT_DRIVE_ID);
+      var unterschriftBlob = unterschriftFile.getBlob();
+      var unterschriftPara = body.appendParagraph('');
+      var unterschriftImg = unterschriftPara.appendInlineImage(unterschriftBlob);
+      var originalWidth = unterschriftImg.getWidth();
+      var originalHeight = unterschriftImg.getHeight();
+      var aspectRatio = originalWidth / originalHeight;
+      var targetHeight = 80;
+      var targetWidth = targetHeight * aspectRatio;
+      unterschriftImg.setWidth(targetWidth);
+      unterschriftImg.setHeight(targetHeight);
+      unterschriftPara.setSpacingAfter(5);
+      Logger.log('✅ Unterschrift geladen');
+    } else {
+      body.appendParagraph('_______________________________________')
+        .setFontSize(9).setSpacingAfter(5);
+    }
+  } catch (e) {
+    body.appendParagraph('_______________________________________')
+      .setFontSize(9).setSpacingAfter(5);
+    Logger.log('⚠️ Unterschrift konnte nicht geladen werden');
+  }
+  
+  body.appendParagraph('Unterschrift des Zuwendungsempfängers')
+    .setFontSize(7).setSpacingAfter(2);
+  
+  body.appendParagraph(UNTERZEICHNER_NAME + ', ' + UNTERZEICHNER_FUNKTION)
+    .setFontSize(9).setSpacingAfter(20);
+  
+  // === HINWEISE (gemäß amtlichem Muster) ===
+  body.appendParagraph('─────────────────────────────────────────────────────────────')
+    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(6);
+  
+  body.appendParagraph('Hinweis:')
+    .setFontSize(6).setBold(false).setSpacingAfter(2);
+  
+  body.appendParagraph('Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen steuerbegünstigten Zwecken verwendet werden, haftet für die entgangene Steuer (§ 10b Abs. 4 EStG, § 9 Abs. 3 KStG, § 9 Nr. 5 GewStG).')
+    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(4);
+  
+  body.appendParagraph('Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt, wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der vorläufigen Bescheinigung länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt (§ 63 Abs. 5 AO).')
+    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(0);
+  
+  // Speichere PDF und gib File-Objekt zurück (verwendet gemeinsame Hilfsfunktion)
+  return savePDFToDrive(tempDoc, 'Sammelquittung_' + receiptNumber + '.pdf');
 }

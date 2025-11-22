@@ -1,18 +1,16 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
+import SEOHead from "@/components/SEOHead";
 
 const Datenschutz = () => {
   return (
     <>
-      <Helmet>
-        <meta property="og:title" content="Hoffnungsradler Dülmen" />
-        <meta property="og:description" content="gemeinsam bewegen wir mehr" />
-        <meta property="og:image" content="https://www.hoffnungs-radler-duelmen.de/og-image.png" />
-        <meta property="og:url" content="https://www.hoffnungs-radler-duelmen.de" />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <SEOHead 
+        title="Datenschutzerklärung"
+        description="Datenschutzerklärung der Hoffnungsradler Dülmen e.V. Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO."
+        url="https://www.hoffnungs-radler-duelmen.de/datenschutz"
+      />
       
       <div className="container mx-auto py-8 px-4">
         <Card>

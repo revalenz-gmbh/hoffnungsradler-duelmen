@@ -1,9 +1,15 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
+import SEOHead from "@/components/SEOHead";
 
 const Impressum = () => {
   return (
     <div className="container mx-auto py-8 px-4">
+      <SEOHead 
+        title="Impressum"
+        description="Impressum der Hoffnungsradler Dülmen e.V. - Angaben gemäß § 5 TMG. Vereinsregistereintrag beim Amtsgericht Coesfeld."
+        url="https://www.hoffnungs-radler-duelmen.de/impressum"
+      />
       <Card>
         <CardContent className="pt-6">
           <h1 className="text-3xl font-bold mb-6">Impressum</h1>
