@@ -1,5 +1,9 @@
+// Übergebene Spenden pro Jahr (historisch + aktuell)
+// Diese Daten werden als Fallback verwendet, wenn das Google Sheet nicht erreichbar ist.
+// Die Live-Daten werden direkt aus dem Dashboard geladen.
+// Stand: 07.12.2025
 export const donations = [
-  { year: 2025, amount: 9046 }, // aktueller Stand
+  { year: 2025, amount: 10000 },  // 2x Spendenübergabe (Dashboard: 05.12.2025)
   { year: 2024, amount: 7000 },
   { year: 2023, amount: 13000 },
   { year: 2022, amount: 4000 },
@@ -23,7 +27,15 @@ export const donations = [
   { year: 2004, amount: 100 },
 ];
 
-export const totalDonations = 91055;
-export const currentYearDonations = 9046;
+// Gesamtsumme aller übergebenen Spenden (2004-2025)
+// 91.055 € (historisch) + 10.000 € (2025) = 101.055 €
+export const totalDonations = 101055;
+
+// Aktuell übergebene Spenden im laufenden Jahr
+export const currentYearDonations = 10000;
+
+// Spendenziel für das aktuelle Jahr
 export const donationGoal = 5000;
+
+// Aktuelles Jahr
 export const donationYear = 2025; 

@@ -4,23 +4,38 @@
 /**
  * Google Apps Script Web-App URL
  * 
- * WICHTIG: Diese URL muss nach dem Deployment des Google Apps Scripts aktualisiert werden!
+ * SETUP-ANLEITUNG:
+ * ================
  * 
- * Deployment-Anleitung:
- * 1. Apps Script Editor öffnen (Erweiterungen → Apps Script)
- * 2. Bereitstellen → Neue Bereitstellung
- * 3. Typ: Web-App
- * 4. Ausführen als: Ich
- * 5. Zugriff: Jeder
- * 6. URL kopieren und hier eintragen
+ * 1. Google Apps Script deployen:
+ *    - Öffne das Google Sheet
+ *    - Erweiterungen → Apps Script
+ *    - Bereitstellen → Neue Bereitstellung → Web-App
+ *    - Ausführen als: Ich
+ *    - Zugriff: Jeder
+ *    - URL kopieren
+ * 
+ * 2. URL konfigurieren (eine Option wählen):
+ * 
+ *    Option A - Umgebungsvariable (.env Datei):
+ *    VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/DEINE_ID/exec
+ * 
+ *    Option B - Direkt hier eintragen:
+ *    Ersetze '' unten mit deiner Web-App URL
+ * 
+ * Ausführliche Anleitung: docs/GOOGLE_APPS_SCRIPT_SETUP.md
  */
 
+// Web-App URL - entweder aus Umgebungsvariable oder direkt hier eintragen
 export const GOOGLE_APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL || '';
 
-// Für lokale Entwicklung: Fallback auf Mock-Daten
-export const USE_MOCK_DATA = !GOOGLE_APPS_SCRIPT_URL || import.meta.env.DEV;
+// Mock-Daten verwenden wenn:
+// - Keine Apps Script URL konfiguriert ist
+// - Im Development-Modus (kann überschrieben werden mit VITE_USE_LIVE_API=true)
+const forceLiveApi = import.meta.env.VITE_USE_LIVE_API === 'true';
+export const USE_MOCK_DATA = !GOOGLE_APPS_SCRIPT_URL || (import.meta.env.DEV && !forceLiveApi);
 
-// Debug-Modus
+// Debug-Modus für API-Calls
 export const DEBUG_API = import.meta.env.DEV;
 
 /**

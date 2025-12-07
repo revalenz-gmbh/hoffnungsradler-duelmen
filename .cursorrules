@@ -16,22 +16,6 @@ Nutze diesen Skill für:
 
 **Vorgehen:** Schaue in die SKILL.md für spezifische Guidelines und Patterns.
 
----
-
-## 🎯 Pitch Deck Generator
-**Pfad:** `.claude/skills/pitch-deck/`
-
-Nutze diesen Skill für:
-- Erstellung von Investor-Präsentationen
-- Startup-Story und Value Proposition
-- Marktanalyse und Wettbewerbsübersicht
-- Finanzprojektionen und Business Model
-- Problem-Solution-Framework
-- Team und Roadmap Slides
-
-**Vorgehen:** Folge der Struktur in SKILL.md für überzeugende Pitch Decks.
-
----
 
 ## 🔍 SEO Optimizer
 **Pfad:** `.claude/skills/seo-optimizer/`

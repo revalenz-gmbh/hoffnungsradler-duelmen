@@ -17,6 +17,7 @@ import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 // Statische Daten für Empfänger-Organisationen (werden mit API-Daten kombiniert)
 const recipientMapping: { [year: number]: string } = {
+  2025: "Datteln Elterninitiative krebskranker Kinder",
   2024: "Datteln Elterninitiative krebskranker Kinder",
   2023: "Datteln Elterninitiative krebskranker Kinder",
   2022: "Datteln Elterninitiative krebskranker Kinder",
@@ -68,7 +69,7 @@ const Spenden = () => {
       }))
     : [];
 
-  const totalDonations = donationsData?.gesamt || 91055;
+  const totalDonations = donationsData?.gesamt || 96055;
   const tableData = [...donations].sort((a, b) => b.year - a.year);
 
   const organizations = [

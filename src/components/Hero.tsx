@@ -44,7 +44,6 @@ const Hero = () => {
 
   useEffect(() => {
     // Animation für aktuelle Spendensumme
-    let start = 0;
     const duration = 1200;
     const step = (timestamp: number, startTime: number) => {
       const progress = Math.min((timestamp - startTime) / duration, 1);
@@ -57,7 +56,6 @@ const Hero = () => {
     };
     requestAnimationFrame((t) => step(t, t));
     // Animation für Gesamtsumme
-    let startTotal = 0;
     const durationTotal = 1500;
     const stepTotal = (timestamp: number, startTime: number) => {
       const progress = Math.min((timestamp - startTime) / durationTotal, 1);

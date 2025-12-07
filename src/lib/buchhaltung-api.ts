@@ -3,6 +3,11 @@
 
 import { API_ENDPOINTS, USE_MOCK_DATA, DEBUG_API } from './api-config';
 import { donations } from '@/data/donations';
+import { 
+  HISTORICAL_DONATIONS, 
+  HISTORICAL_TOTAL,
+  FALLBACK_DASHBOARD
+} from './google-sheets-api';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -68,53 +73,35 @@ export interface Jahresabschluss {
 // MOCK DATA (für Entwicklung ohne Google Sheets)
 // ============================================================================
 
+// Mock-Daten basierend auf historischen Daten + Fallback für aktuelles Jahr
 const mockUebergabeSummen: UebergabeSummen = {
   summen: {
-    '2025': 0,
-    '2024': 7000,
-    '2023': 13000,
-    '2022': 4000,
-    '2021': 4500,
-    '2020': 5600,
-    '2019': 5500,
-    '2018': 5000,
-    '2017': 5000,
-    '2016': 7000,
-    '2015': 5600,
-    '2014': 5555,
-    '2013': 5000,
-    '2012': 4000,
-    '2011': 4000,
-    '2010': 3000,
-    '2009': 2500,
-    '2008': 1700,
-    '2007': 1300,
-    '2006': 1200,
-    '2005': 500,
-    '2004': 100,
+    ...HISTORICAL_DONATIONS,
+    '2025': FALLBACK_DASHBOARD.ausgabenUebergeben, // Aktuelle übergebene Spenden aus Fallback
   },
-  gesamt: 91055
+  gesamt: HISTORICAL_TOTAL + FALLBACK_DASHBOARD.ausgabenUebergeben
 };
 
 const mockAllYearlyData: AllYearlyData = {
   donations: donations,
-  totalDonations: 91055,
+  totalDonations: 96055,
   currentYear: 2025
 };
 
+// Mock-Dashboard mit aktuellen Werten (Stand: 07.12.2025)
 const mockDashboard: DashboardData = {
   year: 2025,
   einnahmen: {
-    konto: { anzahl: 15, summe: 3200.50, letzter: '15.03.2025' },
-    bargeld: { anzahl: 8, summe: 1781.50, letzter: '20.03.2025' },
-    gesamt: 4982.00
+    konto: { anzahl: 23, summe: 7939.00, letzter: '05.12.2025' },
+    bargeld: { anzahl: 7, summe: 2262.00, letzter: '28.09.2025' },
+    gesamt: 10201.00
   },
   ausgaben: {
-    allgemein: { anzahl: 3, summe: 250.00, letzter: '10.03.2025' },
-    uebergeben: { anzahl: 0, summe: 0, letzter: '' },
-    gesamt: 250.00
+    allgemein: { anzahl: 3, summe: 253.88, letzter: '05.12.2025' },
+    uebergeben: { anzahl: 2, summe: 10000.00, letzter: '05.12.2025' },
+    gesamt: 10253.88
   },
-  saldo: 4732.00,
+  saldo: 60.13,  // Endbestand Geldmittel
   quittungen: {
     konto: { ausgestellt: 10, offen: 5 },
     bargeld: { ausgestellt: 3, offen: 5 }
@@ -173,14 +160,26 @@ export async function getDashboard(): Promise<DashboardData> {
 
 /**
  * Übergebene Spenden-Summen abrufen
+ * 
+ * Versucht die Daten von der Google Apps Script Web-App zu laden.
+ * Falls nicht konfiguriert oder nicht erreichbar, werden Fallback-Daten verwendet.
  */
 export async function getUebergabeSummen(): Promise<UebergabeSummen> {
-  if (USE_MOCK_DATA) {
-    console.log('[API] Using mock data for Übergabe-Summen');
-    return mockUebergabeSummen;
+  // Versuche die Google Apps Script Web-App API
+  if (!USE_MOCK_DATA) {
+    try {
+      console.log('[API] Fetching from Google Apps Script Web-App...');
+      const data = await apiFetch<UebergabeSummen>(API_ENDPOINTS.getUebergabeSummen);
+      console.log('[API] Successfully fetched data from Apps Script');
+      return data;
+    } catch (error) {
+      console.warn('[API] Could not fetch from Apps Script:', error);
+    }
   }
-
-  return apiFetch<UebergabeSummen>(API_ENDPOINTS.getUebergabeSummen);
+  
+  // Fallback: Mock-Daten (basierend auf historischen Daten + Fallback für aktuelles Jahr)
+  console.log('[API] Using fallback data for Übergabe-Summen');
+  return mockUebergabeSummen;
 }
 
 /**

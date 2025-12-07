@@ -884,7 +884,7 @@ function createKontoSheet() {
   // Dropdown für Kategorie (Spalte L = 12)
   var kategorieRange = sheet.getRange('L2:L1000');
   var kategorieRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Sonstiges'], true)
+    .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Spendenübergabe', 'Sonstiges'], true)
     .build();
   kategorieRange.setDataValidation(kategorieRule);
   
@@ -915,8 +915,10 @@ function createKontoSheet() {
     '📋 WICHTIG: Diese Tabelle enthält ALLE Kontobewegungen:\n' +
     '   • Positive Beträge = Einnahmen\n' +
     '   • Negative Beträge = Ausgaben\n\n' +
-    '⚠️ KATEGORIE "Intern": Verwenden Sie diese für Bargeldeinzahlungen auf das Konto,\n' +
-    '   um Doppelzählungen mit der Tabelle "Bar- und Sachspenden" zu vermeiden!'
+    '⚠️ KATEGORIEN für Doppelzählungs-Vermeidung:\n' +
+    '   • "Intern": Bargeldeinzahlungen auf das Konto\n' +
+    '   • "Spendenübergabe": Überweisungen an Hilfsorganisationen\n' +
+    '     (werden separat in "Übergebene Spenden" erfasst)'
   );
 }
 
@@ -2667,6 +2669,16 @@ function addDonation(donation) {
   ]);
 }
 
+/**
+ * Gibt die Summen der übergebenen Spenden pro Jahr zurück.
+ * 
+ * SINGLE SOURCE OF TRUTH: Kontobewegungen mit Kategorie "Spendenübergabe"
+ * 
+ * Diese Funktion wird von der Website über die Web-App API abgerufen.
+ * Sie gibt nur aggregierte, nicht-personenbezogene Daten zurück.
+ * 
+ * @returns {Object} { summen: { "2024": 7000, "2025": 5000, ... }, gesamt: 96055 }
+ */
 function getUebergabeSummen() {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -2675,51 +2687,43 @@ function getUebergabeSummen() {
       return { summen: {}, gesamt: 0 };
     }
     
-    var sheet = ss.getSheetByName(SHEET_UEBERGABE);
-    if (!sheet) {
-      Logger.log('Warnung: Sheet "' + SHEET_UEBERGABE + '" nicht gefunden.');
-      return { summen: {}, gesamt: 0 };
-    }
-  
-  var values = sheet.getDataRange().getValues();
-    if (!values || values.length < 2) {
-      Logger.log('Warnung: Keine Daten in Sheet "' + SHEET_UEBERGABE + '" gefunden.');
-      return { summen: {}, gesamt: 0 };
-    }
+    var summen = {};
     
-  var headers = values.shift();
-    if (!headers || headers.length === 0) {
-      Logger.log('Warnung: Keine Header in Sheet "' + SHEET_UEBERGABE + '" gefunden.');
-      return { summen: {}, gesamt: 0 };
-    }
-    
-  var jahrIndex = headers.indexOf('Jahr');
-  var betragIndex = headers.indexOf('Betrag (€)');
-    
-    if (jahrIndex === -1 || betragIndex === -1) {
-      Logger.log('Warnung: Erforderliche Spalten "Jahr" oder "Betrag (€)" nicht gefunden.');
-      return { summen: {}, gesamt: 0 };
-    }
-    
-  var summen = {};
-  
-  values.forEach(function(row) {
-      try {
-    var jahr = row[jahrIndex];
-    var betrag = parseFloat(row[betragIndex]) || 0;
-        
-        if (jahr && !isNaN(betrag)) {
-    if (!summen[jahr]) summen[jahr] = 0;
-    summen[jahr] += betrag;
+    // === QUELLE: Kontobewegungen mit Kategorie "Spendenübergabe" ===
+    var kontoSheet = ss.getSheetByName(SHEET_KONTO);
+    if (kontoSheet) {
+      var data = kontoSheet.getDataRange().getValues();
+      
+      for (var i = 1; i < data.length; i++) {
+        try {
+          var datum = data[i][KONTO_COL_BUCHUNGSTAG];
+          var betrag = data[i][KONTO_COL_BETRAG];
+          var kategorie = data[i][KONTO_COL_KATEGORIE];
+          
+          // Nur negative Beträge (Ausgaben) mit Kategorie "Spendenübergabe"
+          if (datum && betrag && betrag < 0 && kategorie === 'Spendenübergabe') {
+            var jahr = new Date(datum).getFullYear();
+            var positiverBetrag = Math.abs(parseFloat(betrag));
+            
+            if (!isNaN(jahr) && !isNaN(positiverBetrag)) {
+              if (!summen[jahr]) summen[jahr] = 0;
+              summen[jahr] += positiverBetrag;
+            }
+          }
+        } catch (rowError) {
+          Logger.log('Fehler beim Verarbeiten einer Zeile: ' + rowError.toString());
         }
-      } catch (rowError) {
-        Logger.log('Fehler beim Verarbeiten einer Zeile: ' + rowError.toString());
-        // Überspringe fehlerhafte Zeile
       }
-  });
-  
-  var gesamt = Object.values(summen).reduce(function(a, b) { return a + b; }, 0);
-  return { summen: summen, gesamt: gesamt };
+    } else {
+      Logger.log('Warnung: Sheet "' + SHEET_KONTO + '" nicht gefunden.');
+    }
+    
+    // Gesamt berechnen
+    var gesamt = Object.values(summen).reduce(function(a, b) { return a + b; }, 0);
+    
+    Logger.log('getUebergabeSummen(): ' + JSON.stringify({ summen: summen, gesamt: gesamt }));
+    
+    return { summen: summen, gesamt: gesamt };
   } catch (error) {
     Logger.log('Fehler in getUebergabeSummen(): ' + error.toString());
     return { summen: {}, gesamt: 0 };
@@ -3534,7 +3538,7 @@ function importToKontoSheet(rows) {
   // Dropdown für Kategorie (Spalte L) auf neue Zeilen anwenden
   var kategorieRange = sheet.getRange(startRow, 12, dataToInsert.length, 1);
   var kategorieRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Sonstiges'], true)
+    .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Spendenübergabe', 'Sonstiges'], true)
     .build();
   kategorieRange.setDataValidation(kategorieRule);
   
@@ -4788,7 +4792,7 @@ function importRowsToKontoSheet(rows) {
     // Dropdown für Kategorie (Spalte L) auf neue Zeilen anwenden
     var kategorieRange = sheet.getRange(insertRow, 12, newRows.length, 1);
     var kategorieRule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Sonstiges'], true)
+      .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Spendenübergabe', 'Sonstiges'], true)
       .build();
     kategorieRange.setDataValidation(kategorieRule);
     
@@ -5243,6 +5247,7 @@ function ANZAHL_SACHSPENDEN_JAHR(jahr) {
 
 /**
  * Custom Function: Summiert negative Beträge (Ausgaben) aus Kontobewegungen für ein bestimmtes Jahr
+ * WICHTIG: Schließt Kategorie "Spendenübergabe" aus, da diese separat in "Übergebene Spenden" erfasst wird
  * 
  * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der Ausgaben (als positive Zahl)
@@ -5257,12 +5262,14 @@ function AUSGABEN_KONTO_JAHR(jahr) {
   var data = sheet.getDataRange().getValues();
   var summe = 0;
   
-  // Spaltenindizes (0-basiert): B=1 (Datum), I=8 (Betrag)
+  // Spaltenindizes (0-basiert): B=1 (Datum), I=8 (Betrag), L=11 (Kategorie)
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
+    var kategorie = data[i][11] || ''; // Spalte L
     
-    if (datum && betrag && betrag < 0) {
+    // Schließe "Spendenübergabe" aus (wird separat in "Übergebene Spenden" gezählt)
+    if (datum && betrag && betrag < 0 && kategorie !== 'Spendenübergabe') {
       var rowYear = new Date(datum).getFullYear();
       if (rowYear == targetYear) {
         summe += Math.abs(parseFloat(betrag)); // Als positive Zahl
@@ -5275,6 +5282,7 @@ function AUSGABEN_KONTO_JAHR(jahr) {
 
 /**
  * Custom Function: Zählt negative Beträge (Ausgaben) aus Kontobewegungen für ein bestimmtes Jahr
+ * WICHTIG: Schließt Kategorie "Spendenübergabe" aus
  * 
  * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der Ausgaben
@@ -5289,12 +5297,14 @@ function ANZAHL_AUSGABEN_KONTO_JAHR(jahr) {
   var data = sheet.getDataRange().getValues();
   var anzahl = 0;
   
-  // Spaltenindizes (0-basiert): B=1 (Datum), I=8 (Betrag)
+  // Spaltenindizes (0-basiert): B=1 (Datum), I=8 (Betrag), L=11 (Kategorie)
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
+    var kategorie = data[i][11] || ''; // Spalte L
     
-    if (datum && betrag && betrag < 0) {
+    // Schließe "Spendenübergabe" aus (wird separat in "Übergebene Spenden" gezählt)
+    if (datum && betrag && betrag < 0 && kategorie !== 'Spendenübergabe') {
       var rowYear = new Date(datum).getFullYear();
       if (rowYear == targetYear) {
         anzahl++;
@@ -5372,6 +5382,9 @@ function ANZAHL_BARAUSGABEN_JAHR(jahr) {
 /**
  * Custom Function: Summiert übergebene Spenden für ein bestimmtes Jahr
  * 
+ * SINGLE SOURCE OF TRUTH: Nur Kontobewegungen mit Kategorie "Spendenübergabe"
+ * Die "Übergebene Spenden"-Tabelle ist optional für zusätzliche Details (Empfänger, Anlass)
+ * 
  * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der übergebenen Spenden
  * @customfunction
@@ -5379,22 +5392,24 @@ function ANZAHL_BARAUSGABEN_JAHR(jahr) {
 function UEBERGABE_JAHR(jahr) {
   var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_UEBERGABE);
-  if (!sheet) return 0;
+  var kontoSheet = ss.getSheetByName(SHEET_KONTO);
+  if (!kontoSheet) return 0;
   
-  var data = sheet.getDataRange().getValues();
+  var data = kontoSheet.getDataRange().getValues();
   var summe = 0;
   
-  // Spaltenindizes (0-basiert): A=0 (Jahr), B=1 (Betrag)
+  // Spaltenstruktur: B=Datum(1), I=Betrag(8), L=Kategorie(11)
   for (var i = 1; i < data.length; i++) {
-    var jahrWert = data[i][0]; // Spalte A
-    var betrag = data[i][1];   // Spalte B
+    var datum = data[i][1];       // Spalte B: Buchungstag
+    var betrag = data[i][8];      // Spalte I: Betrag
+    var kategorie = data[i][11];  // Spalte L: Kategorie
     
-    // Jahr-Wert aus der Tabelle ebenfalls extrahieren (kann Zahl oder Datum sein)
-    var rowYear = extractJahr(jahrWert);
-    
-    if (jahrWert && betrag && rowYear == targetYear) {
-      summe += parseFloat(betrag);
+    // Nur negative Beträge (Ausgaben) mit Kategorie "Spendenübergabe"
+    if (datum && betrag && betrag < 0 && kategorie === 'Spendenübergabe') {
+      var rowYear = new Date(datum).getFullYear();
+      if (rowYear == targetYear) {
+        summe += Math.abs(parseFloat(betrag)); // Als positive Zahl
+      }
     }
   }
   
@@ -5404,6 +5419,8 @@ function UEBERGABE_JAHR(jahr) {
 /**
  * Custom Function: Zählt übergebene Spenden für ein bestimmtes Jahr
  * 
+ * SINGLE SOURCE OF TRUTH: Nur Kontobewegungen mit Kategorie "Spendenübergabe"
+ * 
  * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der übergebenen Spenden
  * @customfunction
@@ -5411,22 +5428,24 @@ function UEBERGABE_JAHR(jahr) {
 function ANZAHL_UEBERGABE_JAHR(jahr) {
   var targetYear = extractJahr(jahr);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_UEBERGABE);
-  if (!sheet) return 0;
+  var kontoSheet = ss.getSheetByName(SHEET_KONTO);
+  if (!kontoSheet) return 0;
   
-  var data = sheet.getDataRange().getValues();
+  var data = kontoSheet.getDataRange().getValues();
   var anzahl = 0;
   
-  // Spaltenindizes (0-basiert): A=0 (Jahr), B=1 (Betrag)
+  // Spaltenstruktur: B=Datum(1), I=Betrag(8), L=Kategorie(11)
   for (var i = 1; i < data.length; i++) {
-    var jahrWert = data[i][0]; // Spalte A
-    var betrag = data[i][1];   // Spalte B
+    var datum = data[i][1];       // Spalte B: Buchungstag
+    var betrag = data[i][8];      // Spalte I: Betrag
+    var kategorie = data[i][11];  // Spalte L: Kategorie
     
-    // Jahr-Wert aus der Tabelle ebenfalls extrahieren (kann Zahl oder Datum sein)
-    var rowYear = extractJahr(jahrWert);
-    
-    if (jahrWert && betrag && rowYear == targetYear) {
-      anzahl++;
+    // Nur negative Beträge (Ausgaben) mit Kategorie "Spendenübergabe"
+    if (datum && betrag && betrag < 0 && kategorie === 'Spendenübergabe') {
+      var rowYear = new Date(datum).getFullYear();
+      if (rowYear == targetYear) {
+        anzahl++;
+      }
     }
   }
   
@@ -5553,23 +5572,29 @@ function LETZTES_DATUM_BARAUSGABEN() {
 }
 
 /**
- * Custom Function: Findet das letzte Übergabedatum in der Übergebene Spenden-Tabelle
+ * Custom Function: Findet das letzte Datum einer Spendenübergabe
+ * 
+ * SINGLE SOURCE OF TRUTH: Kontobewegungen mit Kategorie "Spendenübergabe"
  * 
  * @return {Date} Letztes Übergabedatum
  * @customfunction
  */
 function LETZTES_DATUM_UEBERGABE() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_UEBERGABE);
-  if (!sheet) return null;
+  var kontoSheet = ss.getSheetByName(SHEET_KONTO);
+  if (!kontoSheet) return null;
   
-  var data = sheet.getDataRange().getValues();
+  var data = kontoSheet.getDataRange().getValues();
   var maxDate = null;
   
-  // Spalte D (Index 3) = Übergabedatum
+  // Spaltenstruktur: B=Datum(1), I=Betrag(8), L=Kategorie(11)
   for (var i = 1; i < data.length; i++) {
-    var datum = data[i][3]; // Spalte D
-    if (datum && datum instanceof Date) {
+    var datum = data[i][1];       // Spalte B: Buchungstag
+    var betrag = data[i][8];      // Spalte I: Betrag
+    var kategorie = data[i][11];  // Spalte L: Kategorie
+    
+    // Nur Buchungen mit Kategorie "Spendenübergabe"
+    if (datum && datum instanceof Date && betrag < 0 && kategorie === 'Spendenübergabe') {
       if (!maxDate || datum > maxDate) {
         maxDate = datum;
       }
@@ -5925,15 +5950,16 @@ function getNichtQuittierteZahlungenFuerSpender(spenderAdresseZeile) {
   }
   
   // 2. BAR- UND SACHSPENDEN durchsuchen
+  // Spaltenstruktur: A=Datum(0), B=Betrag(1), C=Art(2), D=Spender(3), E=Anlass(4), F=Quittung(5)
   if (bargeldSheet) {
     var bargeldData = bargeldSheet.getDataRange().getValues();
     for (var i = 1; i < bargeldData.length; i++) {
       var row = bargeldData[i];
-      var datum = row[0]; // Spalte A
-      var spender = (row[1] || '').toString(); // Spalte B
-      var betrag = parseFloat(row[2]) || 0; // Spalte C
-      var art = (row[3] || '').toString(); // Spalte D
-      var quittung = (row[5] || '').toString(); // Spalte F
+      var datum = row[0]; // Spalte A: Datum
+      var betrag = parseFloat(row[1]) || 0; // Spalte B: Betrag
+      var art = (row[2] || '').toString(); // Spalte C: Art
+      var spender = (row[3] || '').toString(); // Spalte D: Spender
+      var quittung = (row[5] || '').toString(); // Spalte F: Quittung ausgestellt
       
       // Nur Bargeld (nicht Sachspenden) ohne Quittung
       if (art === 'Bargeld' && betrag > 0 && quittung !== 'Ja') {
@@ -6226,11 +6252,16 @@ function issueSammelquittung(spenderZeile, buchungen) {
     
     for (var i = 0; i < buchungen.length; i++) {
       var b = buchungen[i];
-      var sheet = (b.quelle === 'Kontobewegungen') ? kontoSheet : bargeldSheet;
       
-      if (sheet) {
-        sheet.getRange(b.zeile, 13).setValue('Ja'); // Spalte M: Quittung = "Ja"
-        sheet.getRange(b.zeile, 14).setValue(quittungsNummer + ' (Sammelquittung)'); // Spalte N: Quittungsnummer
+      if (b.quelle === 'Kontobewegungen' && kontoSheet) {
+        // Kontobewegungen: Quittung = Spalte M (13), Quittungsnummer = Spalte N (14)
+        kontoSheet.getRange(b.zeile, 13).setValue('Ja');
+        kontoSheet.getRange(b.zeile, 14).setValue(quittungsNummer + ' (Sammelquittung)');
+        buchungsVerweise.push(b.quelle + ' Zeile ' + b.zeile);
+      } else if (bargeldSheet) {
+        // Bar-/Sachspenden: Quittung = Spalte F (6), Quittungsnummer = Spalte G (7)
+        bargeldSheet.getRange(b.zeile, 6).setValue('Ja');
+        bargeldSheet.getRange(b.zeile, 7).setValue(quittungsNummer + ' (Sammelquittung)');
         buchungsVerweise.push(b.quelle + ' Zeile ' + b.zeile);
       }
     }
