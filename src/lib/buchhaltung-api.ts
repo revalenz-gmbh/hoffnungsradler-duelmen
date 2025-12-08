@@ -74,17 +74,21 @@ export interface Jahresabschluss {
 // ============================================================================
 
 // Mock-Daten basierend auf historischen Daten + Fallback für aktuelles Jahr
+// Die Gesamtsumme setzt sich zusammen aus:
+// - Historische Spenden (2004-2024): 91.055 €
+// - Aktuelle übergebene Spenden (2025, C17): 10.000 €
+// = Gesamt: 101.055 €
 const mockUebergabeSummen: UebergabeSummen = {
   summen: {
     ...HISTORICAL_DONATIONS,
-    '2025': FALLBACK_DASHBOARD.ausgabenUebergeben, // Aktuelle übergebene Spenden aus Fallback
+    '2025': FALLBACK_DASHBOARD.ausgabenUebergeben, // 10.000 € (C17 im Dashboard)
   },
-  gesamt: HISTORICAL_TOTAL + FALLBACK_DASHBOARD.ausgabenUebergeben
+  gesamt: HISTORICAL_TOTAL + FALLBACK_DASHBOARD.ausgabenUebergeben // 91.055 + 10.000 = 101.055
 };
 
 const mockAllYearlyData: AllYearlyData = {
   donations: donations,
-  totalDonations: 96055,
+  totalDonations: 101055, // 91.055 (historisch) + 10.000 (2025)
   currentYear: 2025
 };
 

@@ -24,11 +24,14 @@ const Hero = () => {
       try {
         // Versuche Dashboard-Daten zu laden (aktuelles Jahr)
         const dashboard = await getDashboard();
-        if (dashboard && dashboard.einnahmen) {
-          setCurrentDonations(dashboard.einnahmen.gesamt);
+
+        // WICHTIG: Für Hero verwenden wir die ÜBERGEBENEN Spenden des aktuellen Jahres (C17)
+        // NICHT die Einnahmen (C9)
+        if (dashboard && dashboard.ausgaben && dashboard.ausgaben.uebergeben) {
+          setCurrentDonations(dashboard.ausgaben.uebergeben.summe);
         }
-        
-        // Lade Gesamtsumme aller übergebenen Spenden
+
+        // Lade Gesamtsumme aller übergebenen Spenden (historisch + aktuelles Jahr)
         const uebergabe = await getUebergabeSummen();
         if (uebergabe && uebergabe.gesamt) {
           setTotalDonationsValue(uebergabe.gesamt);
