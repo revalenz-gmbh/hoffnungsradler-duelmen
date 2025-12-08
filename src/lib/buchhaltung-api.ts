@@ -75,14 +75,15 @@ const mockDashboard: DashboardData = {
 /**
  * Erstellt Mock-Übergabe-Summen basierend auf historischen Daten + aktuelles Jahr
  */
-function createMockUebergabeSummen(currentYearAmount: number = FALLBACK_DASHBOARD.ausgabenUebergeben): UebergabeSummen {
+async function createMockUebergabeSummen(currentYearAmount: number = FALLBACK_DASHBOARD.ausgabenUebergeben): Promise<UebergabeSummen> {
   const currentYear = new Date().getFullYear();
+  const { TOTAL_DONATIONS } = await import('@/data/donations');
   return {
     summen: {
       ...HISTORICAL_DONATIONS_MAP,
       [currentYear.toString()]: currentYearAmount,
     },
-    gesamt: HISTORICAL_TOTAL + currentYearAmount
+    gesamt: TOTAL_DONATIONS // Gesamtsumme aus hardcodierter Konstante
   };
 }
 
@@ -199,11 +200,10 @@ export async function getDashboard(): Promise<DashboardData> {
 /**
  * Übergebene Spenden-Summen abrufen
  * 
- * Strategie:
- * 1. Prüfe Cache
- * 2. Falls nicht im Cache: API-Call
- * 3. Kombiniere historische Daten (hardcodiert) + aktuelles Jahr (API)
- * 4. Bei Fehler: Fallback mit historischen Daten + Fallback für aktuelles Jahr
+ * Vereinfachte Strategie:
+ * - Historische Daten (2004-2024) kommen IMMER aus hardcodierten Daten
+ * - Aktuelles Jahr (2025+) kommt von der API (falls verfügbar)
+ * - Gesamtsumme wird NICHT dynamisch berechnet, sondern aus TOTAL_DONATIONS genommen
  */
 export async function getUebergabeSummen(): Promise<UebergabeSummen> {
   const cacheKey = 'getUebergabeSummen';
@@ -222,21 +222,19 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
     if (DEBUG_API) {
       console.log('[API] Using mock data for Übergabe-Summen');
     }
-    const mockData = createMockUebergabeSummen();
+    const mockData = await createMockUebergabeSummen();
     setCache(cacheKey, mockData);
     return mockData;
   }
 
   try {
-    // Versuche API-Call
+    // Versuche API-Call für aktuelles Jahr
     const apiData = await apiFetch<UebergabeSummen>(
       API_ENDPOINTS.getUebergabeSummen,
       validateUebergabeSummen
     );
 
-    // Konsistenz-Prüfung: Stelle sicher dass historische Daten enthalten sind
-    // WICHTIG: Nur Jahre NACH dem historischen Maximum von der API verwenden
-    // Dies verhindert, dass die API historische Daten überschreibt
+    // Nur Jahre NACH dem historischen Maximum von der API verwenden
     const apiYearsOnly = Object.fromEntries(
       Object.entries(apiData.summen).filter(([year]) => {
         const yearNum = parseInt(year, 10);
@@ -244,39 +242,26 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
       })
     );
 
-    if (DEBUG_API) {
-      console.log('[API] API-Daten (alle Jahre):', apiData.summen);
-      console.log('[API] API-Daten (nur nach', HISTORICAL_MAX_YEAR, '):', apiYearsOnly);
-      console.log('[API] Historische Daten (2004-', HISTORICAL_MAX_YEAR, '):', HISTORICAL_DONATIONS_MAP);
-    }
-
+    // Kombiniere: Historische Daten (hardcodiert) + aktuelles Jahr (API)
     const result: UebergabeSummen = {
       summen: {
         ...HISTORICAL_DONATIONS_MAP, // Historische Daten (2004-2024) - IMMER aus hardcodierten Daten
         ...apiYearsOnly, // Nur Jahre nach 2024 von der API (2025+)
       },
-      gesamt: 0, // Wird berechnet
+      gesamt: 0, // Wird aus TOTAL_DONATIONS gesetzt
     };
 
-    // Berechne Gesamtsumme
-    result.gesamt = Object.values(result.summen).reduce((sum, val) => sum + val, 0);
-
-    if (DEBUG_API) {
-      console.log('[API] Finale Summen:', result.summen);
-      console.log('[API] Finale Gesamtsumme:', result.gesamt);
-    }
+    // Gesamtsumme aus hardcodierter Konstante (Single Source of Truth)
+    // Importiere TOTAL_DONATIONS dynamisch um zirkuläre Abhängigkeiten zu vermeiden
+    const { TOTAL_DONATIONS } = await import('@/data/donations');
+    result.gesamt = TOTAL_DONATIONS;
 
     // Cache erfolgreiche Antwort
     setCache(cacheKey, result);
     
-    // Konsistenz-Prüfung im Debug-Modus
     if (DEBUG_API) {
-      const consistency = validateUebergabeSummenConsistency(result);
-      if (!consistency.valid) {
-        console.warn('[API] Konsistenz-Warnungen für Übergabe-Summen:', consistency.errors);
-      } else {
-        console.log('[API] Successfully fetched and cached Übergabe-Summen (konsistent)');
-      }
+      console.log('[API] Successfully fetched and cached Übergabe-Summen');
+      console.log('[API] Gesamtsumme (aus TOTAL_DONATIONS):', result.gesamt);
     }
     
     return result;
@@ -284,8 +269,8 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
     console.warn('[API] Failed to fetch Übergabe-Summen, using fallback');
     
     // Fallback: Historische Daten + Fallback für aktuelles Jahr
-    const fallback = createMockUebergabeSummen();
-    setCache(cacheKey, fallback); // Cache auch Fallback
+    const fallback = await createMockUebergabeSummen();
+    setCache(cacheKey, fallback);
     return fallback;
   }
 }

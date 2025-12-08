@@ -12,8 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { getUebergabeSummen } from "../lib/buchhaltung-api";
 import type { UebergabeSummen } from "../lib/buchhaltung-api";
-import { HISTORICAL_TOTAL } from "@/data/donations";
-import { FALLBACK_DASHBOARD } from "@/lib/google-sheets-api";
+import { TOTAL_DONATIONS } from "@/data/donations";
 import SEOHead from "@/components/SEOHead";
 import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
@@ -91,8 +90,8 @@ const Spenden = () => {
       })
     : [];
 
-  // Berechne Gesamtsumme: API-Daten oder Fallback (historisch + aktuelles Jahr)
-  const totalDonations = donationsData?.gesamt || (HISTORICAL_TOTAL + FALLBACK_DASHBOARD.ausgabenUebergeben);
+  // Gesamtsumme aus hardcodierter Konstante (Single Source of Truth)
+  const totalDonations = TOTAL_DONATIONS;
   const tableData = [...donations].sort((a, b) => b.year - a.year);
 
   const organizations = [

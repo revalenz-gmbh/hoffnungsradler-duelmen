@@ -76,10 +76,23 @@ export const donations: YearlyDonation[] = [
 ];
 
 /**
+ * GESAMTSUMME ALLER ÜBERGEBENEN SPENDEN (2004-2025)
+ * 
+ * SINGLE SOURCE OF TRUTH: Diese Zahl wird einmal am Ende der Saison aktualisiert.
+ * Stand: 07.12.2025
+ * 
+ * Berechnung:
+ * - Historische Spenden (2004-2024): 91.055 €
+ * - Aktuelle Spenden (2025): 10.000 € (2x 5.000€)
+ * = GESAMT: 101.055 €
+ */
+export const TOTAL_DONATIONS = 101055;
+
+/**
  * Gesamtsumme aller historischen Spenden (2004-2024)
  * @deprecated Verwende HISTORICAL_TOTAL
  */
-export const totalDonations = HISTORICAL_TOTAL + 10000; // 91.055 + 10.000 (Fallback für 2025)
+export const totalDonations = TOTAL_DONATIONS;
 
 /**
  * Fallback-Wert für aktuelles Jahr (wird durch API überschrieben)
