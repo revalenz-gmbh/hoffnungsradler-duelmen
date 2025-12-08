@@ -235,16 +235,36 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
     );
 
     // Konsistenz-Prüfung: Stelle sicher dass historische Daten enthalten sind
+    // WICHTIG: Nur Jahre NACH dem historischen Maximum von der API verwenden
+    // Dies verhindert, dass die API historische Daten überschreibt
+    const apiYearsOnly = Object.fromEntries(
+      Object.entries(apiData.summen).filter(([year]) => {
+        const yearNum = parseInt(year, 10);
+        return !isNaN(yearNum) && yearNum > HISTORICAL_MAX_YEAR;
+      })
+    );
+
+    if (DEBUG_API) {
+      console.log('[API] API-Daten (alle Jahre):', apiData.summen);
+      console.log('[API] API-Daten (nur nach', HISTORICAL_MAX_YEAR, '):', apiYearsOnly);
+      console.log('[API] Historische Daten (2004-', HISTORICAL_MAX_YEAR, '):', HISTORICAL_DONATIONS_MAP);
+    }
+
     const result: UebergabeSummen = {
       summen: {
-        ...HISTORICAL_DONATIONS_MAP, // Historische Daten (2004-2024)
-        ...apiData.summen, // API-Daten (überschreibt falls vorhanden)
+        ...HISTORICAL_DONATIONS_MAP, // Historische Daten (2004-2024) - IMMER aus hardcodierten Daten
+        ...apiYearsOnly, // Nur Jahre nach 2024 von der API (2025+)
       },
       gesamt: 0, // Wird berechnet
     };
 
     // Berechne Gesamtsumme
     result.gesamt = Object.values(result.summen).reduce((sum, val) => sum + val, 0);
+
+    if (DEBUG_API) {
+      console.log('[API] Finale Summen:', result.summen);
+      console.log('[API] Finale Gesamtsumme:', result.gesamt);
+    }
 
     // Cache erfolgreiche Antwort
     setCache(cacheKey, result);
