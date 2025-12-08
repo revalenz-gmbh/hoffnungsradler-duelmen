@@ -48,6 +48,14 @@ export const DEBUG_API = import.meta.env.DEV;
 /**
  * API-Endpunkte (über sicheren Proxy)
  * Die Google Apps Script URL ist für den Browser nicht sichtbar
+ * 
+ * CACHING-STRATEGIE:
+ * ==================
+ * - Alle API-Calls werden im LocalStorage gecacht (TTL: 5 Minuten)
+ * - Cache-Keys: donations:${action}:${year?}
+ * - Bei Cache-Miss: API-Call → Validierung → Cache
+ * - Bei Fehler: Fallback-Daten werden ebenfalls gecacht
+ * - Cache kann manuell invalidiert werden via invalidateDonationsCache()
  */
 export const API_ENDPOINTS = {
   getDashboard: `${API_BASE_URL}/buchhaltung?action=getDashboard`,

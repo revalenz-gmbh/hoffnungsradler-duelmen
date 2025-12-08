@@ -1,9 +1,25 @@
-// Übergebene Spenden pro Jahr (historisch + aktuell)
-// Diese Daten werden als Fallback verwendet, wenn das Google Sheet nicht erreichbar ist.
-// Die Live-Daten werden direkt aus dem Dashboard geladen.
-// Stand: 07.12.2025
-export const donations = [
-  { year: 2025, amount: 10000 },  // 2x Spendenübergabe (Dashboard: 05.12.2025)
+/**
+ * Single Source of Truth für historische Spendendaten (2004-2024)
+ * 
+ * Diese Datei enthält die historischen, bereits übergebenen Spenden.
+ * Das aktuelle Jahr (2025) wird dynamisch aus der Google Apps Script API geladen.
+ * 
+ * WICHTIG: Diese Daten ändern sich nicht mehr, da es bereits übergebene Spenden sind.
+ * Nur das aktuelle Jahr wird regelmäßig aktualisiert.
+ * 
+ * Stand: 07.12.2025
+ */
+
+export interface YearlyDonation {
+  year: number;
+  amount: number;
+}
+
+/**
+ * Historische Spenden (2004-2024)
+ * Diese Werte sind final und ändern sich nicht mehr.
+ */
+export const historicalDonations: YearlyDonation[] = [
   { year: 2024, amount: 7000 },
   { year: 2023, amount: 13000 },
   { year: 2022, amount: 4000 },
@@ -27,15 +43,56 @@ export const donations = [
   { year: 2004, amount: 100 },
 ];
 
-// Gesamtsumme aller übergebenen Spenden (2004-2025)
-// 91.055 € (historisch) + 10.000 € (2025) = 101.055 €
-export const totalDonations = 101055;
+/**
+ * Berechnet die Gesamtsumme aller historischen Spenden (2004-2024)
+ */
+export const HISTORICAL_TOTAL = historicalDonations.reduce(
+  (sum, donation) => sum + donation.amount,
+  0
+); // = 91.055 €
 
-// Aktuell übergebene Spenden im laufenden Jahr
+/**
+ * Berechnet das höchste Jahr in den historischen Daten
+ * Wird verwendet um zu bestimmen, welche Jahre von der API kommen sollten
+ */
+export const HISTORICAL_MAX_YEAR = Math.max(...historicalDonations.map(d => d.year));
+
+/**
+ * Konvertiert historische Spenden in ein Jahr-zu-Betrag Mapping
+ * Für Kompatibilität mit bestehendem Code
+ */
+export const HISTORICAL_DONATIONS_MAP: Record<string, number> = 
+  Object.fromEntries(
+    historicalDonations.map(d => [d.year.toString(), d.amount])
+  );
+
+/**
+ * Rückwärtskompatibilität: donations Array (inkl. aktuelles Jahr als Fallback)
+ * @deprecated Verwende historicalDonations für historische Daten
+ */
+export const donations: YearlyDonation[] = [
+  { year: 2025, amount: 10000 },  // Fallback für aktuelles Jahr (wird durch API überschrieben)
+  ...historicalDonations,
+];
+
+/**
+ * Gesamtsumme aller historischen Spenden (2004-2024)
+ * @deprecated Verwende HISTORICAL_TOTAL
+ */
+export const totalDonations = HISTORICAL_TOTAL + 10000; // 91.055 + 10.000 (Fallback für 2025)
+
+/**
+ * Fallback-Wert für aktuelles Jahr (wird durch API überschrieben)
+ * @deprecated Wird dynamisch aus API geladen
+ */
 export const currentYearDonations = 10000;
 
-// Spendenziel für das aktuelle Jahr
+/**
+ * Spendenziel für das aktuelle Jahr
+ */
 export const donationGoal = 5000;
 
-// Aktuelles Jahr
+/**
+ * Aktuelles Jahr
+ */
 export const donationYear = 2025; 

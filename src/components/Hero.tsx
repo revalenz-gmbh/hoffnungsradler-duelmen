@@ -18,27 +18,29 @@ const Hero = () => {
   // Banner-Steuerung
   const showCancellationBanner = false; // Auf true setzen, um den Banner anzuzeigen
 
-  // Lade aktuelle Daten von der API
+  // Lade aktuelle Daten von der API (mit automatischem Caching)
   useEffect(() => {
     const fetchDonationData = async () => {
       try {
         // Versuche Dashboard-Daten zu laden (aktuelles Jahr)
+        // Die API verwendet automatisch Caching und Fallback-Daten
         const dashboard = await getDashboard();
 
         // WICHTIG: Für Hero verwenden wir die ÜBERGEBENEN Spenden des aktuellen Jahres (C17)
         // NICHT die Einnahmen (C9)
-        if (dashboard && dashboard.ausgaben && dashboard.ausgaben.uebergeben) {
+        if (dashboard?.ausgaben?.uebergeben) {
           setCurrentDonations(dashboard.ausgaben.uebergeben.summe);
         }
 
         // Lade Gesamtsumme aller übergebenen Spenden (historisch + aktuelles Jahr)
+        // Die API kombiniert automatisch historische Daten + aktuelles Jahr
         const uebergabe = await getUebergabeSummen();
-        if (uebergabe && uebergabe.gesamt) {
+        if (uebergabe?.gesamt) {
           setTotalDonationsValue(uebergabe.gesamt);
         }
       } catch (error) {
-        console.log('Verwende statische Spendendaten als Fallback');
-        // Bei Fehler: Behalte die statischen Werte
+        console.warn('[Hero] Fehler beim Laden der Spendendaten, verwende Fallback:', error);
+        // Die API gibt immer Daten zurück (mit Fallback), daher sollte dieser Fall selten auftreten
       }
     };
 

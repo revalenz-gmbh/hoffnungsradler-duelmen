@@ -12,12 +12,18 @@ import {
 import { useEffect, useState } from "react";
 import { getUebergabeSummen } from "../lib/buchhaltung-api";
 import type { UebergabeSummen } from "../lib/buchhaltung-api";
+import { HISTORICAL_TOTAL } from "@/data/donations";
+import { FALLBACK_DASHBOARD } from "@/lib/google-sheets-api";
 import SEOHead from "@/components/SEOHead";
 import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 // Statische Daten für Empfänger-Organisationen (werden mit API-Daten kombiniert)
-const recipientMapping: { [year: number]: string } = {
-  2025: "Datteln Elterninitiative krebskranker Kinder",
+// Für Jahre mit mehreren Spendenübergaben: Array mit mehreren Einträgen
+const recipientMapping: { [year: number]: string | Array<{ recipient: string; amount: number }> } = {
+  2025: [
+    { recipient: "Elterninitiative krebskranker Kinder Datteln", amount: 5000 },
+    { recipient: "Kinderkrebshilfe Münster", amount: 5000 },
+  ],
   2024: "Datteln Elterninitiative krebskranker Kinder",
   2023: "Datteln Elterninitiative krebskranker Kinder",
   2022: "Datteln Elterninitiative krebskranker Kinder",
@@ -61,15 +67,32 @@ const Spenden = () => {
   }, []);
 
   // Konvertiere API-Daten in Tabellen-Format
+  // Unterstützt mehrere Spendenübergaben pro Jahr (z.B. 2025)
   const donations = donationsData
-    ? Object.entries(donationsData.summen).map(([year, amount]) => ({
-        year: parseInt(year),
-        recipient: recipientMapping[parseInt(year)] || "Kinderkrebshilfe",
-        amount: amount,
-      }))
+    ? Object.entries(donationsData.summen).flatMap(([year, totalAmount]) => {
+        const yearNum = parseInt(year);
+        const mapping = recipientMapping[yearNum];
+        
+        // Wenn Array: Mehrere Spendenübergaben für dieses Jahr
+        if (Array.isArray(mapping)) {
+          return mapping.map((item) => ({
+            year: yearNum,
+            recipient: item.recipient,
+            amount: item.amount,
+          }));
+        }
+        
+        // Einzelne Spendenübergabe für dieses Jahr
+        return [{
+          year: yearNum,
+          recipient: (typeof mapping === 'string' ? mapping : "Kinderkrebshilfe"),
+          amount: totalAmount,
+        }];
+      })
     : [];
 
-  const totalDonations = donationsData?.gesamt || 96055;
+  // Berechne Gesamtsumme: API-Daten oder Fallback (historisch + aktuelles Jahr)
+  const totalDonations = donationsData?.gesamt || (HISTORICAL_TOTAL + FALLBACK_DASHBOARD.ausgabenUebergeben);
   const tableData = [...donations].sort((a, b) => b.year - a.year);
 
   const organizations = [
