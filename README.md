@@ -40,7 +40,9 @@ Es gibt verschiedene Möglichkeiten, die Anwendung zu bearbeiten.
 
 Wenn Sie lokal mit Ihrer bevorzugten IDE arbeiten möchten, können Sie dieses Repository klonen und Änderungen pushen. Die gepushten Änderungen werden auch in Lovable angezeigt.
 
-Die einzige Voraussetzung ist die Installation von Node.js & npm - [Installation mit nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Die einzige Voraussetzung ist die Installation von Node.js 24.x LTS & npm - [Installation mit nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+**Wichtig:** Dieses Projekt erfordert Node.js Version 24.0.0 oder höher. Wenn Sie nvm verwenden, führen Sie `nvm use` aus, um automatisch die richtige Version zu aktivieren (siehe `.nvmrc` Datei).
 
 Folgen Sie diesen Schritten:
 

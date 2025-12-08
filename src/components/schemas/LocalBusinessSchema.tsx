@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import SchemaScript from '../SchemaScript';
 
 const LocalBusinessSchema = () => {
   const schema = {
@@ -36,13 +36,7 @@ const LocalBusinessSchema = () => {
     "keywords": "Rennrad, Charity, Spenden, krebskranke Kinder, Münsterland, Dülmen, Radtouren"
   };
 
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(schema)}
-      </script>
-    </Helmet>
-  );
+  return <SchemaScript schema={schema} />;
 };
 
 export default LocalBusinessSchema;

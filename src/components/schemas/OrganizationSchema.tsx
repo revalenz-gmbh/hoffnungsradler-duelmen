@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import SchemaScript from '../SchemaScript';
 
 const OrganizationSchema = () => {
   const schema = {
@@ -31,13 +31,7 @@ const OrganizationSchema = () => {
     }
   };
 
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(schema)}
-      </script>
-    </Helmet>
-  );
+  return <SchemaScript schema={schema} />;
 };
 
 export default OrganizationSchema;

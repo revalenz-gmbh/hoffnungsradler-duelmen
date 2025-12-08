@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import SchemaScript from '../SchemaScript';
 
 interface ArticleSchemaProps {
   headline: string;
@@ -63,13 +63,7 @@ const ArticleSchema = ({
     }
   };
 
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(schema)}
-      </script>
-    </Helmet>
-  );
+  return <SchemaScript schema={schema} />;
 };
 
 export default ArticleSchema;

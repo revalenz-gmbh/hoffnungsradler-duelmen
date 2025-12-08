@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import { useEffect } from 'react';
 
 interface SEOHeadProps {
   title: string;
@@ -12,6 +12,10 @@ interface SEOHeadProps {
   modifiedTime?: string;
 }
 
+/**
+ * React 19 kompatible SEO Head Komponente
+ * Verwendet React 19's native document metadata support
+ */
 const SEOHead = ({
   title,
   description,
@@ -23,56 +27,58 @@ const SEOHead = ({
   publishedTime,
   modifiedTime,
 }: SEOHeadProps) => {
-  const fullTitle = title.includes('Hoffnungsradler') 
-    ? title 
-    : `${title} | Hoffnungsradler Dülmen`;
+  useEffect(() => {
+    // Update document title
+    document.title = title;
 
-  return (
-    <Helmet>
-      {/* Basic Meta Tags */}
-      <title>{fullTitle}</title>
-      <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
-      <meta name="author" content={author} />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={url} />
-      
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={url} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="Hoffnungsradler Dülmen e.V." />
-      <meta property="og:locale" content="de_DE" />
-      
-      {/* Article specific */}
-      {type === 'article' && publishedTime && (
-        <meta property="article:published_time" content={publishedTime} />
-      )}
-      {type === 'article' && modifiedTime && (
-        <meta property="article:modified_time" content={modifiedTime} />
-      )}
-      {type === 'article' && (
-        <meta property="article:author" content={author} />
-      )}
-      
-      {/* Twitter Card */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={url} />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image} />
-      
-      {/* Additional SEO Tags */}
-      <meta name="robots" content="index, follow" />
-      <meta name="googlebot" content="index, follow" />
-      <meta name="language" content="de" />
-    </Helmet>
-  );
+    // Helper to update or create meta tag
+    const updateMetaTag = (attr: string, value: string, content: string) => {
+      let element = document.querySelector(`meta[${attr}="${value}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attr, value);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    // Update basic meta tags
+    updateMetaTag('name', 'description', description);
+    if (keywords) updateMetaTag('name', 'keywords', keywords);
+    updateMetaTag('name', 'author', author);
+
+    // Update Open Graph tags
+    updateMetaTag('property', 'og:title', title);
+    updateMetaTag('property', 'og:description', description);
+    updateMetaTag('property', 'og:url', url);
+    updateMetaTag('property', 'og:image', image);
+    updateMetaTag('property', 'og:type', type);
+
+    // Update Twitter Card tags
+    updateMetaTag('name', 'twitter:card', 'summary_large_image');
+    updateMetaTag('name', 'twitter:title', title);
+    updateMetaTag('name', 'twitter:description', description);
+    updateMetaTag('name', 'twitter:image', image);
+
+    // Update article specific tags
+    if (publishedTime) {
+      updateMetaTag('property', 'article:published_time', publishedTime);
+    }
+    if (modifiedTime) {
+      updateMetaTag('property', 'article:modified_time', modifiedTime);
+    }
+
+    // Update canonical link
+    let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.rel = 'canonical';
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.href = url;
+  }, [title, description, url, image, type, keywords, author, publishedTime, modifiedTime]);
+
+  return null;
 };
 
 export default SEOHead;

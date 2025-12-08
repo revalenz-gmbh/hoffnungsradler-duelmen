@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import SchemaScript from '../SchemaScript';
 
 interface EventSchemaProps {
   name: string;
@@ -66,13 +66,7 @@ const EventSchema = ({
     "keywords": "Rennrad, Charity, Radtour, Münsterland, Dülmen"
   };
 
-  return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(schema)}
-      </script>
-    </Helmet>
-  );
+  return <SchemaScript schema={schema} />;
 };
 
 export default EventSchema;
