@@ -11,8 +11,12 @@ interface SchemaScriptProps {
 const SchemaScript = ({ schema }: SchemaScriptProps) => {
   useEffect(() => {
     // Erstelle ein eindeutiges ID basierend auf dem Schema-Typ
-    const schemaType = (schema as any)['@type'] || 'schema';
-    const scriptId = `schema-${schemaType.toLowerCase()}`;
+    const schemaTypeRaw = (schema as any)['@type'] || 'schema';
+    // Handle @type as string or array
+    const schemaType = Array.isArray(schemaTypeRaw)
+      ? schemaTypeRaw[0]
+      : schemaTypeRaw;
+    const scriptId = `schema-${String(schemaType).toLowerCase()}`;
 
     // Entferne vorherige Scripts mit derselben ID
     const existingScript = document.getElementById(scriptId);
