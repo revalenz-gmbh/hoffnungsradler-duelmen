@@ -23,17 +23,17 @@ const News = () => {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
             <DialogTrigger asChild>
-              <button onClick={() => setSelectedImage("/photos/Datteln 2025-1.jpg")} className="block w-full">
+              <button onClick={() => setSelectedImage("/photos/Datteln2025-1.jpg")} className="block w-full">
                 <figure>
-                  <img src="/photos/Datteln 2025-1.jpg" alt="Spendenübergabe in Datteln" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <img src="/photos/Datteln2025-1.jpg" alt="Spendenübergabe in Datteln" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                   <figcaption className="text-xs text-gray-500 mt-1">Gregor Horstmann, Roswitha Rabe (Elterninitiative Datteln) und Josef Friedag</figcaption>
                 </figure>
               </button>
             </DialogTrigger>
             <DialogTrigger asChild>
-              <button onClick={() => setSelectedImage("/photos/Münster 2025-2.jpg")} className="block w-full">
+              <button onClick={() => setSelectedImage("/photos/Muenster2025-2.jpg")} className="block w-full">
                 <figure>
-                  <img src="/photos/Münster 2025-2.jpg" alt="Spendenübergabe in Münster" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <img src="/photos/Muenster2025-2.jpg" alt="Spendenübergabe in Münster" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                   <figcaption className="text-xs text-gray-500 mt-1">Gregor Horstmann, Anette Blomberg (Kinderkrebshilfe) und Martin Stolz</figcaption>
                 </figure>
               </button>
@@ -43,7 +43,7 @@ const News = () => {
             100.000 Euro Gesamtspenden seit Gründung
           </p>
           <p className="text-gray-700">
-            Die diesjährige Übergabe markiert einen historischen Moment in der Vereinsgeschichte: Mit der aktuellen Summe haben die Dülmener Radsportler seit ihrer Gründung die Marke von insgesamt 100.000 Euro an Spendengeldern überschritten. Ein besonderes Highlight beim Termin in Datteln: Die Spenden fließen zu 100 % in die Projekte, da der Verein rein ehrenamtlich arbeitet.
+            Die diesjährige Übergabe markiert einen historischen Moment in der Vereinsgeschichte: Mit der aktuellen Summe haben die Dülmener Radsportler seit ihrer Gründung die Marke von insgesamt 100.000 Euro an Spendengeldern überschritten. Die Spenden fließen zu 100 % in die Projekte, da der Verein rein ehrenamtlich arbeitet.
           </p>
         </div>
       ),

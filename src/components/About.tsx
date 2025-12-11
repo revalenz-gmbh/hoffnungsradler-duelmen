@@ -66,7 +66,7 @@ const About = () => {
 
                     <p className="font-semibold text-prussian">
                       Insgesamt konnten durch die Dülmener Hoffnungsradler über
-                      80.000 Euro Spenden gesammelt werden!
+                      100.000  Euro Spenden gesammelt werden!
                     </p>
                   </div>
                 )}
@@ -104,7 +104,7 @@ const About = () => {
 
                   <p className="font-semibold">
                     Insgesamt konnten durch die Dülmener Hoffnungsradler über
-                    90.000 Euro Spenden gesammelt werden!
+                    100.000 Euro Spenden gesammelt werden!
                   </p>
                 </div>
               </div>

@@ -141,7 +141,7 @@ Spende Hoffnungsradler
   return (
     <div className="min-h-screen bg-snow">
       <SEOHead 
-        title="Spenden für krebskranke Kinder - Über 90.000€ gesammelt"
+        title="Spenden für krebskranke Kinder - Über 100.000€ gesammelt"
         description="Die Hoffnungsradler Dülmen haben über 90.000 Euro für krebskranke Kinder gesammelt. Erfahren Sie mehr über unsere Spenden-Historie und wie Sie helfen können."
         url="https://www.hoffnungs-radler-duelmen.de/spenden"
         keywords="Spenden krebskranke Kinder, Elterninitiative Datteln, Kinderkrebshilfe Münster, Spendenquittung, Bankverbindung"
