@@ -11,12 +11,12 @@ const News = () => {
 
   const newsItems = [
     {
-      date: "Dezember 2024",
+      date: "Dezember 2025",
       title: "Meilenstein für Hoffnungsradler Dülmen: 10.000 Euro Weihnachtsspende",
       content: (
         <div className="space-y-4">
           <p className="text-gray-700">
-            Dülmen/Münster/Datteln. Kurz vor Weihnachten haben die Hoffnungsradler Dülmen e.V. ihre erfolgreiche Rennrad-Saison mit einer besonderen Bescherung gekrönt. Der Verein übergab in dieser Woche Spenden in Höhe von insgesamt 10.000 Euro an lokale Hilfsorganisationen.
+            Dülmen/Münster/Datteln. Kurz vor Weihnachten haben die Hoffnungsradler Dülmen ihre erfolgreiche Rennrad-Saison mit einer besonderen Bescherung gekrönt. Der Verein übergab in dieser Woche Spenden in Höhe von insgesamt 10.000 Euro an lokale Hilfsorganisationen.
           </p>
           <p className="text-gray-700">
             Je 5.000 Euro gingen an die Kinderkrebshilfe Münster e.V. sowie an die Elterninitiative krebskranker Kinder Datteln e.V..
