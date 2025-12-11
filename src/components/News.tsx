@@ -11,6 +11,46 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "Dezember 2024",
+      title: "Meilenstein für Hoffnungsradler Dülmen: 10.000 Euro Weihnachtsspende",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Dülmen/Münster/Datteln. Kurz vor Weihnachten haben die Hoffnungsradler Dülmen e.V. ihre erfolgreiche Rennrad-Saison mit einer besonderen Bescherung gekrönt. Der Verein übergab in dieser Woche Spenden in Höhe von insgesamt 10.000 Euro an lokale Hilfsorganisationen.
+          </p>
+          <p className="text-gray-700">
+            Je 5.000 Euro gingen an die Kinderkrebshilfe Münster e.V. sowie an die Elterninitiative krebskranker Kinder Datteln e.V..
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+            <DialogTrigger asChild>
+              <button onClick={() => setSelectedImage("/photos/Datteln 2025-1.jpg")} className="block w-full">
+                <figure>
+                  <img src="/photos/Datteln 2025-1.jpg" alt="Spendenübergabe in Datteln" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <figcaption className="text-xs text-gray-500 mt-1">Gregor Horstmann, Roswitha Rabe (Elterninitiative Datteln) und Josef Friedag</figcaption>
+                </figure>
+              </button>
+            </DialogTrigger>
+            <DialogTrigger asChild>
+              <button onClick={() => setSelectedImage("/photos/Münster 2025-2.jpg")} className="block w-full">
+                <figure>
+                  <img src="/photos/Münster 2025-2.jpg" alt="Spendenübergabe in Münster" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <figcaption className="text-xs text-gray-500 mt-1">Gregor Horstmann, Anette Blomberg (Kinderkrebshilfe) und Martin Stolz</figcaption>
+                </figure>
+              </button>
+            </DialogTrigger>
+          </div>
+          <p className="text-gray-700 font-semibold">
+            100.000 Euro Gesamtspenden seit Gründung
+          </p>
+          <p className="text-gray-700">
+            Die diesjährige Übergabe markiert einen historischen Moment in der Vereinsgeschichte: Mit der aktuellen Summe haben die Dülmener Radsportler seit ihrer Gründung die Marke von insgesamt 100.000 Euro an Spendengeldern überschritten. Ein besonderes Highlight beim Termin in Datteln: Die Spenden fließen zu 100 % in die Projekte, da der Verein rein ehrenamtlich arbeitet.
+          </p>
+        </div>
+      ),
+      type: "internal",
+      highlight: true
+    },
+    {
       date: "28.09.2025",
       title: "Baumberge Alpin‑Tour – aus dem Nebel hinauf in die Sonne",
       content: (
