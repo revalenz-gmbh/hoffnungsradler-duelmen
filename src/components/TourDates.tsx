@@ -35,7 +35,7 @@ interface TourDate {
   variants?: TourVariant[]; // Optional: mehrere Streckenvarianten
 }
 
-// Exportierte Tour-Daten für 2025
+// Archivierte Tour-Daten für 2025
 export const tours2025: TourDate[] = [
   {
     date: "18.04.2025",
@@ -130,6 +130,18 @@ export const tours2025: TourDate[] = [
   }
 ];
 
+// Tour-Termine für 2026 - werden nach der Mitgliederversammlung am 19.01.2026 festgelegt
+export const tours2026: TourDate[] = [
+  {
+    date: "TBD",
+    name: "in Planung",
+    distance: "-",
+    time: "-",
+    location: "wird bekannt gegeben",
+    address: "-",
+  }
+];
+
 interface ArchiveTour {
   name: string;
   distance: string;
@@ -138,7 +150,7 @@ interface ArchiveTour {
 }
 
 const TourDates = () => {
-  const [tourList, setTourList] = useState<TourDate[]>(tours2025);
+  const [tourList, setTourList] = useState<TourDate[]>(tours2026);
 
   useEffect(() => {
     const loadVariantLinks = async () => {
@@ -187,7 +199,7 @@ const TourDates = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-anton text-4xl text-prussian text-center mb-12">
-            Tour-Termine 2025
+            Tour-Termine 2026
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full bg-white rounded-lg shadow-lg border border-forest/10">
@@ -359,6 +371,9 @@ const TourDates = () => {
               </tbody>
             </table>
           </div>
+          <p className="text-center text-gray-600 mt-6 italic">
+            Die Tourtermine für 2026 werden auf der Mitgliederversammlung am 19. Januar festgelegt.
+          </p>
         </div>
       </div>
     </section>
