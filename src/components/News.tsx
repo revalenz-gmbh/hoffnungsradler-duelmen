@@ -12,7 +12,7 @@ const News = () => {
   const newsItems = [
     {
       date: "Januar 2026",
-      title: "Mitgliederversammlung am 19. Januar",
+      title: "Mitgliederversammlung am 19. Januar 2026",
       content: (
         <div className="space-y-4">
           <p className="text-gray-700">
@@ -22,17 +22,20 @@ const News = () => {
             <strong>Ort:</strong> Königsberger Str. 26, Dülmen
           </p>
           <p className="text-gray-700">
-            Auf der Tagesordnung stehen der Bericht des Vorstands über die 
-            Mittelvergabe 2025 sowie die Festlegung der neuen Tourtermine 
-            für die kommende Saison 2026.
+            <strong>Tagesordnung:</strong>
           </p>
+          <ul className="list-disc list-inside text-gray-700 ml-4">
+            <li>Rückblick auf die abgelaufene Saison 2025</li>
+            <li>Kassenbericht</li>
+            <li>Bericht des Vorstands über die Mittelvergabe 2025</li>
+            <li>Festlegung der Tourtermine für die Saison 2026</li>
+          </ul>
           <p className="text-gray-700">
             Wir freuen uns auf zahlreiches Erscheinen!
           </p>
         </div>
       ),
-      type: "internal",
-      highlight: true
+      type: "internal"
     },
     {
       date: "Dezember 2025",
