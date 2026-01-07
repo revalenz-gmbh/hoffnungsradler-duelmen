@@ -73,31 +73,45 @@ const mockDashboard: DashboardData = {
 };
 
 /**
- * Erstellt Mock-Übergabe-Summen basierend auf historischen Daten + aktuelles Jahr
+ * Erstellt Mock-Übergabe-Summen basierend auf historischen Daten
+ * WICHTIG: Fügt NICHT automatisch das aktuelle Jahr hinzu - nur Jahre mit tatsächlichen Spendenübergaben
  */
-async function createMockUebergabeSummen(currentYearAmount: number = FALLBACK_DASHBOARD.ausgabenUebergeben): Promise<UebergabeSummen> {
-  const currentYear = new Date().getFullYear();
+async function createMockUebergabeSummen(): Promise<UebergabeSummen> {
   const { TOTAL_DONATIONS } = await import('@/data/donations');
+  // Nur historische Daten (2004-2024) + 2025 (falls in FALLBACK_DASHBOARD definiert)
+  // Kein automatisches Hinzufügen des aktuellen Jahres
+  const currentYear = new Date().getFullYear();
+  const summen: Record<string, number> = { ...HISTORICAL_DONATIONS_MAP };
+  
+  // Nur 2025 hinzufügen wenn es das aktuelle Jahr ist und in FALLBACK_DASHBOARD definiert
+  if (currentYear === 2025) {
+    summen['2025'] = FALLBACK_DASHBOARD.ausgabenUebergeben;
+  }
+  
   return {
-    summen: {
-      ...HISTORICAL_DONATIONS_MAP,
-      [currentYear.toString()]: currentYearAmount,
-    },
+    summen,
     gesamt: TOTAL_DONATIONS // Gesamtsumme aus hardcodierter Konstante
   };
 }
 
 /**
  * Erstellt Mock-Jahresdaten
+ * WICHTIG: Fügt NICHT automatisch das aktuelle Jahr hinzu - nur Jahre mit tatsächlichen Spendenübergaben
  */
-function createMockAllYearlyData(currentYearAmount: number = FALLBACK_DASHBOARD.ausgabenUebergeben): AllYearlyData {
+async function createMockAllYearlyData(): Promise<AllYearlyData> {
   const currentYear = new Date().getFullYear();
+  const donations = [...historicalDonations];
+  
+  // Nur 2025 hinzufügen wenn es das aktuelle Jahr ist
+  if (currentYear === 2025) {
+    donations.unshift({ year: 2025, amount: FALLBACK_DASHBOARD.ausgabenUebergeben });
+  }
+  
+  const { TOTAL_DONATIONS } = await import('@/data/donations');
+  
   return {
-    donations: [
-      { year: currentYear, amount: currentYearAmount },
-      ...historicalDonations,
-    ],
-    totalDonations: HISTORICAL_TOTAL + currentYearAmount,
+    donations,
+    totalDonations: TOTAL_DONATIONS,
     currentYear: currentYear
   };
 }
@@ -301,7 +315,7 @@ export async function getAllYearlyData(): Promise<AllYearlyData> {
     if (DEBUG_API) {
       console.log('[API] Using mock data for yearly donations');
     }
-    const mockData = createMockAllYearlyData();
+    const mockData = await createMockAllYearlyData();
     setCache(cacheKey, mockData);
     return mockData;
   }
@@ -345,7 +359,7 @@ export async function getAllYearlyData(): Promise<AllYearlyData> {
     console.warn('[API] Failed to fetch yearly data, using fallback');
     
     // Fallback: Historische Daten + Fallback für aktuelles Jahr
-    const fallback = createMockAllYearlyData();
+    const fallback = await createMockAllYearlyData();
     setCache(cacheKey, fallback); // Cache auch Fallback
     return fallback;
   }
