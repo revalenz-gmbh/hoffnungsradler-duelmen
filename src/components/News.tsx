@@ -16,7 +16,7 @@ const News = () => {
       content: (
         <div className="space-y-4">
           <p className="text-gray-700">
-            <strong>Termin:</strong> Sonntag, 19. Januar 2026 um 19:00 Uhr
+            <strong>Termin:</strong> Montag, 19. Januar 2026 um 19:00 Uhr
           </p>
           <p className="text-gray-700">
             <strong>Ort:</strong> Königsberger Str. 26, Dülmen
