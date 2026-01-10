@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { getUebergabeSummen } from "../lib/buchhaltung-api";
 import type { UebergabeSummen } from "../lib/buchhaltung-api";
-import { TOTAL_DONATIONS } from "@/data/donations";
+import { TOTAL_DONATIONS, HISTORICAL_DONATIONS_MAP } from "@/data/donations";
 import SEOHead from "@/components/SEOHead";
 import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
@@ -65,37 +65,42 @@ const Spenden = () => {
     fetchData();
   }, []);
 
-  // Konvertiere API-Daten in Tabellen-Format
+  // Konvertiere API-Daten + historische Daten in Tabellen-Format
   // Unterstützt mehrere Spendenübergaben pro Jahr (z.B. 2025)
-  // WICHTIG: Nur Jahre anzeigen, die in recipientMapping definiert sind (tatsächliche Spendenübergaben)
-  const donations = donationsData
-    ? Object.entries(donationsData.summen)
-        .filter(([year]) => {
-          const yearNum = parseInt(year);
-          // Nur Jahre anzeigen, die in recipientMapping definiert sind
-          return recipientMapping[yearNum] !== undefined;
-        })
-        .flatMap(([year, totalAmount]) => {
-          const yearNum = parseInt(year);
-          const mapping = recipientMapping[yearNum];
-          
-          // Wenn Array: Mehrere Spendenübergaben für dieses Jahr
-          if (Array.isArray(mapping)) {
-            return mapping.map((item) => ({
-              year: yearNum,
-              recipient: item.recipient,
-              amount: item.amount,
-            }));
-          }
-          
-          // Einzelne Spendenübergabe für dieses Jahr
-          return [{
+  // WICHTIG: Kombiniert API-Daten (aktuelles Jahr) mit historischen Daten aus Code
+  const donations = (() => {
+    // Kombiniere API-Daten mit historischen hardcodierten Daten
+    const allYearData = donationsData
+      ? { ...HISTORICAL_DONATIONS_MAP, ...donationsData.summen }
+      : HISTORICAL_DONATIONS_MAP;
+
+    return Object.entries(allYearData)
+      .filter(([year]) => {
+        const yearNum = parseInt(year);
+        // Nur Jahre anzeigen, die in recipientMapping definiert sind
+        return recipientMapping[yearNum] !== undefined;
+      })
+      .flatMap(([year, totalAmount]) => {
+        const yearNum = parseInt(year);
+        const mapping = recipientMapping[yearNum];
+
+        // Wenn Array: Mehrere Spendenübergaben für dieses Jahr
+        if (Array.isArray(mapping)) {
+          return mapping.map((item) => ({
             year: yearNum,
-            recipient: (typeof mapping === 'string' ? mapping : "Kinderkrebshilfe"),
-            amount: totalAmount,
-          }];
-        })
-    : [];
+            recipient: item.recipient,
+            amount: item.amount,
+          }));
+        }
+
+        // Einzelne Spendenübergabe für dieses Jahr
+        return [{
+          year: yearNum,
+          recipient: (typeof mapping === 'string' ? mapping : "Kinderkrebshilfe"),
+          amount: totalAmount,
+        }];
+      });
+  })();
 
   // Gesamtsumme aus hardcodierter Konstante (Single Source of Truth)
   const totalDonations = TOTAL_DONATIONS;
