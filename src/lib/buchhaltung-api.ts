@@ -50,67 +50,55 @@ export type {
 // ============================================================================
 
 /**
- * Mock-Dashboard mit aktuellen Werten (Stand: 07.12.2025)
+ * Mock-Dashboard für 2026 (neues Jahr - Nullstand)
  * Wird nur verwendet wenn USE_MOCK_DATA=true oder API nicht erreichbar
  */
 const mockDashboard: DashboardData = {
-  year: 2025,
+  year: 2026,
   einnahmen: {
-    konto: { anzahl: 23, summe: 7939.00, letzter: '05.12.2025' },
-    bargeld: { anzahl: 7, summe: 2262.00, letzter: '28.09.2025' },
-    gesamt: 10201.00
+    konto: { anzahl: 0, summe: 0, letzter: '' },
+    bargeld: { anzahl: 0, summe: 0, letzter: '' },
+    gesamt: 0
   },
   ausgaben: {
-    allgemein: { anzahl: 3, summe: 253.88, letzter: '05.12.2025' },
-    uebergeben: { anzahl: 2, summe: 10000.00, letzter: '05.12.2025' },
-    gesamt: 10253.88
+    allgemein: { anzahl: 0, summe: 0, letzter: '' },
+    uebergeben: { anzahl: 0, summe: 0, letzter: '' },
+    gesamt: 0
   },
-  saldo: 60.13,  // Endbestand Geldmittel
+  saldo: 0,
   quittungen: {
-    konto: { ausgestellt: 10, offen: 5 },
-    bargeld: { ausgestellt: 3, offen: 5 }
+    konto: { ausgestellt: 0, offen: 0 },
+    bargeld: { ausgestellt: 0, offen: 0 }
   }
 };
 
 /**
  * Erstellt Mock-Übergabe-Summen basierend auf historischen Daten
- * WICHTIG: Fügt NICHT automatisch das aktuelle Jahr hinzu - nur Jahre mit tatsächlichen Spendenübergaben
+ * Verwendet HISTORICAL_DONATIONS_MAP (enthält alle abgeschlossenen Jahre inkl. 2025)
  */
 async function createMockUebergabeSummen(): Promise<UebergabeSummen> {
   const { TOTAL_DONATIONS } = await import('@/data/donations');
-  // Nur historische Daten (2004-2024) + 2025 (falls in FALLBACK_DASHBOARD definiert)
-  // Kein automatisches Hinzufügen des aktuellen Jahres
-  const currentYear = new Date().getFullYear();
-  const summen: Record<string, number> = { ...HISTORICAL_DONATIONS_MAP };
-  
-  // Nur 2025 hinzufügen wenn es das aktuelle Jahr ist und in FALLBACK_DASHBOARD definiert
-  if (currentYear === 2025) {
-    summen['2025'] = FALLBACK_DASHBOARD.ausgabenUebergeben;
-  }
-  
+
+  // Historische Daten (2004-2025) aus hardcodierten Daten
+  // Das aktuelle Jahr (2026+) kommt von der API, wenn verfügbar
   return {
-    summen,
-    gesamt: TOTAL_DONATIONS // Gesamtsumme aus hardcodierter Konstante
+    summen: { ...HISTORICAL_DONATIONS_MAP },
+    gesamt: TOTAL_DONATIONS
   };
 }
 
 /**
  * Erstellt Mock-Jahresdaten
- * WICHTIG: Fügt NICHT automatisch das aktuelle Jahr hinzu - nur Jahre mit tatsächlichen Spendenübergaben
+ * Verwendet historicalDonations (enthält alle abgeschlossenen Jahre inkl. 2025)
  */
 async function createMockAllYearlyData(): Promise<AllYearlyData> {
-  const currentYear = new Date().getFullYear();
-  const donations = [...historicalDonations];
-  
-  // Nur 2025 hinzufügen wenn es das aktuelle Jahr ist
-  if (currentYear === 2025) {
-    donations.unshift({ year: 2025, amount: FALLBACK_DASHBOARD.ausgabenUebergeben });
-  }
-  
   const { TOTAL_DONATIONS } = await import('@/data/donations');
-  
+  const currentYear = new Date().getFullYear();
+
+  // Historische Daten (2004-2025) aus hardcodierten Daten
+  // Das aktuelle Jahr (2026+) kommt von der API, wenn verfügbar
   return {
-    donations,
+    donations: [...historicalDonations],
     totalDonations: TOTAL_DONATIONS,
     currentYear: currentYear
   };

@@ -27,6 +27,16 @@ nvm use             # Use Node.js 24.x (required, see .nvmrc)
 
 **Important:** This project requires Node.js >= 24.0.0. Always run `nvm use` when switching to this project.
 
+## Quick Reference: Common Tasks
+
+**Update current year donations:** Edit mock data in `src/lib/buchhaltung-api.ts` (mockDashboard.ausgaben.uebergeben) OR update Google Sheets Dashboard
+
+**Add press article:** Edit `src/pages/Presse.tsx` → add to `pressArticles` array + image in `public/zeitungsartikel/`
+
+**Update tour dates:** Edit `src/components/TourDates.tsx` → modify `tours` array
+
+**Add new route:** Create page in `src/pages/`, add route in `src/App.tsx`, include `<SEOHead />` component
+
 ## Architecture Overview
 
 ### Core Technology Stack
@@ -59,6 +69,12 @@ Three independent Google Apps Script services in separate directories:
 
 Each service has its own `google-apps-script/Code.gs` entry point and operates independently.
 
+**Security Architecture:**
+- Frontend communicates with Google Apps Script via Vercel serverless functions (proxy pattern)
+- Google Apps Script URL is never exposed to the browser
+- Proxy configuration in `api/` directory (Vercel Functions)
+- Environment variable `GOOGLE_APPS_SCRIPT_URL` configured on Vercel only
+
 **3. Single Source of Truth for Donations**
 - **Historical donations (2004-2024):** Hardcoded in `src/data/donations.ts` and `src/lib/google-sheets-api.ts` (HISTORICAL_DONATIONS)
 - **Current year (2025):** Loaded from Google Sheets Dashboard via API (`ausgabenUebergeben` field)
@@ -77,12 +93,19 @@ Tours can have multiple route variants (e.g., 48km, 78km, 106km):
 2. Set execution: "Me", access: "Anyone"
 3. Copy deployment URL to `.env` file: `VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/YOUR_ID/exec`
 
-**API Endpoints (when configured):**
-- `?action=getDashboard` - Current year accounting dashboard
-- `?action=getUebergabeSummen` - Total donations by year + grand total
-- `?action=getAllYearlyData` - All yearly donation data
-- `?action=getJahresabschluss&year=YYYY` - Annual financial report
-- `?action=getVotingTours` - Tours available for voting (Tourverwaltung)
+**API Endpoints (proxied through Vercel):**
+- `/api/buchhaltung?action=getDashboard` - Current year accounting dashboard
+- `/api/buchhaltung?action=getUebergabeSummen` - Total donations by year + grand total
+- `/api/buchhaltung?action=getAllYearlyData` - All yearly donation data
+- `/api/buchhaltung?action=getJahresabschluss&year=YYYY` - Annual financial report
+- `/api/voting?action=getVotingTours` - Tours available for voting (Tourverwaltung)
+
+**Data Layer Architecture:**
+- `src/lib/buchhaltung-api.ts` - API client with automatic fallback to mock data
+- `src/lib/donations-validator.ts` - Zod schema validation for all API responses
+- `src/lib/donations-cache.ts` - LocalStorage caching (5-minute TTL)
+- `src/lib/donations-consistency.ts` - Cross-validation of donation data integrity
+- `src/data/donations.ts` - Immutable historical donation constants (2004-2024)
 
 ### Directory Structure Philosophy
 
@@ -93,6 +116,12 @@ src/
 │   └── schemas/     # SEO Schema.org structured data components
 ├── pages/           # Route-level page components (1:1 with routes)
 ├── lib/             # Utilities and API integration logic
+│   ├── api-config.ts            # API endpoints and configuration
+│   ├── buchhaltung-api.ts       # Accounting API client
+│   ├── donations-validator.ts   # Zod schemas for data validation
+│   ├── donations-cache.ts       # LocalStorage caching layer
+│   ├── donations-consistency.ts # Data integrity validation
+│   └── google-sheets-api.ts     # Direct Google Sheets integration
 ├── data/            # Static data and constants (donations, tours)
 └── hooks/           # Custom React hooks
 
@@ -100,6 +129,10 @@ public/              # Static assets served as-is
 ├── zeitungsartikel/ # Press article images
 ├── photos/          # Gallery photos
 └── logos/           # Logo files
+
+api/                 # Vercel serverless functions (proxy layer)
+├── buchhaltung.ts   # Accounting API proxy
+└── voting.ts        # Voting API proxy
 
 Service-*/           # Google Apps Script backend services (separate repos conceptually)
 docs/                # Comprehensive documentation for accounting system
@@ -148,6 +181,44 @@ Comprehensive SEO with Schema.org structured data:
   - `BreadcrumbSchema.tsx` - Breadcrumb navigation
 
 Each page component should import and use `SEOHead` with appropriate props.
+
+### Data Layer: Caching & Validation Architecture
+
+The project uses a three-layer approach for data integrity:
+
+**1. Caching Layer (`src/lib/donations-cache.ts`):**
+- LocalStorage-based caching with 5-minute TTL
+- Automatic cache invalidation on expiry
+- Manual cache clearing available via `clearCache()`
+- Cache keys: `donations:${action}:${year?}`
+- Reduces API calls and improves performance
+
+**2. Validation Layer (`src/lib/donations-validator.ts`):**
+- Zod schemas for runtime type validation
+- Validates all API responses before use
+- Catches data structure changes early
+- Provides type-safe TypeScript types
+- Schemas: `DashboardData`, `UebergabeSummen`, `AllYearlyData`, `Jahresabschluss`
+
+**3. Consistency Layer (`src/lib/donations-consistency.ts`):**
+- Cross-validates that totals match sum of individual entries
+- Verifies historical donations match hardcoded constants
+- Ensures current year + historical = grand total
+- Logs warnings for inconsistencies without breaking UI
+- Example: `validateUebergabeSummenConsistency()`, `validateAllYearlyDataConsistency()`
+
+**Flow for API calls:**
+```
+User Request → Check Cache → [Cache Hit] → Return cached data
+                          → [Cache Miss] → Fetch from API
+                                         → Validate with Zod
+                                         → Cross-validate consistency
+                                         → Store in cache
+                                         → Return data
+                          → [API Error] → Return fallback/mock data
+```
+
+This architecture ensures data integrity while providing excellent performance and graceful degradation.
 
 ## Content Management
 
@@ -212,6 +283,41 @@ The newsletter system uses Service-Newsletter Apps Script:
 ### Working with Lovable
 This project was created with Lovable (lovable.dev). Changes made in Lovable are automatically synced to this repository.
 
+### Vercel Serverless Functions (API Proxy Layer)
+The `api/` directory contains Vercel serverless functions that act as a secure proxy between the frontend and Google Apps Script:
+
+**Why use a proxy?**
+- Hides Google Apps Script URL from browser (security)
+- Enables server-side environment variables
+- Provides consistent error handling
+- Allows for future API enhancements without frontend changes
+
+**Adding a new API endpoint:**
+1. Create file in `api/` directory (e.g., `api/my-endpoint.ts`)
+2. Export handler function following Vercel serverless pattern
+3. Configure `GOOGLE_APPS_SCRIPT_URL` environment variable on Vercel
+4. Add endpoint to `src/lib/api-config.ts`
+5. Create corresponding function in `src/lib/` for frontend consumption
+
+**Example proxy function:**
+```typescript
+// api/my-endpoint.ts
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const scriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL;
+
+  if (!scriptUrl) {
+    return res.status(500).json({ error: 'Configuration error' });
+  }
+
+  const response = await fetch(`${scriptUrl}?action=myAction`);
+  const data = await response.json();
+
+  return res.status(200).json(data);
+}
+```
+
 ### Deployment
 - **Platform:** Vercel (automatic deployment)
 - **Branch:** main (auto-deploys on push)
@@ -224,21 +330,28 @@ Extensive documentation in `docs/` directory (primarily for accounting system):
 - `docs/README.md` - Documentation overview
 - `docs/INSTALLATION.md` - Google Sheets + Apps Script setup guide
 - `docs/BUCHHALTUNG_HANDBUCH.md` - Accounting system user manual
+- `docs/JAHRESWECHSEL.md` - **Year-end transition guide (Spreadsheet + Website code)**
+- `docs/JAHRESABSCHLUSS_CHECKLISTE.md` - Annual financial statement checklist
 - `docs/GOOGLE_APPS_SCRIPT_SETUP.md` - Detailed Apps Script configuration
 - `docs/SICHERHEIT.md` - Security and data protection guidelines
 
 ## Important Constraints
 
-**Security:**
-- NEVER read or commit `.env` files
+**Security (CRITICAL):**
+- **NEVER read or commit `.env` files** - contains sensitive Google Apps Script URLs
+- **NEVER read or display `.env.local`, `.env.production`, or any environment files**
+- **NEVER expose Google Apps Script URLs** - all API calls go through Vercel proxy
 - Google Sheets API only exposes aggregated, non-personal data
 - Sensitive endpoints (personal donor data) are blocked in Apps Script Web App
-- All personal data (names, IBANs) stays in private Google Sheets
+- All personal data (names, IBANs, email addresses) stays in private Google Sheets
+- When debugging API issues, use mock data or ask user to check Vercel environment variables
+- API proxy pattern ensures Google Apps Script URL is never exposed to browser
 
 **Data Integrity:**
-- Historical donation data (2004-2024) is immutable - only current year changes
-- Total donations = 91,055€ (historical) + current year amount
+- Historical donation data (2004-2025) is immutable - only current year changes
+- Total donations = 101,055€ (historical 2004-2025) + current year amount
 - Always verify totals match after any donation data changes
+- Year-end transition: See `docs/JAHRESWECHSEL.md` for complete guide
 
 **Node Version:**
 - Project REQUIRES Node.js >= 24.0.0 (specified in package.json engines)
@@ -260,7 +373,7 @@ Components installed to `src/components/ui/` - do not edit directly.
 
 **API integration with fallback:**
 ```typescript
-import { getDashboard, USE_MOCK_DATA } from '@/lib/buchhaltung-api';
+import { getDashboard } from '@/lib/buchhaltung-api';
 
 // In component:
 const { data, isLoading, error } = useQuery({
@@ -269,6 +382,21 @@ const { data, isLoading, error } = useQuery({
 });
 
 // Mock data automatically used if Google Sheets not configured
+// Data is validated with Zod schemas and cached for 5 minutes
+// Cache can be manually cleared with: import { clearCache } from '@/lib/donations-cache'
+```
+
+**Data validation pattern:**
+```typescript
+import { validateDashboardData } from '@/lib/donations-validator';
+import { getCache, setCache } from '@/lib/donations-cache';
+
+// All API responses are:
+// 1. Fetched from cache if available and fresh (5 min TTL)
+// 2. Validated with Zod schemas for type safety
+// 3. Cross-validated for consistency (totals match sum of parts)
+// 4. Cached on success
+// 5. Fallback to mock data on error
 ```
 
 **Custom animations:**

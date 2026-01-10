@@ -81,7 +81,22 @@ Detaillierte Checkliste für den Jahresabschluss:
 
 ---
 
-### 5. [SICHERHEIT.md](./SICHERHEIT.md) 🔒
+### 5. [JAHRESWECHSEL.md](./JAHRESWECHSEL.md) 🔄 **NEU!**
+**Für: Administratoren, Schatzmeister & Entwickler**
+
+Komplette Anleitung für den Jahreswechsel der Buchhaltung und Website:
+- Jahresabschluss erstellen
+- Spreadsheet für neues Jahr vorbereiten
+- Website-Code aktualisieren (historische Spenden, neues Jahr)
+- Testing & Deployment
+- Schritt-für-Schritt Workflow
+- Troubleshooting
+
+📖 **Pflichtlektüre für den Jahreswechsel - spart Zeit und vermeidet Fehler!**
+
+---
+
+### 6. [SICHERHEIT.md](./SICHERHEIT.md) 🔒
 **Für: Alle Administratoren**
 
 Sicherheits-Dokumentation und Best Practices:
@@ -95,7 +110,7 @@ Sicherheits-Dokumentation und Best Practices:
 
 ---
 
-### 6. [MITGLIEDERVERWALTUNG.md](./MITGLIEDERVERWALTUNG.md) 👥
+### 7. [MITGLIEDERVERWALTUNG.md](./MITGLIEDERVERWALTUNG.md) 👥
 **Für: Schatzmeister & Vorstand**
 
 Mitgliederverwaltung mit automatischer Zuordnung:
@@ -109,7 +124,7 @@ Mitgliederverwaltung mit automatischer Zuordnung:
 
 ---
 
-### 7. [MITGLIEDER_INFO.md](./MITGLIEDER_INFO.md) 📧
+### 8. [MITGLIEDER_INFO.md](./MITGLIEDER_INFO.md) 📧
 **Für: Vorstand & Kommunikationsverantwortliche**
 
 Mitglieder-Info-Versand per E-Mail:
@@ -123,7 +138,7 @@ Mitglieder-Info-Versand per E-Mail:
 
 ---
 
-### 8. [BACKUP_SYSTEM.md](./BACKUP_SYSTEM.md) 💾
+### 9. [BACKUP_SYSTEM.md](./BACKUP_SYSTEM.md) 💾
 **Für: Alle Administratoren**
 
 Backup-System für Datensicherung:
@@ -137,7 +152,7 @@ Backup-System für Datensicherung:
 
 ---
 
-### 9. [SPENDENQUITTUNGEN_EMAIL.md](./SPENDENQUITTUNGEN_EMAIL.md) 📧
+### 10. [SPENDENQUITTUNGEN_EMAIL.md](./SPENDENQUITTUNGEN_EMAIL.md) 📧
 **Für: Schatzmeister & Buchhalter**
 
 Automatischer Versand von Spendenquittungen per E-Mail:

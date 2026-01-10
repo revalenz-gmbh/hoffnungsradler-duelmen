@@ -26,10 +26,12 @@ const Hero = () => {
         // Die API verwendet automatisch Caching und Fallback-Daten
         const dashboard = await getDashboard();
 
-        // WICHTIG: Für Hero verwenden wir die ÜBERGEBENEN Spenden des aktuellen Jahres (C17)
-        // NICHT die Einnahmen (C9)
-        if (dashboard?.ausgaben?.uebergeben) {
-          setCurrentDonations(dashboard.ausgaben.uebergeben.summe);
+        // WICHTIG: Für Fortschrittsbalken verwenden wir den SALDO minus 300€ Reserve
+        // Der Saldo zeigt das aktuell verfügbare Geld (Einnahmen - Ausgaben)
+        if (dashboard?.saldo !== undefined) {
+          const STILLE_RESERVE = 300; // Fixer Reservebetrag
+          const verfuegbarerBetrag = Math.max(0, dashboard.saldo - STILLE_RESERVE);
+          setCurrentDonations(verfuegbarerBetrag);
         }
 
         // Lade Gesamtsumme aller übergebenen Spenden (historisch + aktuelles Jahr)

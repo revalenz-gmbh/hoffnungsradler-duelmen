@@ -35,21 +35,21 @@ export interface DashboardValues {
 
 /**
  * Fallback-Werte falls die API nicht erreichbar ist
- * Stand: 07.12.2025 (aus Dashboard-Screenshot)
- * 
+ * Stand: 10.01.2026 (Jahreswechsel - neues Jahr)
+ *
  * Diese Werte werden nur verwendet wenn:
  * - Die Google Apps Script API nicht erreichbar ist
  * - Im Development-Modus (USE_MOCK_DATA=true)
  */
 export const FALLBACK_DASHBOARD: DashboardValues = {
-  einnahmenKonto: 7939.00,
-  einnahmenBargeld: 2262.00,
-  einnahmenGesamt: 10201.00,
-  ausgabenKonto: 253.88,
+  einnahmenKonto: 0,
+  einnahmenBargeld: 0,
+  einnahmenGesamt: 0,
+  ausgabenKonto: 0,
   ausgabenBargeld: 0,
-  ausgabenUebergeben: 10000.00,  // 2x Spendenübergabe à 5.000€
-  ausgabenGesamt: 10253.88,
-  saldo: 60.13,  // Endbestand Geldmittel
-  jahr: 2025,
-  lastUpdated: '2025-12-07',
+  ausgabenUebergeben: 0,  // Noch keine Übergaben in 2026
+  ausgabenGesamt: 0,
+  saldo: 0,  // Start des neuen Jahres
+  jahr: 2026,
+  lastUpdated: '2026-01-10',
 };
