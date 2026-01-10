@@ -133,12 +133,14 @@ export const tours2025: TourDate[] = [
 // Tour-Termine für 2026 - werden nach der Mitgliederversammlung am 19.01.2026 festgelegt
 export const tours2026: TourDate[] = [
   {
-    date: "TBD",
-    name: "in Planung",
-    distance: "-",
-    time: "-",
-    location: "wird bekannt gegeben",
-    address: "-",
+    date: "03.04.2026",
+    day: "Karfreitag",
+    name: "Saisonauftakt",
+    distance: "in Planung",
+    time: "10:00 Uhr",
+    location: "Marktplatz Dülmen",
+    address: "Markt, 48249 Dülmen",
+    speed: "wird festgelegt",
   }
 ];
 
@@ -372,7 +374,7 @@ const TourDates = () => {
             </table>
           </div>
           <p className="text-center text-gray-600 mt-6 italic">
-            Die Tourtermine für 2026 werden auf der Mitgliederversammlung am 19. Januar festgelegt.
+            Weitere Tourtermine für 2026 werden auf der Mitgliederversammlung am 19. Januar festgelegt.
           </p>
         </div>
       </div>
