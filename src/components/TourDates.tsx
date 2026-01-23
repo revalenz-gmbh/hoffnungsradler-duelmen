@@ -138,8 +138,8 @@ export const tours2026: TourDate[] = [
     name: "Saisonauftakt zum Ruheforst",
     distance: "ca. 53 km",
     time: "10:00 Uhr",
-    location: "Sportzentrum Süd",
-    address: "Kapellenweg, Dülmen",
+    location: "Rathaus / Marktplatz",
+    address: "Markt, 48249 Dülmen",
     speed: "Guide: Berni",
   },
   {
