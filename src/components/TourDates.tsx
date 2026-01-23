@@ -130,18 +130,76 @@ export const tours2025: TourDate[] = [
   }
 ];
 
-// Tour-Termine für 2026 - werden nach der Mitgliederversammlung am 19.01.2026 festgelegt
+// Tour-Termine für 2026 - festgelegt auf der Mitgliederversammlung am 19.01.2026
 export const tours2026: TourDate[] = [
   {
     date: "03.04.2026",
     day: "Karfreitag",
-    name: "Saisonauftakt",
-    distance: "in Planung",
+    name: "Saisonauftakt zum Ruheforst",
+    distance: "ca. 53 km",
     time: "10:00 Uhr",
-    location: "Marktplatz Dülmen",
-    address: "Markt, 48249 Dülmen",
-    speed: "wird festgelegt",
-  }
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+    speed: "Guide: Berni",
+  },
+  {
+    date: "03.05.2026",
+    day: "Sonntag",
+    name: "Kanaltour",
+    distance: "wird bekannt gegeben",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+    speed: "Guide: Piet",
+  },
+  {
+    date: "31.05.2026",
+    day: "Sonntag",
+    name: "Tour nach Gescher",
+    distance: "wird bekannt gegeben",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+    speed: "Guide: Berni",
+  },
+  {
+    date: "28.06.2026",
+    day: "Sonntag",
+    name: "Münster-Tour",
+    distance: "wird bekannt gegeben",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+    speed: "Guide: Martin",
+  },
+  {
+    date: "26.07.2026",
+    day: "Sonntag",
+    name: "Termin reserviert",
+    distance: "wird bekannt gegeben",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+  },
+  {
+    date: "23.08.2026",
+    day: "Sonntag",
+    name: "Termin reserviert",
+    distance: "wird bekannt gegeben",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+  },
+  {
+    date: "27.09.2026",
+    day: "Sonntag",
+    name: "Saisonabschluss / Baumberge-Alpin-Tour",
+    distance: "48/78/106 km",
+    time: "10:00 Uhr",
+    location: "Sportzentrum Süd",
+    address: "Kapellenweg, Dülmen",
+    speed: "frei",
+  },
 ];
 
 interface ArchiveTour {
@@ -374,7 +432,7 @@ const TourDates = () => {
             </table>
           </div>
           <p className="text-center text-gray-600 mt-6 italic">
-            Weitere Tourtermine für 2026 werden auf der Mitgliederversammlung am 19. Januar festgelegt.
+            Streckendetails und GPX-Tracks werden rechtzeitig vor den jeweiligen Touren veröffentlicht.
           </p>
         </div>
       </div>

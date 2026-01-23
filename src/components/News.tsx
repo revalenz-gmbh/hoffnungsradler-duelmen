@@ -11,33 +11,6 @@ const News = () => {
 
   const newsItems = [
     {
-      date: "Januar 2026",
-      title: "Mitgliederversammlung am 19. Januar 2026",
-      content: (
-        <div className="space-y-4">
-          <p className="text-gray-700">
-            <strong>Termin:</strong> Montag, 19. Januar 2026 um 19:00 Uhr
-          </p>
-          <p className="text-gray-700">
-            <strong>Ort:</strong> Königsberger Str. 26, Dülmen
-          </p>
-          <p className="text-gray-700">
-            <strong>Tagesordnung:</strong>
-          </p>
-          <ul className="list-disc list-inside text-gray-700 ml-4">
-            <li>Rückblick auf die abgelaufene Saison 2025</li>
-            <li>Kassenbericht</li>
-            <li>Bericht des Vorstands über die Mittelvergabe 2025</li>
-            <li>Festlegung der Tourtermine für die Saison 2026</li>
-          </ul>
-          <p className="text-gray-700">
-            Wir freuen uns auf zahlreiches Erscheinen!
-          </p>
-        </div>
-      ),
-      type: "internal"
-    },
-    {
       date: "Dezember 2025",
       title: "Meilenstein für Hoffnungsradler Dülmen: 10.000 Euro Weihnachtsspende",
       content: (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../components/MainLayout';
-import { FaDownload, FaSpinner } from 'react-icons/fa';
+import { FaDownload, FaSpinner, FaMap } from 'react-icons/fa';
 import SEOHead from '@/components/SEOHead';
 import BreadcrumbSchema from '@/components/schemas/BreadcrumbSchema';
 
@@ -80,7 +80,36 @@ const UnsereTouren: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-8 max-w-4xl mx-auto bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded-r-lg" role="alert">
+          {/* Interaktive Kartenansicht Button */}
+          <div className="mt-8 max-w-4xl mx-auto">
+            <a
+              href="/Archivuebersicht.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 p-3 rounded-lg">
+                    <FaMap className="text-3xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold">Interaktive Kartenansicht</h3>
+                    <p className="text-white/90 text-sm mt-1">
+                      Vergleiche bis zu 3 Touren gleichzeitig auf der Karte
+                    </p>
+                  </div>
+                </div>
+                <div className="text-white/80">
+                  <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
+                    95 Touren
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div className="mt-6 max-w-4xl mx-auto bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 rounded-r-lg" role="alert">
             <p className="font-bold">Ein kleiner Hinweis</p>
             <p>
               Hier finden Sie einige Highlights aus unseren gemeinsamen Fahrten der letzten Jahre. Da die Touren teilweise vor längerer Zeit erstellt wurden und nicht regelmäßig überarbeitet werden, empfehlen wir, den Streckenverlauf vor Antritt der Fahrt zu überprüfen.
