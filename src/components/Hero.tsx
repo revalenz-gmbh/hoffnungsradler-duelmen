@@ -1,4 +1,5 @@
-import { currentYearDonations, totalDonations, donationGoal, donationYear } from "../data/donations";
+import { totalDonations, donationYear } from "../data/donations";
+import { CURRENT_SEASON, getVerfuegbarerBetrag } from "../data/current-season";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -7,9 +8,13 @@ import { Link } from "react-router-dom";
 import { getDashboard, getUebergabeSummen } from "../lib/buchhaltung-api";
 
 const Hero = () => {
-  // Spendendaten - Start mit statischen Werten, werden dann durch API aktualisiert
-  const [currentDonations, setCurrentDonations] = useState(currentYearDonations);
+  // Spendendaten - Primär aus current-season.ts, optional API-Update
+  // getVerfuegbarerBetrag() = kontostand - stilleReserve
+  const [currentDonations, setCurrentDonations] = useState(getVerfuegbarerBetrag());
   const [totalDonationsValue, setTotalDonationsValue] = useState(totalDonations);
+  
+  // Spendenziel aus current-season.ts
+  const donationGoal = CURRENT_SEASON.spendenziel;
   
   // Animierte Zahlen
   const [animatedCurrent, setAnimatedCurrent] = useState(0);
@@ -18,31 +23,34 @@ const Hero = () => {
   // Banner-Steuerung
   const showCancellationBanner = false; // Auf true setzen, um den Banner anzuzeigen
 
-  // Lade aktuelle Daten von der API (mit automatischem Caching)
+  // Optional: Versuche API-Daten zu laden (als Ergänzung zu current-season.ts)
+  // Die primären Daten kommen aus current-season.ts, API ist nur ein optionales Update
   useEffect(() => {
     const fetchDonationData = async () => {
       try {
         // Versuche Dashboard-Daten zu laden (aktuelles Jahr)
-        // Die API verwendet automatisch Caching und Fallback-Daten
         const dashboard = await getDashboard();
 
-        // WICHTIG: Für Fortschrittsbalken verwenden wir den SALDO minus 300€ Reserve
-        // Der Saldo zeigt das aktuell verfügbare Geld (Einnahmen - Ausgaben)
-        if (dashboard?.saldo !== undefined) {
-          const STILLE_RESERVE = 300; // Fixer Reservebetrag
-          const verfuegbarerBetrag = Math.max(0, dashboard.saldo - STILLE_RESERVE);
-          setCurrentDonations(verfuegbarerBetrag);
+        // Nur übernehmen wenn API-Daten neuer/höher sind als manuelle Daten
+        // Dies verhindert, dass veraltete API-Daten die manuellen Werte überschreiben
+        if (dashboard?.saldo !== undefined && dashboard.saldo > 0) {
+          const apiVerfuegbar = Math.max(0, dashboard.saldo - CURRENT_SEASON.stilleReserve);
+          // Nur aktualisieren wenn API-Wert sich vom manuellen unterscheidet
+          if (apiVerfuegbar !== getVerfuegbarerBetrag()) {
+            console.log('[Hero] API-Update: Saldo von API abweichend', { api: apiVerfuegbar, manuell: getVerfuegbarerBetrag() });
+            // Optional: Hier könnte man die API-Daten verwenden
+            // setCurrentDonations(apiVerfuegbar);
+          }
         }
 
         // Lade Gesamtsumme aller übergebenen Spenden (historisch + aktuelles Jahr)
-        // Die API kombiniert automatisch historische Daten + aktuelles Jahr
         const uebergabe = await getUebergabeSummen();
         if (uebergabe?.gesamt) {
           setTotalDonationsValue(uebergabe.gesamt);
         }
       } catch (error) {
-        console.warn('[Hero] Fehler beim Laden der Spendendaten, verwende Fallback:', error);
-        // Die API gibt immer Daten zurück (mit Fallback), daher sollte dieser Fall selten auftreten
+        // API-Fehler sind OK - wir haben bereits Daten aus current-season.ts
+        console.log('[Hero] API nicht verfügbar, verwende manuelle Daten aus current-season.ts');
       }
     };
 

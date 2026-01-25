@@ -35,21 +35,24 @@ export interface DashboardValues {
 
 /**
  * Fallback-Werte falls die API nicht erreichbar ist
- * Stand: 10.01.2026 (Jahreswechsel - neues Jahr)
+ * Stand: 23.01.2026 - Aktueller Kontostand aus Buchhaltung
  *
  * Diese Werte werden nur verwendet wenn:
  * - Die Google Apps Script API nicht erreichbar ist
  * - Im Development-Modus (USE_MOCK_DATA=true)
+ * 
+ * WICHTIG: Bei Änderungen des Kontostands hier aktualisieren!
+ * Alternativ: src/data/current-season.ts für zentrale Pflege nutzen.
  */
 export const FALLBACK_DASHBOARD: DashboardValues = {
-  einnahmenKonto: 0,
+  einnahmenKonto: 1012.30,
   einnahmenBargeld: 0,
-  einnahmenGesamt: 0,
+  einnahmenGesamt: 1012.30,
   ausgabenKonto: 0,
   ausgabenBargeld: 0,
   ausgabenUebergeben: 0,  // Noch keine Übergaben in 2026
   ausgabenGesamt: 0,
-  saldo: 0,  // Start des neuen Jahres
+  saldo: 1012.30,  // Aktueller Kontostand 2026
   jahr: 2026,
-  lastUpdated: '2026-01-10',
+  lastUpdated: '2026-01-23',
 };

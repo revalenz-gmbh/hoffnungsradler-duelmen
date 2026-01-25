@@ -122,7 +122,9 @@ src/
 │   ├── donations-cache.ts       # LocalStorage caching layer
 │   ├── donations-consistency.ts # Data integrity validation
 │   └── google-sheets-api.ts     # Direct Google Sheets integration
-├── data/            # Static data and constants (donations, tours)
+├── data/            # Static data and constants
+│   ├── donations.ts          # Historical donations (2004-2025)
+│   └── current-season.ts     # Current year data (manually updated)
 └── hooks/           # Custom React hooks
 
 public/              # Static assets served as-is
@@ -222,13 +224,34 @@ This architecture ensures data integrity while providing excellent performance a
 
 ## Content Management
 
-### Updating Donation Amounts
-**Current year donations (2025):**
-Managed via Google Sheets Dashboard (if connected) OR update mock data in `src/lib/buchhaltung-api.ts` (mockDashboard.ausgaben.uebergeben)
+### Aktuellen Spendenstand aktualisieren (2026+)
 
-**Historical donations (2004-2024):**
-Rarely change. If needed, update both:
-1. `src/data/donations.ts` - donations array
+**Empfohlene Methode: `src/data/current-season.ts`**
+
+Diese Datei ist die Single Source of Truth für den aktuellen Kontostand. So wird der Spendenstand aktualisiert:
+
+1. Öffne `src/data/current-season.ts`
+2. Aktualisiere die Werte:
+   ```typescript
+   export const CURRENT_SEASON: CurrentSeasonData = {
+     year: 2026,
+     kontostand: 1012.30,      // ← Aktuellen Kontostand eintragen
+     spendenziel: 5000,        // Spendenziel für das Jahr
+     lastUpdated: '2026-01-23', // ← Aktuelles Datum eintragen
+     stilleReserve: 300,       // Fixer Reservebetrag
+   };
+   ```
+3. Committe und pushe die Änderung
+4. Nach dem Vercel-Deployment ist der neue Stand live
+
+**Wichtig:** Der Fortschrittsbalken zeigt `kontostand - stilleReserve` (z.B. 1012,30€ - 300€ = 712,30€)
+
+**Alternative Fallback-Werte:**
+Falls die current-season.ts nicht geändert werden soll, können auch die Fallback-Werte in `src/lib/google-sheets-api.ts` (FALLBACK_DASHBOARD) aktualisiert werden.
+
+**Historische Spendendaten (2004-2025):**
+Ändern sich selten. Bei Bedarf beide Dateien aktualisieren:
+1. `src/data/donations.ts` - donations array + TOTAL_DONATIONS
 2. `src/lib/google-sheets-api.ts` - HISTORICAL_DONATIONS object
 
 ### Adding Press Articles
