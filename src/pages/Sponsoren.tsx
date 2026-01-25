@@ -5,15 +5,17 @@ import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
 const Sponsoren = () => {
   const sponsors = [
+    // Erste Reihe: Aktive Hauptsponsoren
     {
-      name: "DÜMO Reisemobile",
-      logo: "/logos/40a11938-1150-4706-9454-5cbe35d8b8dd.png",
-      website: "https://www.duemo-duelmen.de/",
+      name: "Baumschule Rüskamp",
+      logo: "/logos/68952004-e13e-4290-a8a9-440e9cc4918f.png",
+      website: "https://www.rueskamp-welte.de/",
     },
     {
-      name: "Kes Thiel & Co",
-      logo: "/logos/a0371457-045a-4dd5-9f40-ac475a36ef3b.png",
-      website: "https://www.kesthiel-co.de/",
+      name: "Stadtwerke Dülmen GmbH",
+      logo: "/logos/Stw_Logo_transparent_NEU_10_12__Original.gif",
+      website:
+        "http://www.stadtwerke-duelmen.de/privatkunden/service/online-portal/",
     },
     {
       name: "Fahrrad XXL Hürter",
@@ -27,17 +29,6 @@ const Sponsoren = () => {
       website: "https://laumann-verlag.de/",
     },
     {
-      name: "Stadtwerke Dülmen GmbH",
-      logo: "/logos/Stw_Logo_transparent_NEU_10_12__Original.gif",
-      website:
-        "http://www.stadtwerke-duelmen.de/privatkunden/service/online-portal/",
-    },
-    {
-      name: "Baumschule Rüskamp",
-      logo: "/logos/68952004-e13e-4290-a8a9-440e9cc4918f.png",
-      website: "https://www.rueskamp-welte.de/",
-    },
-    {
       name: "A&R Münsterland",
       logo: "/logos/373bd578-37cc-42bf-b984-e8359e6a41e8.png",
       website: "http://www.schrotthandel-muensterland.de/",
@@ -47,15 +38,20 @@ const Sponsoren = () => {
       logo: "/logos/Vette_Logo.gif",
       website: "http://www.repro-vette.de/",
     },
+    {
+      name: "DÜMO Reisemobile",
+      logo: "/logos/40a11938-1150-4706-9454-5cbe35d8b8dd.png",
+      website: "https://www.duemo-duelmen.de/",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-snow">
       <SEOHead 
         title="Unsere Sponsoren und Partner"
-        description="Danke an unsere Sponsoren und Partner, die die Hoffnungsradler Dülmen unterstützen: DÜMO Reisemobile, Kes Thiel & Co, Fahrrad XXL Hürter, Stadtwerke Dülmen und viele mehr."
+        description="Danke an unsere Sponsoren und Partner, die die Hoffnungsradler Dülmen unterstützen: Baumschule Rüskamp, Stadtwerke Dülmen, Fahrrad XXL Hürter, Laumann Verlag und viele mehr."
         url="https://www.hoffnungs-radler-duelmen.de/sponsoren"
-        keywords="Sponsoren Hoffnungsradler, Partner Dülmen, DÜMO, Stadtwerke Dülmen, Fahrrad XXL"
+        keywords="Sponsoren Hoffnungsradler, Partner Dülmen, Rüskamp, Stadtwerke Dülmen, Fahrrad XXL"
       />
       <BreadcrumbSchema items={[
         { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
