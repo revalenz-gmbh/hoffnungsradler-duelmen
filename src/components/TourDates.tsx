@@ -152,7 +152,7 @@ export const tours2026: TourDate[] = [
     date: "03.05.2026",
     day: "Sonntag",
     name: "Kanaltour",
-    distance: "wird bekannt gegeben",
+    distance: "57 km",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
