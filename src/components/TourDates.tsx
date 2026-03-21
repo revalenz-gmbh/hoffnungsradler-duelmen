@@ -28,6 +28,8 @@ interface TourDate {
   location: string;
   address: string;
   speed?: string;
+  /** Kurzer Hinweis z. B. zu geeigneten Fahrradtypen (Gravel, alle Bikes …) */
+  bikeNote?: string;
   gpxUrl?: string;
   mapUrl?: string;
   komootUrl?: string;
@@ -141,6 +143,7 @@ export const tours2026: TourDate[] = [
     location: "Rathaus / Marktplatz",
     address: "Markt, 48249 Dülmen",
     speed: "Guide: Berni",
+    bikeNote: "Geeignet für alle Fahrradtypen.",
     komootUrl: "https://www.komoot.com/tour/2837377226",
     gpxUrl: "https://drive.google.com/uc?export=download&id=107gvnc8rx1nLsngH8jSuq_N0YC2P87Z0",
     mapUrl: "https://www.google.com/maps/d/edit?mid=1fgam5iQ_Mv5iW-h7aLbCtXSc3GEdoGw&usp=sharing",
@@ -154,6 +157,10 @@ export const tours2026: TourDate[] = [
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
     speed: "Guide: Piet",
+    bikeNote: "Gravel-Tour – besonders für Gravel-Bikes geeignet.",
+    mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1iPBjqpVdtY0p83lPzoIMjg6lLlCFAYA&usp=sharing",
+    komootUrl: "https://www.komoot.com/de-de/tour/2808082918",
+    gpxUrl: "https://drive.google.com/uc?export=download&id=1XagAaCAT5OwYWnRuQtKuiBr_9O2EvaKI",
   },
   {
     date: "31.05.2026",
@@ -304,6 +311,9 @@ const TourDates = () => {
                     <td className="px-4 py-3">
                       <div className="font-medium">{tour.distance}</div>
                       <div className="text-sm text-gray-600">{tour.speed}</div>
+                      {tour.bikeNote && (
+                        <div className="text-sm text-forest/90 mt-1">{tour.bikeNote}</div>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {tour.variants && tour.variants.length > 0 ? (
