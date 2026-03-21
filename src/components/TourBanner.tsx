@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Calendar, MapPin, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { tours2025 } from './TourDates';
+import { tours2025, tours2026 } from './TourDates';
 
 const TourBanner = () => {
   // Funktion um das nächste Tour-Datum zu finden
@@ -10,7 +10,7 @@ const TourBanner = () => {
     today.setHours(0, 0, 0, 0); // Auf Mitternacht setzen für Vergleich
     
     // Touren nach Datum sortieren und die nächste finden
-    const futureTours = tours2025
+    const futureTours = [...tours2025, ...tours2026]
       .map(tour => {
         // Deutsche Datumsformat (DD.MM.YYYY) in Date Object konvertieren
         const [day, month, year] = tour.date.split('.');

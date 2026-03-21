@@ -141,6 +141,9 @@ export const tours2026: TourDate[] = [
     location: "Rathaus / Marktplatz",
     address: "Markt, 48249 Dülmen",
     speed: "Guide: Berni",
+    komootUrl: "https://www.komoot.com/tour/2837377226",
+    gpxUrl: "https://drive.google.com/uc?export=download&id=107gvnc8rx1nLsngH8jSuq_N0YC2P87Z0",
+    mapUrl: "https://www.google.com/maps/d/edit?mid=1fgam5iQ_Mv5iW-h7aLbCtXSc3GEdoGw&usp=sharing",
   },
   {
     date: "03.05.2026",
@@ -309,25 +312,6 @@ const TourDates = () => {
                             <div key={vIdx} className="border border-forest/10 rounded-lg p-2">
                               <div className="text-sm font-medium mb-2">{variant.label}</div>
                               <div className="flex flex-wrap gap-2">
-                                {variant.gpxUrl ? (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-forest hover:text-forest hover:bg-forest/5"
-                                    asChild
-                                  >
-                                    <a 
-                                      href={variant.gpxUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      title="GPX herunterladen"
-                                    >
-                                      <Download className="w-4 h-4" />
-                                    </a>
-                                  </Button>
-                                ) : (
-                                  <span className="text-xs text-gray-400">GPX bald verfügbar</span>
-                                )}
                                 {(variant.mapUrl || tour.mapUrl) ? (
                                   <Button
                                     variant="outline"
@@ -366,29 +350,31 @@ const TourDates = () => {
                                 ) : (
                                   <span className="text-xs text-gray-400">Komoot bald verfügbar</span>
                                 )}
+                                {variant.gpxUrl ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-forest hover:text-forest hover:bg-forest/5"
+                                    asChild
+                                  >
+                                    <a 
+                                      href={variant.gpxUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="GPX herunterladen"
+                                    >
+                                      <Download className="w-4 h-4" />
+                                    </a>
+                                  </Button>
+                                ) : (
+                                  <span className="text-xs text-gray-400">GPX bald verfügbar</span>
+                                )}
                               </div>
                             </div>
                           ))}
                         </div>
                       ) : (
                         <div className="flex gap-2">
-                          {tour.gpxUrl && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-forest hover:text-forest hover:bg-forest/5"
-                              asChild
-                            >
-                              <a 
-                                href={tour.gpxUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="GPX herunterladen"
-                              >
-                                <Download className="w-4 h-4" />
-                              </a>
-                            </Button>
-                          )}
                           {tour.mapUrl && (
                             <Button
                               variant="outline"
@@ -420,6 +406,23 @@ const TourDates = () => {
                                 title="Route auf Komoot ansehen"
                               >
                                 <Link2 className="w-4 h-4" />
+                              </a>
+                            </Button>
+                          )}
+                          {tour.gpxUrl && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-forest hover:text-forest hover:bg-forest/5"
+                              asChild
+                            >
+                              <a 
+                                href={tour.gpxUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="GPX herunterladen"
+                              >
+                                <Download className="w-4 h-4" />
                               </a>
                             </Button>
                           )}

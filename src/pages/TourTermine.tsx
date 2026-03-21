@@ -69,10 +69,10 @@ const TourTermine = () => {
   return (
     <div className="min-h-screen bg-snow">
       <SEOHead 
-        title="Tour-Termine 2025 - Aktuelle Rennradtouren"
-        description="Alle aktuellen Tour-Termine der Hoffnungsradler Dülmen 2025. Gemeinsame Rennradtouren im Münsterland für den guten Zweck. Inkl. Wetterdaten und GPX-Downloads."
+        title="Tour-Termine 2026 - Aktuelle Rennradtouren"
+        description="Alle aktuellen Tour-Termine der Hoffnungsradler Dülmen 2026. Gemeinsame Rennradtouren im Münsterland für den guten Zweck. Inkl. Wetterdaten und GPX-Downloads."
         url="https://www.hoffnungs-radler-duelmen.de/tour-termine"
-        keywords="Rennradtouren 2025, Tour-Termine Dülmen, Baumberge Alpin-Tour, Münsterland Radtouren, GPX Download"
+        keywords="Rennradtouren 2026, Tour-Termine Dülmen, Baumberge Alpin-Tour, Münsterland Radtouren, GPX Download"
       />
       <BreadcrumbSchema items={[
         { name: "Startseite", url: "https://www.hoffnungs-radler-duelmen.de" },
