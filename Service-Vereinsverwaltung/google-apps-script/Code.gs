@@ -1538,7 +1538,10 @@ function issueReceipt(rowIndex, sheetName) {
     throw new Error('Kein Spendername in der ausgewählten Zeile gefunden.');
   }
   
-  var year = new Date(datum).getFullYear();
+  var year = getBuchungstagJahr(datum);
+  if (year === null) {
+    year = new Date().getFullYear();
+  }
   
   var receiptNumber = generateReceiptNumber(year);
   var quittungsDatum = new Date();
@@ -2216,42 +2219,49 @@ function sendReceiptEmailManual() {
 
 function getJahresabschluss(year) {
   try {
-    // Validiere Jahr
-    if (!year || isNaN(year) || year < 2000 || year > new Date().getFullYear() + 1) {
+    // Validiere Jahr (Query-Parameter kommen ggf. als String)
+    var yearNum = parseInt(String(year), 10);
+    if (!yearNum || isNaN(yearNum) || yearNum < 2000 || yearNum > new Date().getFullYear() + 1) {
       throw new Error('Ungültiges Jahr: ' + year + '. Bitte geben Sie ein gültiges Jahr zwischen 2000 und ' + (new Date().getFullYear() + 1) + ' ein.');
     }
-    
+    year = yearNum;
+
   var ss = SpreadsheetApp.getActiveSpreadsheet();
     if (!ss) {
       throw new Error('Spreadsheet konnte nicht geöffnet werden.');
     }
   
-  // Einnahmen
-    var kontoSheet = ss.getSheetByName(SHEET_KONTO);
-    var bargeldSheet = ss.getSheetByName(SHEET_BARGELD);
-    
-    // NEUE LOGIK: Nur positive Beträge aus Kontobewegungen sind Einnahmen
-    var einnahmenKonto = sumPositiveByYear(kontoSheet, year, KONTO_COL_BUCHUNGSTAG + 1, KONTO_COL_BETRAG + 1);
-    // Nur BARGELDspenden (nicht Sachspenden) zählen zu den Geldeinnahmen
-    var einnahmenBargeld = sumBargeldByYear(bargeldSheet, year);
-    var gesamtEinnahmen = (einnahmenKonto || 0) + (einnahmenBargeld || 0);
-    
+  // Einnahmen / Ausgaben: dieselbe Logik wie Dashboard-Zellen C7–C18
+  // (Custom Functions schließen z. B. "Intern" bzw. doppelte Spendenübergaben korrekt aus)
+    var einnahmenKonto = EINNAHMEN_KONTO_JAHR(year) || 0;
+    var einnahmenBargeld = BARGELDSPENDEN_JAHR(year) || 0;
+    var gesamtEinnahmen = einnahmenKonto + einnahmenBargeld;
+
     // Sachspenden separat erfassen (nicht in Geldeinnahmen)
-    var sachspenden = sumSachspendenByYear(bargeldSheet, year) || 0;
-  
-  // Ausgaben
-    var ausgabenSheet = ss.getSheetByName(SHEET_AUSGABEN);
-    var uebergabeSheet = ss.getSheetByName(SHEET_UEBERGABE);
-    
-    // NEUE LOGIK: Negative Beträge aus Kontobewegungen sind Ausgaben (als positiv)
-    // Sachspenden werden NICHT mehr als Geldausgabe geführt
-    var ausgabenKonto = sumNegativeByYear(kontoSheet, year, KONTO_COL_BUCHUNGSTAG + 1, KONTO_COL_BETRAG + 1);
-    var barausgaben = sumByYear(ausgabenSheet, year, 1, 2) || 0;
-    var ausgabenUebergabe = sumByYearColumn(uebergabeSheet, year, 1, 2) || 0;
-    var gesamtAusgaben = (ausgabenKonto || 0) + barausgaben + ausgabenUebergabe;
-  
-  // Saldo
-  var saldo = gesamtEinnahmen - gesamtAusgaben;
+    var sachspenden = SACHSPENDEN_JAHR(year) || 0;
+
+    var ausgabenKonto = AUSGABEN_KONTO_JAHR(year) || 0;
+    var barausgaben = BARAUSGABEN_JAHR(year) || 0;
+    // SINGLE SOURCE OF TRUTH wie UEBERGABE_JAHR: nur Konto "Spendenübergabe", nicht Extra-Tabelle
+    var ausgabenUebergabe = UEBERGABE_JAHR(year) || 0;
+    var gesamtAusgaben = ausgabenKonto + barausgaben + ausgabenUebergabe;
+
+    // Anfangsbestand (Dashboard E3) – wie Formel C23 = C21 + (C9 - C18)
+    var anfangsbestand = 0;
+    var dashboardSheet = ss.getSheetByName(SHEET_DASHBOARD);
+    if (dashboardSheet) {
+      var dashboardJahrRaw = dashboardSheet.getRange('B3').getValue();
+      var dashboardJahr = extractJahr(dashboardJahrRaw);
+      if (dashboardJahr === year) {
+        var abRaw = dashboardSheet.getRange('E3').getValue();
+        if (typeof abRaw === 'number' && !isNaN(abRaw)) {
+          anfangsbestand = abRaw;
+        }
+      }
+    }
+
+    // Saldo = Anfangsbestand + Einnahmen - Ausgaben (entspricht Dashboard C23)
+    var saldo = anfangsbestand + gesamtEinnahmen - gesamtAusgaben;
   
     // Quittungen - NEUE LOGIK: Verwende Quittungsprotokoll statt einzelne Sheets
     // Zähle nur GÜLTIGE Quittungen, stornierte separat
@@ -2312,8 +2322,8 @@ function countGueltigeQuittungen(protokollSheet, year) {
     var status = data[i][5];
     
     if (quittungsNr && ausstellungsDatum && status === 'Gültig') {
-      var jahrQuittung = new Date(ausstellungsDatum).getFullYear();
-      if (jahrQuittung == year) {
+      var jahrQuittung = getBuchungstagJahr(ausstellungsDatum);
+      if (jahrQuittung !== null && jahrQuittung == year) {
         count++;
       }
     }
@@ -2342,8 +2352,8 @@ function countStornierteQuittungen(protokollSheet, year) {
     var status = data[i][5];
     
     if (quittungsNr && ausstellungsDatum && status === 'Storniert') {
-      var jahrQuittung = new Date(ausstellungsDatum).getFullYear();
-      if (jahrQuittung == year) {
+      var jahrQuittung = getBuchungstagJahr(ausstellungsDatum);
+      if (jahrQuittung !== null && jahrQuittung == year) {
         count++;
       }
     }
@@ -2361,9 +2371,10 @@ function sumByYear(sheet, year, dateCol, amountCol) {
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][dateCol - 1];
     var betrag = data[i][amountCol - 1];
-    
-    if (datum && betrag && new Date(datum).getFullYear() == year) {
-      sum += parseFloat(betrag) || 0;
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
+    if (rowYear !== null && !isNaN(bNum) && rowYear == year) {
+      sum += bNum;
     }
   }
   
@@ -2381,9 +2392,10 @@ function sumPositiveByYear(sheet, year, dateCol, amountCol) {
   
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][dateCol - 1];
-    var betrag = parseFloat(data[i][amountCol - 1]) || 0;
+    var betrag = normalizeKontoBetrag(data[i][amountCol - 1]);
+    var rowYear = getBuchungstagJahr(datum);
     
-    if (datum && betrag > 0 && new Date(datum).getFullYear() == year) {
+    if (rowYear !== null && !isNaN(betrag) && betrag > 0 && rowYear == year) {
       sum += betrag;
     }
   }
@@ -2403,10 +2415,11 @@ function sumNegativeByYear(sheet, year, dateCol, amountCol) {
   
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][dateCol - 1];
-    var betrag = parseFloat(data[i][amountCol - 1]) || 0;
+    var betrag = normalizeKontoBetrag(data[i][amountCol - 1]);
+    var rowYear = getBuchungstagJahr(datum);
     
-    if (datum && betrag < 0 && new Date(datum).getFullYear() == year) {
-      sum += Math.abs(betrag); // Absolute Wert (positiv)
+    if (rowYear !== null && !isNaN(betrag) && betrag < 0 && rowYear == year) {
+      sum += Math.abs(betrag);
     }
   }
   
@@ -2428,8 +2441,10 @@ function sumBargeldByYear(sheet, year) {
     var betrag = data[i][1]; // Spalte B: Betrag
     var art = data[i][2];    // Spalte C: Art
     
-    if (datum && betrag && art === 'Bargeld' && new Date(datum).getFullYear() == year) {
-      sum += parseFloat(betrag) || 0;
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
+    if (rowYear !== null && !isNaN(bNum) && art === 'Bargeld' && rowYear == year) {
+      sum += bNum;
     }
   }
   
@@ -2451,8 +2466,10 @@ function sumSachspendenByYear(sheet, year) {
     var betrag = data[i][1]; // Spalte B: Betrag
     var art = data[i][2];    // Spalte C: Art
     
-    if (datum && betrag && art === 'Sachspende' && new Date(datum).getFullYear() == year) {
-      sum += parseFloat(betrag) || 0;
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
+    if (rowYear !== null && !isNaN(bNum) && art === 'Sachspende' && rowYear == year) {
+      sum += bNum;
     }
   }
   
@@ -2487,7 +2504,8 @@ function countReceiptsIssued(sheet, year, dateCol, receiptCol) {
     var datum = data[i][dateCol - 1];
     var quittung = data[i][receiptCol - 1];
     
-    if (datum && new Date(datum).getFullYear() == year && quittung === 'Ja') {
+    var rowYear = getBuchungstagJahr(datum);
+    if (rowYear !== null && rowYear == year && quittung === 'Ja') {
       count++;
     }
   }
@@ -2701,14 +2719,12 @@ function getUebergabeSummen() {
           var kategorie = data[i][KONTO_COL_KATEGORIE];
           
           // Nur negative Beträge (Ausgaben) mit Kategorie "Spendenübergabe"
-          if (datum && betrag && betrag < 0 && kategorie === 'Spendenübergabe') {
-            var jahr = new Date(datum).getFullYear();
-            var positiverBetrag = Math.abs(parseFloat(betrag));
-            
-            if (!isNaN(jahr) && !isNaN(positiverBetrag)) {
-              if (!summen[jahr]) summen[jahr] = 0;
-              summen[jahr] += positiverBetrag;
-            }
+          var bNum = normalizeKontoBetrag(betrag);
+          var jahr = getBuchungstagJahr(datum);
+          if (jahr !== null && !isNaN(bNum) && bNum < 0 && kategorie === 'Spendenübergabe') {
+            var positiverBetrag = Math.abs(bNum);
+            if (!summen[jahr]) summen[jahr] = 0;
+            summen[jahr] += positiverBetrag;
           }
         } catch (rowError) {
           Logger.log('Fehler beim Verarbeiten einer Zeile: ' + rowError.toString());
@@ -4914,12 +4930,32 @@ function sortSheetByDate(sheet, dateColumn, headerRows) {
 function parseSparkassenDate(dateStr) {
   if (!dateStr || dateStr === '') return '';
   
-  var match = dateStr.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (Object.prototype.toString.call(dateStr) === '[object Date]' && !isNaN(dateStr.getTime())) {
+    return dateStr;
+  }
+  
+  var s = String(dateStr).trim();
+  
+  var match = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
   if (match) {
-    var day = parseInt(match[1]);
-    var month = parseInt(match[2]) - 1; // Monat ist 0-basiert
-    var year = parseInt(match[3]);
+    var day = parseInt(match[1], 10);
+    var month = parseInt(match[2], 10) - 1;
+    var year = parseInt(match[3], 10);
     return new Date(year, month, day);
+  }
+  
+  // Sparkassen-CSV / FinTS teils als ISO (YYYY-MM-DD)
+  var iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) {
+    var y = parseInt(iso[1], 10);
+    var mo = parseInt(iso[2], 10) - 1;
+    var d = parseInt(iso[3], 10);
+    return new Date(y, mo, d);
+  }
+  
+  var parsed = new Date(s);
+  if (!isNaN(parsed.getTime())) {
+    return parsed;
   }
   
   return '';
@@ -4929,17 +4965,98 @@ function parseSparkassenDate(dateStr) {
  * Parst Sparkassen-Betrag (z.B. "1.234,56" oder "-1.234,56")
  */
 function parseSparkassenBetrag(betragStr) {
-  if (!betragStr || betragStr === '') return 0;
+  if (betragStr === null || betragStr === undefined || betragStr === '') return 0;
+  if (typeof betragStr === 'number') {
+    return isNaN(betragStr) ? 0 : betragStr;
+  }
   
-  // Entferne Währungssymbole und Leerzeichen
-  var cleaned = betragStr.replace(/[^\d,.-]/g, '');
+  var s = String(betragStr).trim();
+  var neg = /^[\s(]*-/.test(s) || /^\(.+\)$/.test(s);
   
-  // Ersetze deutsches Format: Punkt als Tausender, Komma als Dezimal
-  cleaned = cleaned.replace(/\./g, ''); // Entferne Tausender-Punkte
-  cleaned = cleaned.replace(',', '.'); // Komma zu Punkt
+  // Entferne Währungssymbole und Leerzeichen (Minus/Klammern separat)
+  var cleaned = s.replace(/[^\d,.-]/g, '').replace(/-/g, '');
+  
+  if (cleaned.indexOf(',') !== -1) {
+    // Deutsch: Punkt = Tausender, Komma = Dezimal
+    cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+  }
   
   var value = parseFloat(cleaned);
-  return isNaN(value) ? 0 : value;
+  if (isNaN(value)) return 0;
+  if (neg) value = -Math.abs(value);
+  return value;
+}
+
+/**
+ * Buchungstag aus Sheet-Zelle → Kalenderjahr (für Dashboard-Custom-Functions).
+ * Unterstützt Date, Zahl (Excel-Serientag), Strings dd.mm.yyyy und yyyy-mm-dd.
+ *
+ * @param {*} datum Zellenwert Buchungstag (Spalte B)
+ * @return {number|null} Jahr oder null
+ */
+function getBuchungstagJahr(datum) {
+  if (datum === null || datum === undefined || datum === '') return null;
+  if (Object.prototype.toString.call(datum) === '[object Date]' && !isNaN(datum.getTime())) {
+    return datum.getFullYear();
+  }
+  if (typeof datum === 'number') {
+    if (datum > 20000 && datum < 80000) {
+      var epoch = new Date(Date.UTC(1899, 11, 30));
+      var fromSerial = new Date(epoch.getTime() + datum * 86400000);
+      if (!isNaN(fromSerial.getTime())) return fromSerial.getFullYear();
+    }
+    if (datum >= 1900 && datum <= 2100) return Math.floor(datum);
+  }
+  if (typeof datum === 'string') {
+    var t = datum.trim();
+    var m = t.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+    if (m) return parseInt(m[3], 10);
+    m = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return parseInt(m[1], 10);
+  }
+  var d = new Date(datum);
+  if (!isNaN(d.getTime())) return d.getFullYear();
+  return null;
+}
+
+/**
+ * Buchungstag → Date (für LETZTES_DATUM_* in Formeln).
+ *
+ * @param {*} datum Zellenwert
+ * @return {Date|null}
+ */
+function parseBuchungstagToDate(datum) {
+  if (datum === null || datum === undefined || datum === '') return null;
+  if (Object.prototype.toString.call(datum) === '[object Date]' && !isNaN(datum.getTime())) {
+    return datum;
+  }
+  if (typeof datum === 'number' && datum > 20000 && datum < 80000) {
+    var epoch = new Date(Date.UTC(1899, 11, 30));
+    var fromSerial = new Date(epoch.getTime() + datum * 86400000);
+    return isNaN(fromSerial.getTime()) ? null : fromSerial;
+  }
+  if (typeof datum === 'string') {
+    var t = datum.trim();
+    var m = t.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+    if (m) return new Date(parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+    m = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10));
+  }
+  var d = new Date(datum);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/**
+ * Betrag aus Kontobewegungen-Spalte I als Zahl (auch Text aus Import/Paste).
+ *
+ * @param {*} betrag Zellenwert
+ * @return {number} Zahl oder NaN bei nicht interpretierbar
+ */
+function normalizeKontoBetrag(betrag) {
+  if (betrag === null || betrag === undefined || betrag === '') return NaN;
+  if (typeof betrag === 'number' && !isNaN(betrag)) return betrag;
+  var n = parseSparkassenBetrag(betrag);
+  return n;
 }
 
 /**
@@ -5059,11 +5176,12 @@ function EINNAHMEN_KONTO_JAHR(jahr) {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
     var kategorie = data[i][11]; // Spalte L
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && betrag > 0 && kategorie !== "Intern") {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum > 0 && kategorie !== 'Intern') {
       if (rowYear == targetYear) {
-        summe += parseFloat(betrag);
+        summe += bNum;
       }
     }
   }
@@ -5101,9 +5219,10 @@ function ANZAHL_EINNAHMEN_KONTO_JAHR(jahr) {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
     var kategorie = data[i][11]; // Spalte L
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && betrag > 0 && kategorie !== "Intern") {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum > 0 && kategorie !== 'Intern') {
       if (rowYear == targetYear) {
         anzahl++;
       }
@@ -5134,11 +5253,12 @@ function BARGELDSPENDEN_JAHR(jahr) {
     var datum = data[i][0]; // Spalte A
     var betrag = data[i][1]; // Spalte B
     var art = data[i][2];    // Spalte C
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && art === 'Bargeld') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && art === 'Bargeld') {
       if (rowYear == targetYear) {
-        summe += parseFloat(betrag);
+        summe += bNum;
       }
     }
   }
@@ -5167,9 +5287,10 @@ function ANZAHL_BARGELDSPENDEN_JAHR(jahr) {
     var datum = data[i][0]; // Spalte A
     var betrag = data[i][1]; // Spalte B
     var art = data[i][2];    // Spalte C
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && art === 'Bargeld') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && art === 'Bargeld') {
       if (rowYear == targetYear) {
         anzahl++;
       }
@@ -5200,11 +5321,12 @@ function SACHSPENDEN_JAHR(jahr) {
     var datum = data[i][0]; // Spalte A
     var betrag = data[i][1]; // Spalte B
     var art = data[i][2];    // Spalte C
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && art === 'Sachspende') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && art === 'Sachspende') {
       if (rowYear == targetYear) {
-        summe += parseFloat(betrag);
+        summe += bNum;
       }
     }
   }
@@ -5233,9 +5355,10 @@ function ANZAHL_SACHSPENDEN_JAHR(jahr) {
     var datum = data[i][0]; // Spalte A
     var betrag = data[i][1]; // Spalte B
     var art = data[i][2];    // Spalte C
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && art === 'Sachspende') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && art === 'Sachspende') {
       if (rowYear == targetYear) {
         anzahl++;
       }
@@ -5267,12 +5390,13 @@ function AUSGABEN_KONTO_JAHR(jahr) {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
     var kategorie = data[i][11] || ''; // Spalte L
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
     // Schließe "Spendenübergabe" aus (wird separat in "Übergebene Spenden" gezählt)
-    if (datum && betrag && betrag < 0 && kategorie !== 'Spendenübergabe') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie !== 'Spendenübergabe') {
       if (rowYear == targetYear) {
-        summe += Math.abs(parseFloat(betrag)); // Als positive Zahl
+        summe += Math.abs(bNum);
       }
     }
   }
@@ -5302,10 +5426,11 @@ function ANZAHL_AUSGABEN_KONTO_JAHR(jahr) {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
     var kategorie = data[i][11] || ''; // Spalte L
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
     // Schließe "Spendenübergabe" aus (wird separat in "Übergebene Spenden" gezählt)
-    if (datum && betrag && betrag < 0 && kategorie !== 'Spendenübergabe') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie !== 'Spendenübergabe') {
       if (rowYear == targetYear) {
         anzahl++;
       }
@@ -5335,11 +5460,12 @@ function BARAUSGABEN_JAHR(jahr) {
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][0]; // Spalte A
     var betrag = data[i][1]; // Spalte B
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag) {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum)) {
       if (rowYear == targetYear) {
-        summe += parseFloat(betrag);
+        summe += bNum;
       }
     }
   }
@@ -5367,9 +5493,10 @@ function ANZAHL_BARAUSGABEN_JAHR(jahr) {
   for (var i = 1; i < data.length; i++) {
     var datum = data[i][0]; // Spalte A
     var betrag = data[i][1]; // Spalte B
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag) {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum)) {
       if (rowYear == targetYear) {
         anzahl++;
       }
@@ -5403,12 +5530,13 @@ function UEBERGABE_JAHR(jahr) {
     var datum = data[i][1];       // Spalte B: Buchungstag
     var betrag = data[i][8];      // Spalte I: Betrag
     var kategorie = data[i][11];  // Spalte L: Kategorie
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
     // Nur negative Beträge (Ausgaben) mit Kategorie "Spendenübergabe"
-    if (datum && betrag && betrag < 0 && kategorie === 'Spendenübergabe') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie === 'Spendenübergabe') {
       if (rowYear == targetYear) {
-        summe += Math.abs(parseFloat(betrag)); // Als positive Zahl
+        summe += Math.abs(bNum);
       }
     }
   }
@@ -5439,10 +5567,11 @@ function ANZAHL_UEBERGABE_JAHR(jahr) {
     var datum = data[i][1];       // Spalte B: Buchungstag
     var betrag = data[i][8];      // Spalte I: Betrag
     var kategorie = data[i][11];  // Spalte L: Kategorie
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
     // Nur negative Beträge (Ausgaben) mit Kategorie "Spendenübergabe"
-    if (datum && betrag && betrag < 0 && kategorie === 'Spendenübergabe') {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie === 'Spendenübergabe') {
       if (rowYear == targetYear) {
         anzahl++;
       }
@@ -5473,13 +5602,16 @@ function debugKontoKategorien() {
     var datum = data[i][1]; // Spalte B
     var betrag = data[i][8]; // Spalte I
     var kategorie = data[i][11]; // Spalte L
+    var rowYear = getBuchungstagJahr(datum);
+    var bNum = normalizeKontoBetrag(betrag);
     
-    if (datum && betrag && betrag > 0) {
-      var rowYear = new Date(datum).getFullYear();
+    if (rowYear !== null && !isNaN(bNum) && bNum > 0) {
       if (rowYear == jahr) {
+        var dObj = parseBuchungstagToDate(datum);
+        var dStr = dObj ? Utilities.formatDate(dObj, Session.getScriptTimeZone(), 'dd.MM.yyyy') : String(datum);
         Logger.log(
           'Zeile ' + (i+1) + ': ' + 
-          Utilities.formatDate(new Date(datum), Session.getScriptTimeZone(), 'dd.MM.yyyy') + 
+          dStr + 
           ' | ' + betrag + ' € | "' + kategorie + '"' +
           (kategorie === 'Intern' ? ' ✓ INTERN (wird nicht gezählt)' : ' → WIRD GEZÄHLT')
         );
@@ -5506,8 +5638,8 @@ function LETZTES_DATUM_KONTO() {
   
   // Spalte B (Index 1) = Buchungstag
   for (var i = 1; i < data.length; i++) {
-    var datum = data[i][1]; // Spalte B
-    if (datum && datum instanceof Date) {
+    var datum = parseBuchungstagToDate(data[i][1]);
+    if (datum) {
       if (!maxDate || datum > maxDate) {
         maxDate = datum;
       }
@@ -5533,8 +5665,8 @@ function LETZTES_DATUM_BARGELD() {
   
   // Spalte A (Index 0) = Datum
   for (var i = 1; i < data.length; i++) {
-    var datum = data[i][0]; // Spalte A
-    if (datum && datum instanceof Date) {
+    var datum = parseBuchungstagToDate(data[i][0]);
+    if (datum) {
       if (!maxDate || datum > maxDate) {
         maxDate = datum;
       }
@@ -5560,8 +5692,8 @@ function LETZTES_DATUM_BARAUSGABEN() {
   
   // Spalte A (Index 0) = Datum
   for (var i = 1; i < data.length; i++) {
-    var datum = data[i][0]; // Spalte A
-    if (datum && datum instanceof Date) {
+    var datum = parseBuchungstagToDate(data[i][0]);
+    if (datum) {
       if (!maxDate || datum > maxDate) {
         maxDate = datum;
       }
@@ -5589,12 +5721,13 @@ function LETZTES_DATUM_UEBERGABE() {
   
   // Spaltenstruktur: B=Datum(1), I=Betrag(8), L=Kategorie(11)
   for (var i = 1; i < data.length; i++) {
-    var datum = data[i][1];       // Spalte B: Buchungstag
+    var datum = parseBuchungstagToDate(data[i][1]);       // Spalte B: Buchungstag
     var betrag = data[i][8];      // Spalte I: Betrag
     var kategorie = data[i][11];  // Spalte L: Kategorie
+    var bNum = normalizeKontoBetrag(betrag);
     
     // Nur Buchungen mit Kategorie "Spendenübergabe"
-    if (datum && datum instanceof Date && betrag < 0 && kategorie === 'Spendenübergabe') {
+    if (datum && !isNaN(bNum) && bNum < 0 && kategorie === 'Spendenübergabe') {
       if (!maxDate || datum > maxDate) {
         maxDate = datum;
       }
