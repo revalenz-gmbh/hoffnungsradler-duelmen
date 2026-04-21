@@ -99,20 +99,35 @@ const JahresabschlussEinnahmenSchema = z.object({
 });
 
 const JahresabschlussAusgabenSchema = z.object({
-  allgemein: z.number().nonnegative(),
+  // Legacy/Frontend-Form: "allgemein"
+  allgemein: z.number().nonnegative().optional(),
+  // Apps-Script-Form: "konto" + "bar"
+  konto: z.number().nonnegative().optional(),
+  bar: z.number().nonnegative().optional(),
+  bargeld: z.number().nonnegative().optional(),
   uebergabe: z.number().nonnegative(),
   gesamt: z.number().nonnegative(),
 });
 
 const JahresabschlussQuittungenSchema = z.object({
-  konto: z.number().int().nonnegative(),
-  bargeld: z.number().int().nonnegative(),
+  // Legacy/Frontend-Form
+  konto: z.number().int().nonnegative().optional(),
+  bargeld: z.number().int().nonnegative().optional(),
+  // Apps-Script-Form
+  gueltig: z.number().int().nonnegative().optional(),
+  storniert: z.number().int().nonnegative().optional(),
   gesamt: z.number().int().nonnegative(),
+  hinweis: z.string().optional(),
 });
 
 export const JahresabschlussSchema = z.object({
   jahr: z.number().int().min(2004).max(2100),
+  anfangsbestand: z.number().nonnegative().optional(),
   einnahmen: JahresabschlussEinnahmenSchema,
+  sachspenden: z.object({
+    wert: z.number().nonnegative(),
+    hinweis: z.string(),
+  }).optional(),
   ausgaben: JahresabschlussAusgabenSchema,
   saldo: z.number(),
   quittungen: JahresabschlussQuittungenSchema,

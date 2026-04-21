@@ -2272,6 +2272,8 @@ function getJahresabschluss(year) {
   
   return {
     jahr: year,
+    // Dokumentationshilfe: explizit ausgeben, damit die Saldo-Berechnung transparent ist
+    anfangsbestand: anfangsbestand,
     einnahmen: {
         konto: einnahmenKonto || 0,
         bargeld: einnahmenBargeld || 0,
