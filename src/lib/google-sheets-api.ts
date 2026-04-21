@@ -35,7 +35,7 @@ export interface DashboardValues {
 
 /**
  * Fallback-Werte falls die API nicht erreichbar ist
- * Stand: 23.01.2026 - Aktueller Kontostand aus Buchhaltung
+ * Stand: 21.04.2026 - Kontostand inkl. 305 € Spenden Karfreitag 2026
  *
  * Diese Werte werden nur verwendet wenn:
  * - Die Google Apps Script API nicht erreichbar ist
@@ -45,14 +45,14 @@ export interface DashboardValues {
  * Alternativ: src/data/current-season.ts für zentrale Pflege nutzen.
  */
 export const FALLBACK_DASHBOARD: DashboardValues = {
-  einnahmenKonto: 1012.30,
+  einnahmenKonto: 1317.30,
   einnahmenBargeld: 0,
-  einnahmenGesamt: 1012.30,
+  einnahmenGesamt: 1317.30,
   ausgabenKonto: 0,
   ausgabenBargeld: 0,
   ausgabenUebergeben: 0,  // Noch keine Übergaben in 2026
   ausgabenGesamt: 0,
-  saldo: 1012.30,  // Aktueller Kontostand 2026
+  saldo: 1317.30,  // Aktueller Kontostand 2026
   jahr: 2026,
-  lastUpdated: '2026-01-23',
+  lastUpdated: '2026-04-21',
 };

@@ -31,14 +31,14 @@ export interface CurrentSeasonData {
 /**
  * Aktuelle Saison-Daten
  * 
- * Stand: 23.01.2026
- * Quelle: Bankauszug in Buchhaltungslösung
+ * Stand: 21.04.2026
+ * Quelle: Bankauszug in Buchhaltungslösung; +305 € Spenden Karfreitags-Runde (03.04.2026)
  */
 export const CURRENT_SEASON: CurrentSeasonData = {
   year: 2026,
-  kontostand: 1012.30,      // Aktueller Kontostand aus Buchhaltung
+  kontostand: 1317.30,      // Aktueller Kontostand aus Buchhaltung
   spendenziel: 5000,        // Spendenziel für 2026
-  lastUpdated: '2026-01-23', // Datum der letzten Aktualisierung
+  lastUpdated: '2026-04-21', // Datum der letzten Aktualisierung
   stilleReserve: 300,       // Fixer Reservebetrag
 };
 
