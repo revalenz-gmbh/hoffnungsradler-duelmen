@@ -11,6 +11,15 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "April 2026",
+      source: "Dülmener Zeitung",
+      title: "Zeitungsbericht zur Karfreitagstour 2026",
+      excerpt: `Unter der Überschrift „Hoffnungsradler eröffnen ihre Saison und bringen den Bürgermeister nach Hause“ berichtet die Zeitung über unseren Saisonstart am Rathaus in Dülmen mit rund 30 Teilnehmenden. Die Karfreitagstour führte über eine landschaftlich reizvolle Runde in einer Schleife am Ruheforst in Coesfeld zurück nach Dülmen. Wie jedes Jahr wurden Spenden gesammelt, die zu 100 % an die Kinderkrebshilfe Münster sowie die Elterninitiative krebskranker Kinder Datteln gehen. Bürgermeister Carsten Hövekamp, der erneut mitfuhr, wurde mit den Worten zitiert: „Von so vielen Leuten bin ich auch noch nicht nach Hause gebracht worden.“`,
+      images: ["/zeitungsartikel/Karfreitag2026.jpeg"],
+      type: "internal",
+      highlight: true
+    },
+    {
       date: "Dezember 2025",
       title: "Meilenstein für Hoffnungsradler Dülmen: 10.000 Euro Weihnachtsspende",
       content: (
