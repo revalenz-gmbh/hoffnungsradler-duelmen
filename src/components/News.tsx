@@ -11,6 +11,13 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "26.05.2026",
+      title: "Kanaltour – gemeinsam am Wasser unterwegs",
+      excerpt: `Bei bestem Radfahrwetter sind die Hoffnungsradler gestern die Kanalstrecke entlang gefahren. Sonne, gute Laune und eine eingespielte Gruppe machten die Runde zu einem schönen gemeinsamen Erlebnis – vielen Dank an alle, die dabei waren!`,
+      images: ["/photos/26mai_02.jpg"],
+      type: "internal"
+    },
+    {
       date: "April 2026",
       source: "Dülmener Zeitung",
       title: "Zeitungsbericht zur Karfreitagstour 2026",
