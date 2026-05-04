@@ -98,47 +98,63 @@ function createSafeTrigger(functionName, triggerTime) {
 }
 
 /**
- * Installiert einen Monitoring-Trigger für die regelmäßige Verarbeitung neuer Anmeldungen
+ * Entfernt fehlerhafte Zeit-Trigger, die noch sendNewsletterToAllSubscribers nutzen (UI → Abbruch im Headless-Lauf).
+ */
+function removeObsoleteNewsletterSendTriggers_() {
+  const obsolete = ['sendNewsletterToAllSubscribers'];
+  const triggers = ScriptApp.getProjectTriggers();
+  for (let i = triggers.length - 1; i >= 0; i--) {
+    if (obsolete.indexOf(triggers[i].getHandlerFunction()) !== -1) {
+      ScriptApp.deleteTrigger(triggers[i]);
+      Logger.log('Veralteter Versand-Trigger entfernt (war ungeeignet für Zeit-Ausführung).');
+    }
+  }
+}
+
+/**
+ * Installiert den 10-Minuten-Monitoring-Trigger (An- und Abmeldungen aus Gmail).
+ * Benötigt OAuth-Scope script.scriptapp – siehe appsscript.json im Projektordner.
  */
 function installMonitoringTrigger() {
   try {
-    // Prüfe, ob bereits ein Trigger für processNewSubscriptions existiert
+    removeObsoleteNewsletterSendTriggers_();
+
+    const handler = 'processInboxNewsletterTasks';
+    const legacyHandlers = ['processNewSubscriptions', 'processInboxNewsletterTasks'];
     const triggers = ScriptApp.getProjectTriggers();
-    let triggerExists = false;
-    
-    for (let i = 0; i < triggers.length; i++) {
-      if (triggers[i].getHandlerFunction() === 'processNewSubscriptions') {
-        triggerExists = true;
-        break;
+
+    for (let i = triggers.length - 1; i >= 0; i--) {
+      const fn = triggers[i].getHandlerFunction();
+      if (legacyHandlers.indexOf(fn) !== -1) {
+        ScriptApp.deleteTrigger(triggers[i]);
+        Logger.log('Alter Inbox-Trigger entfernt: ' + fn);
       }
     }
-    
-    if (!triggerExists) {
-      // Erstelle Trigger für alle 10 Minuten
-      const trigger = ScriptApp.newTrigger('processNewSubscriptions')
-        .timeBased()
-        .everyMinutes(10)
-        .create();
-      
-      Logger.log('Monitoring-Trigger für processNewSubscriptions wurde erstellt');
-      SpreadsheetApp.getUi().alert(
-        'Trigger installiert',
-        'Der Monitoring-Trigger wurde erfolgreich installiert. Neue Anmeldungen werden jetzt alle 10 Minuten automatisch verarbeitet.',
-        SpreadsheetApp.getUi().ButtonSet.OK
-      );
-    } else {
-      SpreadsheetApp.getUi().alert(
-        'Trigger bereits vorhanden',
-        'Der Monitoring-Trigger ist bereits installiert und aktiv.',
-        SpreadsheetApp.getUi().ButtonSet.OK
-      );
-    }
-    
+
+    ScriptApp.newTrigger(handler).timeBased().everyMinutes(10).create();
+
+    Logger.log('Monitoring-Trigger für ' + handler + ' wurde erstellt');
+    SpreadsheetApp.getUi().alert(
+      'Trigger installiert',
+      'Der Monitoring-Trigger wurde installiert. Anmeldungen und Abmeldungen werden alle 10 Minuten aus Gmail verarbeitet.\n\n' +
+        'Hinweis: Bestehende Trigger für die alte Funktion wurden ersetzt.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
   } catch (error) {
     Logger.log('Fehler beim Installieren des Monitoring-Triggers: ' + error.message);
+    let hint = '';
+    const msg = String(error.message || '');
+    if (msg.indexOf('script.scriptapp') !== -1 || msg.indexOf('ScriptApp') !== -1) {
+      hint =
+        '\n\n— Hinweis —\n' +
+        'Im Apps-Script-Projekt fehlt oft der Scope „script.scriptapp“.\n' +
+        'Projekteinstellungen → „appsscript.json“ anzeigen → oauthScopes um\n' +
+        'https://www.googleapis.com/auth/script.scriptapp\n' +
+        'ergänzen (siehe Datei appsscript.json im Repo), speichern, dann Berechtigungen erneut erteilen.';
+    }
     SpreadsheetApp.getUi().alert(
       'Fehler',
-      'Fehler beim Installieren des Monitoring-Triggers: ' + error.message,
+      'Fehler beim Installieren des Monitoring-Triggers: ' + error.message + hint,
       SpreadsheetApp.getUi().ButtonSet.OK
     );
   }
@@ -433,14 +449,28 @@ function resetNewsletterSystem() {
 function manualContinueNewsletterSend() {
   const scriptProperties = PropertiesService.getScriptProperties();
   const sendingInProgress = scriptProperties.getProperty('SENDING_IN_PROGRESS');
-  
-  if (sendingInProgress === 'true') {
-    // Rufe die Versand-Funktion auf
-    sendNewsletterToAllSubscribers();
-  } else {
+
+  if (sendingInProgress !== 'true') {
     SpreadsheetApp.getUi().alert(
       'Kein Versand aktiv',
       'Es ist kein Newsletter-Versand aktiv, der fortgesetzt werden könnte.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+    return;
+  }
+
+  sendNewsletterScheduledContinuation();
+
+  if (scriptProperties.getProperty('SENDING_IN_PROGRESS') === 'true') {
+    SpreadsheetApp.getUi().alert(
+      'Fortsetzung',
+      'Es gibt noch ausstehende Empfänger (Tageslimit). Bitte später erneut „Versand manuell fortsetzen“ wählen oder auf den Zeit-Trigger warten.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+  } else {
+    SpreadsheetApp.getUi().alert(
+      'Versand abgeschlossen',
+      'Der Versand ist beendet. Statistik steht im Blatt „Newsletter_aktuell“ (Versanddatum / Anzahl / Status).',
       SpreadsheetApp.getUi().ButtonSet.OK
     );
   }

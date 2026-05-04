@@ -2,7 +2,7 @@ function processNewSubscriptions() {
   Logger.log("Suche nach neuen Anmeldungen...");
   
   // Betreff angepasst an das tatsächliche Email-Template
-  const threads = GmailApp.search('subject:"Neue Tour-Newsletter Anmeldung!" is:unread', 0, 10);
+  const threads = GmailApp.search('subject:"Neue Tour-Newsletter Anmeldung!" is:unread', 0, 20);
   Logger.log("Gefundene E-Mails: " + threads.length);
   
   if (threads.length === 0) {
@@ -21,14 +21,30 @@ function processNewSubscriptions() {
   }
 }
 
+/**
+ * Ein Einstieg für Zeit-Trigger und Menü: neue Anmeldungen und Abmeldungen aus Gmail verarbeiten.
+ */
+function processInboxNewsletterTasks() {
+  try {
+    processNewSubscriptions();
+  } catch (e) {
+    Logger.log('processInboxNewsletterTasks (Anmeldungen): ' + e);
+  }
+  try {
+    processUnsubscriptions();
+  } catch (e) {
+    Logger.log('processInboxNewsletterTasks (Abmeldungen): ' + e);
+  }
+}
+
 function processSubscriptionEmail(message) {
   const body = message.getPlainBody();
   Logger.log("E-Mail-Inhalt: " + body);
   
   // Verbesserte Regex-Ausdrücke, die besser mit dem EmailJS-Format übereinstimmen
-  const emailRegex = /E-Mail:\s+([\w.-]+@[\w.-]+\.\w+)/i;
-  const linkRegex = /Abmelde-Link:\s+(https:\/\/[^\s\n]+)/i;
-  const idRegex = /Abonnenten-ID:\s+([a-f0-9-]+)/i;
+  const emailRegex = /E-Mail:\s*([\w.+-]+@[\w.-]+\.\w+)/i;
+  const linkRegex = /Abmelde-Link:\s*(https?:\/\/[^\s\n]+)/i;
+  const idRegex = /Abonnenten-ID:\s*([0-9a-fA-F-]+)/;
   
   const emailMatch = body.match(emailRegex);
   const linkMatch = body.match(linkRegex);
@@ -184,51 +200,6 @@ function getSubscriptionConfirmationEmail(email, unsubscribeLink) {
       </div>
     `
   };
-}
-
-function createNewsletterSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  // Erstellen eines Eingabe-Blattes für die Newsletter-Daten
-  let inputSheet = ss.getSheetByName('Newsletter_aktuell');
-  if (!inputSheet) {
-    inputSheet = ss.insertSheet('Newsletter_aktuell');
-    
-    // Formatieren des Eingabeblattes
-    inputSheet.setColumnWidth(1, 150);
-    inputSheet.setColumnWidth(2, 600);
-    
-    // Überschriften
-    inputSheet.getRange('A1').setValue("TOUR-NEWSLETTER").setFontWeight('bold');
-    inputSheet.getRange('A1:B1').merge().setBackground('#f3f3f3').setHorizontalAlignment('center');
-    
-    inputSheet.getRange('A2').setValue("Tour-Titel:").setFontWeight('bold');
-    
-    inputSheet.getRange('A3').setValue("Beschreibung:").setFontWeight('bold');
-    inputSheet.getRange('B3').setValue("").setWrap(true);
-    inputSheet.setRowHeight(3, 200);  // Höhe für Beschreibung
-    
-    inputSheet.getRange('A4').setValue("Datum und Uhrzeit:").setFontWeight('bold');
-    
-    inputSheet.getRange('A5').setValue("Treffpunkt:").setFontWeight('bold');
-    
-    // Anweisung und Menü-Hinweis
-    inputSheet.getRange('A7:B7').merge().setValue("Fülle alle Felder aus und wähle dann 'Erweiterungen > Newsletter > Newsletter versenden'.");
-    
-    // Statistik-Bereich
-    inputSheet.getRange('A10').setValue("STATISTIK").setFontWeight('bold');
-    inputSheet.getRange('A10:B10').merge().setBackground('#f3f3f3').setHorizontalAlignment('center');
-    
-    inputSheet.getRange('A11').setValue("Versanddatum:").setFontWeight('bold');
-    inputSheet.getRange('A12').setValue("Anzahl Empfänger:").setFontWeight('bold');
-    inputSheet.getRange('A13').setValue("Status:").setFontWeight('bold');
-  }
-  
-  Browser.msgBox("Newsletter erstellen", 
-      "Bitte trage alle Tour-Details im Blatt 'Newsletter_aktuell' ein.\n\n" +
-      "Wenn du den Newsletter versenden möchtest, wähle 'Erweiterungen > Newsletter > Newsletter versenden'.\n\n" +
-      "Um frühere Newsletter zu archivieren, kannst du vor dem Senden das Blatt duplizieren und umbenennen.", 
-      Browser.Buttons.OK);
 }
 
 /**

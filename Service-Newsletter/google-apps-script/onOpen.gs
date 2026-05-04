@@ -10,7 +10,7 @@ function onOpen() {
   newsletterMenu.addItem('Test-Newsletter senden', 'sendNewsletterTest');
   newsletterMenu.addItem('NEWSLETTER AN ALLE SENDEN', 'sendNewsletterToAllSubscribers');
   newsletterMenu.addSeparator();
-  newsletterMenu.addItem('Neue Anmeldungen verarbeiten', 'processNewSubscriptions');
+  newsletterMenu.addItem('Anmeldungen & Abmeldungen verarbeiten', 'processInboxNewsletterTasks');
   newsletterMenu.addItem('Manuelle Abonnenten hinzufügen', 'addManualSubscribers');
   newsletterMenu.addSeparator();
   newsletterMenu.addItem('Ungültige E-Mails deaktivieren', 'cleanupInvalidEmails');

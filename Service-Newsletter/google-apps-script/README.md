@@ -14,6 +14,16 @@ Das Newsletter-System wurde komplett überarbeitet und kritische Probleme behobe
 
 ## 🔧 Erste Schritte nach dem Update
 
+### 0. Manifest `appsscript.json` (wichtig bei Trigger-Fehlern)
+
+Falls beim **Monitoring-Trigger installieren** eine Meldung zu fehlenden Rechten für `ScriptApp.getProjectTriggers` erscheint, fehlt meist der OAuth-Scope **`script.scriptapp`** im Apps-Script-Projekt.
+
+1. Im Apps-Script-Editor: **Projekteinstellungen** (Zahnrad) → **„appsscript.json“-Manifestdatei im Editor anzeigen** aktivieren.
+2. Die Datei **`appsscript.json`** aus diesem Ordner (`Service-Newsletter/google-apps-script/`) in den Editor übernehmen bzw. den Eintrag **`https://www.googleapis.com/auth/script.scriptapp`** in eure bestehende `oauthScopes`-Liste **ergänzen** (nicht doppelt eintragen).
+3. Skript **speichern**, danach eine beliebige Menüfunktion erneut ausführen und die **Berechtigungsabfrage** vollständig durchklicken (ggf. „Zugriff prüfen“ / erweiterte Ansicht).
+
+Ohne diesen Scope dürfen `ScriptApp.getProjectTriggers`, `ScriptApp.newTrigger` und `ScriptApp.deleteTrigger` nicht laufen.
+
 ### 1. Trigger-System installieren
 ```
 1. Öffne das Google Sheets mit dem Newsletter-Service
@@ -48,14 +58,15 @@ Erweiterungen > Newsletter > Administration > Quota-Status (24h) anzeigen
 
 ## 🔄 Trigger-System
 
-### Automatische Verarbeitung neuer Anmeldungen
+### Automatische Verarbeitung von An- und Abmeldungen
 - **Frequenz**: Alle 10 Minuten
-- **Funktion**: `processNewSubscriptions`
-- **Betreff**: "Neue Tour-Newsletter Anmeldung!"
+- **Funktion**: `processInboxNewsletterTasks` (ruft Anmeldungen und Abmeldungen auf)
+- **Betreff Anmeldung**: "Neue Tour-Newsletter Anmeldung!"
+- **Betreff Abmeldung**: "Newsletter-Abmeldung"
 
 ### Versand-Trigger für große Listen
-- **Automatisch**: Bei mehr als 90 Empfängern
-- **Fallback**: Manuelle Fortsetzung möglich
+- **Automatisch**: Bei mehr als 90 Empfängern wird ein Zeit-Trigger auf `sendNewsletterScheduledContinuation` gelegt (ohne UI, lauffähig im Hintergrund)
+- **Fallback**: „Versand manuell fortsetzen“ im Menü
 - **Monitoring**: Detaillierte Status-Anzeige
 
 ## 📋 Verfügbare Menü-Funktionen
@@ -65,7 +76,7 @@ Erweiterungen > Newsletter > Administration > Quota-Status (24h) anzeigen
 - **Newsletter archivieren**: Aktuelles Blatt mit Zeitstempel archivieren
 - **Test-Newsletter senden**: Testversand an eigene E-Mail
 - **Newsletter an alle senden**: Hauptversand-Funktion
-- **Neue Anmeldungen verarbeiten**: Manuelle Verarbeitung von E-Mails
+- **Anmeldungen & Abmeldungen verarbeiten**: Manuelle Gmail-Verarbeitung (wie der Monitoring-Trigger)
 - **Manuelle Abonnenten hinzufügen**: Bulk-Import von E-Mail-Adressen
 - **Ungültige E-Mails deaktivieren**: Cleanup-Funktion
 
@@ -84,6 +95,11 @@ Erweiterungen > Newsletter > Administration > Quota-Status (24h) anzeigen
 2. `Administration > Monitoring-Trigger installieren` ausführen
 3. Bei Fehlern: `Administration > Newsletter-System zurücksetzen`
 
+### Problem: „Berechtigungen reichen nicht aus … script.scriptapp“
+**Ursache:** Im Projekt fehlt der OAuth-Scope für die Trigger-API.
+
+**Lösung:** Abschnitt **„0. Manifest appsscript.json“** oben befolgen, dann erneut **Monitoring-Trigger installieren**. In **Google Workspace** kann ein Admin zusätzlich den Zugriff auf den Scope für interne Skripte freigeben müssen.
+
 ### Problem: Versand bleibt hängen
 **Lösung:**
 1. `Administration > Versandstatus anzeigen` prüfen
@@ -99,7 +115,7 @@ Erweiterungen > Newsletter > Administration > Quota-Status (24h) anzeigen
 ### Problem: Neue Anmeldungen werden nicht verarbeitet
 **Lösung:**
 1. E-Mail-Betreff prüfen: "Neue Tour-Newsletter Anmeldung!"
-2. `Neue Anmeldungen verarbeiten` manuell ausführen
+2. `Anmeldungen & Abmeldungen verarbeiten` manuell ausführen
 3. `Monitoring-Trigger installieren` erneut ausführen
 
 ## 📊 Newsletter-Erstellung

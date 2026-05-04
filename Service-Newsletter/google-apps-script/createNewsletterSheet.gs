@@ -13,11 +13,15 @@ function createNewsletterSheet() {
     inputSheet.getRange('A1').setValue("TOUR-NEWSLETTER").setFontWeight('bold');
     inputSheet.getRange('A1:B1').merge().setBackground('#f3f3f3').setHorizontalAlignment('center');
     inputSheet.getRange('A2').setValue("Tour-Titel:").setFontWeight('bold');
-    inputSheet.getRange('A3').setValue("Beschreibung (inkl. Datum, Uhrzeit, Treffpunkt etc.):").setFontWeight('bold');
-    inputSheet.getRange('B3').setValue("").setWrap(true);
-    inputSheet.setRowHeight(3, 200);  // Höhe für Beschreibung
+    inputSheet.getRange('A3').setValue('Beschreibung:').setFontWeight('bold');
+    inputSheet.getRange('B3').setValue('').setWrap(true);
+    inputSheet.setRowHeight(3, 200);
+    inputSheet.getRange('A4').setValue('Datum und Uhrzeit:').setFontWeight('bold');
+    inputSheet.getRange('B4').setValue('');
+    inputSheet.getRange('A5').setValue('Treffpunkt:').setFontWeight('bold');
+    inputSheet.getRange('B5').setValue('');
     // Anweisung und Menü-Hinweis
-    inputSheet.getRange('A7:B7').merge().setValue("Fülle alle Felder aus und klicke dann auf 'Erweiterungen > Newsletter > Newsletter versenden'.");
+    inputSheet.getRange('A7:B7').merge().setValue("Fülle alle Felder aus (B2–B5) und wähle dann im Menü „Newsletter“ → „NEWSLETTER AN ALLE SENDEN“.");
     // Statistik-Bereich
     inputSheet.getRange('A10').setValue("STATISTIK").setFontWeight('bold');
     inputSheet.getRange('A10:B10').merge().setBackground('#f3f3f3').setHorizontalAlignment('center');
