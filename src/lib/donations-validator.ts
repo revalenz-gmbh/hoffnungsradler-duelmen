@@ -10,42 +10,46 @@ import { z } from 'zod';
 // DASHBOARD SCHEMA
 // ============================================================================
 
+/** Google Apps Script / Sheets liefern viele Zellen als String im JSON – einheitlich zu Zahl zwingen */
+const sheetIntNonneg = z.coerce.number().int().nonnegative();
+const sheetNumNonneg = z.coerce.number().nonnegative();
+
 const DashboardEinnahmenSchema = z.object({
   konto: z.object({
-    anzahl: z.number().int().nonnegative(),
-    summe: z.number().nonnegative(),
-    letzter: z.string(),
+    anzahl: sheetIntNonneg,
+    summe: sheetNumNonneg,
+    letzter: z.coerce.string(),
   }),
   bargeld: z.object({
-    anzahl: z.number().int().nonnegative(),
-    summe: z.number().nonnegative(),
-    letzter: z.string(),
+    anzahl: sheetIntNonneg,
+    summe: sheetNumNonneg,
+    letzter: z.coerce.string(),
   }),
-  gesamt: z.number().nonnegative(),
+  gesamt: sheetNumNonneg,
 });
 
 const DashboardAusgabenSchema = z.object({
   allgemein: z.object({
-    anzahl: z.number().int().nonnegative(),
-    summe: z.number().nonnegative(),
-    letzter: z.string(),
+    anzahl: sheetIntNonneg,
+    summe: sheetNumNonneg,
+    letzter: z.coerce.string(),
   }),
   uebergeben: z.object({
-    anzahl: z.number().int().nonnegative(),
-    summe: z.number().nonnegative(),
-    letzter: z.string(),
+    anzahl: sheetIntNonneg,
+    summe: sheetNumNonneg,
+    letzter: z.coerce.string(),
   }),
-  gesamt: z.number().nonnegative(),
+  gesamt: sheetNumNonneg,
 });
 
 const DashboardQuittungenSchema = z.object({
   konto: z.object({
-    ausgestellt: z.number().int().nonnegative(),
-    offen: z.number().int().nonnegative(),
+    ausgestellt: sheetIntNonneg,
+    offen: sheetIntNonneg,
   }),
   bargeld: z.object({
-    ausgestellt: z.number().int().nonnegative(),
-    offen: z.number().int().nonnegative(),
+    ausgestellt: sheetIntNonneg,
+    offen: sheetIntNonneg,
   }),
 });
 
