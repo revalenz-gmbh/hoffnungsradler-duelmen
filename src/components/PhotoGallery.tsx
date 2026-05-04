@@ -14,7 +14,7 @@ const PhotoGallery = () => {
     },
     {
       src: "/photos/26mai_03.jpg",
-      alt: "2026: Kanaltour – Eindrücke von der Strecke",
+      alt: "2026: Kanaltour – Einkehr bei Bäckerei Berthold's in Flaesheim",
     },
     {
       src: "/photos/95ce881c-58bc-4a88-872e-a0335e78ca06~1.jpg",
