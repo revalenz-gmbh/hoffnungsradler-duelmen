@@ -412,6 +412,26 @@ function updateDashboard() {
 }
 
 /**
+ * Nur für getDashboardData (Web-API): volle ensure-Zelle nur wenn Migration oder fehlende Formel nötig ist.
+ * Spart Schreibzugriffe bei jedem Lesen → schnellere Antwort, weniger Gateway-Timeouts über Vercel.
+ */
+function ensureDashboardWebsitePufferCellsIfNeededForApi_(sheet) {
+  if (!sheet) {
+    return;
+  }
+  var e4Val = sheet.getRange('E4').getValue();
+  var e4Leer = e4Val === '' || e4Val === null;
+  var formel = String(sheet.getRange('G4').getFormula() || '');
+  var formelBeziehtE4 = formel.indexOf('E4') !== -1 || formel.indexOf('e4') !== -1;
+  var f3t = String(sheet.getRange('F3').getValue() || '');
+  var f3Alt = f3t.indexOf('Basisabsicherung') !== -1;
+
+  if (e4Leer || !formelBeziehtE4 || f3Alt) {
+    ensureDashboardWebsitePufferCells_(sheet);
+  }
+}
+
+/**
  * E4 = jährlicher Puffer (Versicherung, Website …) – frei als Zahl eintragbar, direkt unter Anfangsbestand E3.
  * G4 = MAX(0,C23-E4) für die Web-Anzeige (transparenter Bezug zu C23).
  * Alte Variante G3: wird nach E4 migriert; F3/F4 Altbeschriftung wird bereinigt.
@@ -480,7 +500,7 @@ function getDashboardData() {
       currentYear = new Date().getFullYear();
     }
 
-    ensureDashboardWebsitePufferCells_(dashboardSheet);
+    ensureDashboardWebsitePufferCellsIfNeededForApi_(dashboardSheet);
 
     var endbestandRaw = dashboardSheet.getRange('C23').getValue() || 0;
     var endbestand = parseFloat(endbestandRaw);

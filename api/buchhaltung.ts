@@ -16,8 +16,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Google Apps Script URL aus Umgebungsvariable
 const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || '';
 
-// Timeout für Google Apps Script Calls (8 Sekunden)
-const FETCH_TIMEOUT_MS = 8000;
+// Timeout für Google Apps Script (Web-App kann bei Kaltstart lange brauchen; siehe vercel.json maxDuration)
+const FETCH_TIMEOUT_MS = Number(process.env.BUCHHALTUNG_FETCH_TIMEOUT_MS) || 55000;
 
 // Erlaubte Actions (Whitelist)
 const ALLOWED_ACTIONS = [
