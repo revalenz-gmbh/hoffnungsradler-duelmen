@@ -60,9 +60,9 @@ export const DashboardDataSchema = z.object({
   ausgaben: DashboardAusgabenSchema,
   /** Endbestand Geldmittel (Dashboard C23) */
   saldo: z.coerce.number(),
-  /** Jährlicher Puffer z. B. Versicherung/Website (Dashboard G3); optional solange altes Apps Script deployed ist */
+  /** Jährlicher Puffer z. B. Versicherung/Website (Dashboard E4, editierbar) */
   basisAbsicherung: sheetNumNonneg.optional(),
-  /** Für Website-Balken: max(0, C23 − G3) */
+  /** Für Website-Balken: Sheet G4 = max(0, C23 − E4) */
   verfuegbarFuerWebsite: sheetNumNonneg.optional(),
   quittungen: DashboardQuittungenSchema,
 });

@@ -11,9 +11,9 @@
  * 4. Committe und pushe die Änderung
  * 5. Nach dem Vercel-Deployment ist der neue Stand live
  * 
- * HINWEIS: Der Fortschrittsbalken nutzt primär `verfuegbarFuerWebsite` aus der API
- * (= Sheet G4 = C23 − G3 „Basisabsicherung“). Ohne diese Felder: Fallback C23 minus
- * `stilleReserve` aus dieser Datei.
+ * HINWEIS: Der Fortschrittsbalken nutzt primär die API-Felder `saldo` (C23) und
+ * `basisAbsicherung` (E4), also max(0, C23 − E4). Ohne `basisAbsicherung`: Fallback
+ * `verfuegbarFuerWebsite` (G4), sonst C23 minus `stilleReserve` aus dieser Datei.
  */
 
 export interface CurrentSeasonData {

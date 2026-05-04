@@ -30,19 +30,20 @@ const Hero = () => {
     try {
       const dashboard = await getDashboard();
 
-      // Balken: API „verfuegbarFuerWebsite“ (= Sheet G4) oder C23 − basisAbsicherung; sonst C23 − stille Reserve (Legacy)
-      const vf = dashboard?.verfuegbarFuerWebsite;
-      const ausApi =
-        vf !== undefined && vf !== null && Number.isFinite(Number(vf)) ? Number(vf) : null;
+      // Balken = Sheet C23 − E4: über API saldo (C23) und basisAbsicherung (E4), konsistent zum Spreadsheet
       const saldoN = Number(dashboard?.saldo);
       const basisN = Number(dashboard?.basisAbsicherung);
-      const ausSaldoUndBasis =
+      const ausC23minusE4 =
         Number.isFinite(saldoN) && Number.isFinite(basisN) && basisN >= 0
           ? Math.max(0, saldoN - basisN)
           : null;
+      const vf = dashboard?.verfuegbarFuerWebsite;
+      const ausApiG4 =
+        vf !== undefined && vf !== null && Number.isFinite(Number(vf)) ? Number(vf) : null;
       const fallbackVerf =
         Number.isFinite(saldoN) ? Math.max(0, saldoN - CURRENT_SEASON.stilleReserve) : null;
-      const balkenBetrag = ausApi !== null ? ausApi : ausSaldoUndBasis !== null ? ausSaldoUndBasis : fallbackVerf;
+      const balkenBetrag =
+        ausC23minusE4 !== null ? ausC23minusE4 : ausApiG4 !== null ? ausApiG4 : fallbackVerf;
       if (balkenBetrag !== null) {
         setCurrentDonations(Math.max(0, balkenBetrag));
       }

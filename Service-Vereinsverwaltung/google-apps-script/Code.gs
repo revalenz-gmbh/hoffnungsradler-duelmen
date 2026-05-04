@@ -388,7 +388,7 @@ function createDashboardSheet() {
     'ℹ️ SACHSPENDEN: Werden separat ausgewiesen, fließen NICHT in Geldbilanz ein\n' +
     '💳 AUSGABEN: Nur Geldausgaben (Konto + Bar + Übergebene Spenden)\n' +
     '💵 SALDO: Zeigt nur tatsächlich verfügbare Geldmittel\n' +
-    '🌐 F3/G3/G4: Basisabsicherung (jährlich) und Betrag für Website-Balken (C23 − G3)\n\n' +
+    '🌐 D4/E4 + G4: Puffer jährlich in E4 eintragen; G4 = Website-Betrag (C23 − E4)\n\n' +
     '⚖️ Dies entspricht den Empfehlungen für gemeinnützige Vereine (§ 63 AO):\n' +
     'Sachspenden werden für satzungsgemäße Zwecke direkt verwendet.'
   );
@@ -412,40 +412,54 @@ function updateDashboard() {
 }
 
 /**
- * F3:G4 = transparenter Puffer für Website/Versicherung (editierbar, Auswahlliste in G3).
- * G4 = MAX(0; C23 − G3) für den auf der Website angezeigten Betrag.
- * Bestehende Dashboards: einmalig Zellen ergänzen, Quittungs-Bereich bleibt unverändert.
+ * E4 = jährlicher Puffer (Versicherung, Website …) – frei als Zahl eintragbar, direkt unter Anfangsbestand E3.
+ * G4 = MAX(0,C23-E4) für die Web-Anzeige (transparenter Bezug zu C23).
+ * Alte Variante G3: wird nach E4 migriert; F3/F4 Altbeschriftung wird bereinigt.
  */
 function ensureDashboardWebsitePufferCells_(sheet) {
   if (!sheet) {
     return;
   }
-  var f3 = sheet.getRange('F3');
-  if (!f3.getValue()) {
-    f3.setValue('Basisabsicherung (€/Jahr):').setFontWeight('bold');
-  }
-  var g3 = sheet.getRange('G3');
-  if (g3.getValue() === '' || g3.getValue() === null) {
-    g3.setValue(300);
-  }
-  g3.setNumberFormat('#,##0.00 €');
-  try {
-    var dv = SpreadsheetApp.newDataValidation()
-      .requireValueInList(['0', '100', '200', '250', '300', '400', '500'], true)
-      .setAllowInvalid(true)
-      .build();
-    g3.setDataValidation(dv);
-  } catch (e) {
-    Logger.log('ensureDashboardWebsitePufferCells_: DataValidation ' + e);
-  }
-  g3.setNote('Jährlicher Puffer (z. B. Versicherung, Website). Wird vom Endbestand C23 abgezogen. Andere Beträge: Zelle trotz Liste eintragbar (ungültige Werte erlaubt).');
 
-  sheet.getRange('F4').setValue('Verfügbar für Touren (C23 − G3):').setFontWeight('bold');
+  sheet.getRange('D4').setValue('Basisabsicherung €/Jahr (frei eintragbar):').setFontWeight('bold');
+
+  var e4 = sheet.getRange('E4');
+  var e4Val = e4.getValue();
+  var e4Leer = e4Val === '' || e4Val === null;
+  if (e4Leer) {
+    var altG3 = sheet.getRange('G3').getValue();
+    var altNum = parseFloat(altG3);
+    if (!isNaN(altNum) && altNum >= 0) {
+      e4.setValue(altNum);
+      sheet.getRange('G3').clearContent();
+    } else {
+      e4.setValue(300);
+    }
+  }
+  e4.setNumberFormat('#,##0.00 €');
+  e4.clearDataValidation();
+  e4.setBackground('#fffde7');
+  e4.setNote(
+    'Hier den jährlichen Puffer in Euro eintragen (z. B. 300 für Versicherung + Website). ' +
+      'Beliebige Zahl. Wird für die Website von Endbestand C23 abgezogen (siehe G4).'
+  );
+
+  sheet.getRange('F4').setValue('Verfügbar für Touren / Web (C23 − E4):').setFontWeight('bold');
   var g4 = sheet.getRange('G4');
-  if (!g4.getFormula()) {
-    g4.setFormula('=MAX(0,C23-G3)');
+  var formel = g4.getFormula();
+  if (!formel || formel.indexOf('E4') === -1) {
+    g4.setFormula('=MAX(0;C23-E4)');
   }
   g4.setNumberFormat('#,##0.00 €');
+  g4.setBackground('#e8f5e9');
+
+  // Frühere Skript-Version (Beschriftung in F3, Wert in G3)
+  var f3 = sheet.getRange('F3');
+  var f3t = String(f3.getValue() || '');
+  if (f3t.indexOf('Basisabsicherung') !== -1) {
+    f3.clearContent();
+  }
+  sheet.getRange('G3').clearDataValidation();
 }
 
 function getDashboardData() {
@@ -473,7 +487,7 @@ function getDashboardData() {
     if (isNaN(endbestand)) {
       endbestand = 0;
     }
-    var basisRaw = dashboardSheet.getRange('G3').getValue();
+    var basisRaw = dashboardSheet.getRange('E4').getValue();
     var basisAbsicherung = parseFloat(basisRaw);
     if (isNaN(basisAbsicherung) || basisAbsicherung < 0) {
       basisAbsicherung = 300;
