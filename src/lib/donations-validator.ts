@@ -50,10 +50,11 @@ const DashboardQuittungenSchema = z.object({
 });
 
 export const DashboardDataSchema = z.object({
-  year: z.number().int().min(2004).max(2100),
+  // Google Sheets / JSON können Jahr oder Saldo als String liefern
+  year: z.coerce.number().int().min(2004).max(2100),
   einnahmen: DashboardEinnahmenSchema,
   ausgaben: DashboardAusgabenSchema,
-  saldo: z.number(),
+  saldo: z.coerce.number(),
   quittungen: DashboardQuittungenSchema,
 });
 

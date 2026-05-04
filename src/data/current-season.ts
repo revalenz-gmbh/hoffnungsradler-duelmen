@@ -11,8 +11,9 @@
  * 4. Committe und pushe die Änderung
  * 5. Nach dem Vercel-Deployment ist der neue Stand live
  * 
- * HINWEIS: Der Fortschrittsbalken auf der Startseite zeigt:
- * kontostand - STILLE_RESERVE (300€) = verfügbarer Spendenbetrag
+ * HINWEIS: Der Fortschrittsbalken auf der Startseite lädt nach dem Laden
+ * den Endbestand aus dem Buchhaltungs-Dashboard (Google API, Zelle C23) und rechnet
+ * minus stille Reserve – `kontostand` hier ist nur Fallback, solange die API nicht antwortet.
  */
 
 export interface CurrentSeasonData {

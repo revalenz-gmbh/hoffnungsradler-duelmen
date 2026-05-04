@@ -30,13 +30,11 @@ const Hero = () => {
     try {
       const dashboard = await getDashboard();
 
-      if (dashboard?.saldo !== undefined && dashboard.saldo > 0) {
-        const apiVerfuegbar = Math.max(0, dashboard.saldo - CURRENT_SEASON.stilleReserve);
-        if (apiVerfuegbar !== getVerfuegbarerBetrag()) {
-          console.log('[Hero] API-Update: Saldo von API abweichend', { api: apiVerfuegbar, manuell: getVerfuegbarerBetrag() });
-          // Optional: Live-Kontostand aus Dashboard anzeigen
-          // setCurrentDonations(apiVerfuegbar);
-        }
+      // Live-Endbestand aus dem Sheet-Dashboard (C23), gleiche Logik wie current-season: minus stille Reserve
+      const saldoRaw = dashboard?.saldo;
+      if (saldoRaw !== undefined && saldoRaw !== null && Number.isFinite(Number(saldoRaw))) {
+        const apiVerfuegbar = Math.max(0, Number(saldoRaw) - CURRENT_SEASON.stilleReserve);
+        setCurrentDonations(apiVerfuegbar);
       }
 
       const uebergabe = await getUebergabeSummen();
