@@ -375,6 +375,8 @@ function createDashboardSheet() {
   
   // Zahlenformatierung
   sheet.getRange('C7:C23').setNumberFormat('#,##0.00 €');
+
+  ensureDashboardWebsitePufferCells_(sheet);
   
   // Freeze
   sheet.setFrozenRows(1);
@@ -385,7 +387,8 @@ function createDashboardSheet() {
     '💰 EINNAHMEN: Nur Geldmittel (Konto + Bargeld)\n' +
     'ℹ️ SACHSPENDEN: Werden separat ausgewiesen, fließen NICHT in Geldbilanz ein\n' +
     '💳 AUSGABEN: Nur Geldausgaben (Konto + Bar + Übergebene Spenden)\n' +
-    '💵 SALDO: Zeigt nur tatsächlich verfügbare Geldmittel\n\n' +
+    '💵 SALDO: Zeigt nur tatsächlich verfügbare Geldmittel\n' +
+    '🌐 F3/G3/G4: Basisabsicherung (jährlich) und Betrag für Website-Balken (C23 − G3)\n\n' +
     '⚖️ Dies entspricht den Empfehlungen für gemeinnützige Vereine (§ 63 AO):\n' +
     'Sachspenden werden für satzungsgemäße Zwecke direkt verwendet.'
   );
@@ -401,9 +404,48 @@ function updateDashboard() {
   // Aktuelles Jahr setzen
   var currentYear = new Date().getFullYear();
   sheet.getRange('B3').setValue(currentYear);
+
+  ensureDashboardWebsitePufferCells_(sheet);
   
   SpreadsheetApp.flush();
   SpreadsheetApp.getUi().alert('✅ Dashboard wurde aktualisiert!');
+}
+
+/**
+ * F3:G4 = transparenter Puffer für Website/Versicherung (editierbar, Auswahlliste in G3).
+ * G4 = MAX(0; C23 − G3) für den auf der Website angezeigten Betrag.
+ * Bestehende Dashboards: einmalig Zellen ergänzen, Quittungs-Bereich bleibt unverändert.
+ */
+function ensureDashboardWebsitePufferCells_(sheet) {
+  if (!sheet) {
+    return;
+  }
+  var f3 = sheet.getRange('F3');
+  if (!f3.getValue()) {
+    f3.setValue('Basisabsicherung (€/Jahr):').setFontWeight('bold');
+  }
+  var g3 = sheet.getRange('G3');
+  if (g3.getValue() === '' || g3.getValue() === null) {
+    g3.setValue(300);
+  }
+  g3.setNumberFormat('#,##0.00 €');
+  try {
+    var dv = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['0', '100', '200', '250', '300', '400', '500'], true)
+      .setAllowInvalid(true)
+      .build();
+    g3.setDataValidation(dv);
+  } catch (e) {
+    Logger.log('ensureDashboardWebsitePufferCells_: DataValidation ' + e);
+  }
+  g3.setNote('Jährlicher Puffer (z. B. Versicherung, Website). Wird vom Endbestand C23 abgezogen. Andere Beträge: Zelle trotz Liste eintragbar (ungültige Werte erlaubt).');
+
+  sheet.getRange('F4').setValue('Verfügbar für Touren (C23 − G3):').setFontWeight('bold');
+  var g4 = sheet.getRange('G4');
+  if (!g4.getFormula()) {
+    g4.setFormula('=MAX(0,C23-G3)');
+  }
+  g4.setNumberFormat('#,##0.00 €');
 }
 
 function getDashboardData() {
@@ -422,6 +464,26 @@ function getDashboardData() {
   var currentYear = dashboardSheet.getRange('B3').getValue();
     if (!currentYear || currentYear === '') {
       currentYear = new Date().getFullYear();
+    }
+
+    ensureDashboardWebsitePufferCells_(dashboardSheet);
+
+    var endbestandRaw = dashboardSheet.getRange('C23').getValue() || 0;
+    var endbestand = parseFloat(endbestandRaw);
+    if (isNaN(endbestand)) {
+      endbestand = 0;
+    }
+    var basisRaw = dashboardSheet.getRange('G3').getValue();
+    var basisAbsicherung = parseFloat(basisRaw);
+    if (isNaN(basisAbsicherung) || basisAbsicherung < 0) {
+      basisAbsicherung = 300;
+    }
+    var verfFormelwert = dashboardSheet.getRange('G4').getValue();
+    var verfuegbarFuerWebsite = parseFloat(verfFormelwert);
+    if (isNaN(verfuegbarFuerWebsite)) {
+      verfuegbarFuerWebsite = Math.max(0, endbestand - basisAbsicherung);
+    } else {
+      verfuegbarFuerWebsite = Math.max(0, verfuegbarFuerWebsite);
     }
   
     // Lese Werte mit Fehlerbehandlung
@@ -464,7 +526,9 @@ function getDashboardData() {
       },
       gesamt: dashboardSheet.getRange('C18').getValue() || 0
         },
-        saldo: dashboardSheet.getRange('C23').getValue() || 0,
+        saldo: endbestand,
+        basisAbsicherung: basisAbsicherung,
+        verfuegbarFuerWebsite: verfuegbarFuerWebsite,
     quittungen: {
       konto: {
             ausgestellt: dashboardSheet.getRange('B27').getValue() || 0,

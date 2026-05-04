@@ -69,6 +69,8 @@ const mockDashboard: DashboardData = {
     gesamt: 0
   },
   saldo: 0,
+  basisAbsicherung: 300,
+  verfuegbarFuerWebsite: 0,
   quittungen: {
     konto: { ausgestellt: 0, offen: 0 },
     bargeld: { ausgestellt: 0, offen: 0 }

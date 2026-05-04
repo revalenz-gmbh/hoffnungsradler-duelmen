@@ -11,9 +11,9 @@
  * 4. Committe und pushe die Änderung
  * 5. Nach dem Vercel-Deployment ist der neue Stand live
  * 
- * HINWEIS: Der Fortschrittsbalken auf der Startseite lädt nach dem Laden
- * den Endbestand aus dem Buchhaltungs-Dashboard (Google API, Zelle C23) und rechnet
- * minus stille Reserve – `kontostand` hier ist nur Fallback, solange die API nicht antwortet.
+ * HINWEIS: Der Fortschrittsbalken nutzt primär `verfuegbarFuerWebsite` aus der API
+ * (= Sheet G4 = C23 − G3 „Basisabsicherung“). Ohne diese Felder: Fallback C23 minus
+ * `stilleReserve` aus dieser Datei.
  */
 
 export interface CurrentSeasonData {

@@ -58,7 +58,12 @@ export const DashboardDataSchema = z.object({
   year: z.coerce.number().int().min(2004).max(2100),
   einnahmen: DashboardEinnahmenSchema,
   ausgaben: DashboardAusgabenSchema,
+  /** Endbestand Geldmittel (Dashboard C23) */
   saldo: z.coerce.number(),
+  /** Jährlicher Puffer z. B. Versicherung/Website (Dashboard G3); optional solange altes Apps Script deployed ist */
+  basisAbsicherung: sheetNumNonneg.optional(),
+  /** Für Website-Balken: max(0, C23 − G3) */
+  verfuegbarFuerWebsite: sheetNumNonneg.optional(),
   quittungen: DashboardQuittungenSchema,
 });
 
