@@ -5,12 +5,16 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PhotoGallery = () => {
   const images = [
     {
-      src: "/photos/PXL_20250511_075522965~3.jpg",
-      alt: "2025: Große Scheibe Lette überreicht gesammelte Spenden über 1200 €",
+      src: "/photos/26mai_01.jpg",
+      alt: "2026: Kanaltour – Gruppe der Hoffnungsradler",
     },
     {
-      src: "/photos/PXL_20250622_080113338.jpg",
-      alt: "2025: Tour-Start nach Dorsten Rhade",
+      src: "/photos/26mai_02.jpg",
+      alt: "2026: Kanaltour – gemeinsame Pause am Wasser",
+    },
+    {
+      src: "/photos/26mai_03.jpg",
+      alt: "2026: Kanaltour – Eindrücke von der Strecke",
     },
     {
       src: "/photos/95ce881c-58bc-4a88-872e-a0335e78ca06~1.jpg",
@@ -19,10 +23,6 @@ const PhotoGallery = () => {
     {
       src: "/photos/Asbeck-Freckhold.jpg",
       alt: "2025: Pause in Ledgen bei Cafe Ebbing",
-    },
-    {
-      src: "/photos/PXL_20250418_080335661.MP.jpg",
-      alt: "2025: Bürgermeister Carsten Hövekamp ehrt Josef Friedag zum Saisonauftakt",
     },
     {
       src: "/zeitungsartikel/3ac1df73-721c-4114-a502-09eed0e8d4d5~1.jpg",
