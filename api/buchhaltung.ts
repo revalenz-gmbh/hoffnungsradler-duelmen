@@ -155,8 +155,8 @@ export default async function handler(
       throw new Error('Invalid response format from Google Apps Script');
     }
 
-    // Cache-Control Header für bessere Performance
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+    // Kein CDN-/Browser-Caching: Daten kommen live aus Google Sheets
+    res.setHeader('Cache-Control', 'private, no-store');
 
     return res.status(200).json(data);
 

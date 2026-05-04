@@ -51,7 +51,8 @@ export const DEBUG_API = import.meta.env.DEV;
  * 
  * CACHING-STRATEGIE:
  * ==================
- * - Alle API-Calls werden im LocalStorage gecacht (TTL: 5 Minuten)
+ * - Buchhaltungs-Endpunkte (Dashboard, Übergaben, …): LocalStorage TTL ca. 60 s
+ * - Sonstige / ältere Pfade: weiterhin Standard-TTL im donations-cache (5 Min.)
  * - Cache-Keys: donations:${action}:${year?}
  * - Bei Cache-Miss: API-Call → Validierung → Cache
  * - Bei Fehler: Fallback-Daten werden ebenfalls gecacht

@@ -4334,7 +4334,8 @@ function fixDateColumn(sheet, columnNumber, columnName) {
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return 0; // Keine Daten
   
-  var range = sheet.getRange(2, columnNumber, lastRow - 1, 1);
+  // Zeile 1 = Kopf, Daten 2 … lastRow (lastRow ist letzte befüllte Zeile – nicht lastRow-1)
+  var range = sheet.getRange(2, columnNumber, lastRow, 1);
   var values = range.getValues();
   var fixedCount = 0;
   
@@ -4693,7 +4694,8 @@ function importRowsToKontoSheet(rows) {
   var existingKeys = {};
   
   if (lastRow > 1) {
-    var existingData = sheet.getRange(2, 1, lastRow - 1, 16).getValues();
+    // Alle Datenzeilen inkl. letzter Zeile (vorher lastRow-1 → letzte Buchung fehlte in Duplikat-Map)
+    var existingData = sheet.getRange(2, 1, lastRow, 16).getValues();
     
     // Erstelle Objekt mit eindeutigen Identifikatoren bestehender Buchungen
     for (var i = 0; i < existingData.length; i++) {

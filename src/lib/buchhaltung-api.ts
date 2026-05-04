@@ -4,7 +4,7 @@
  * 
  * Features:
  * - Schema-Validierung mit Zod
- * - LocalStorage-Caching (TTL: 5 Minuten)
+ * - LocalStorage-Caching (Buchhaltung: kurze TTL; siehe BUCHHALTUNG_CACHE_TTL_MS)
  * - Konsistente Fehlerbehandlung
  * - Automatische Berechnung: historische + aktuelle Spenden
  */
@@ -32,6 +32,9 @@ import {
   setCache,
   clearCache,
 } from './donations-cache';
+
+/** LocalStorage-TTL für Google-Buchhaltung: kurz, damit die Website nach Sheet-Updates zeitnah mitzieht. */
+const BUCHHALTUNG_CACHE_TTL_MS = 60 * 1000;
 import {
   validateUebergabeSummenConsistency,
   validateAllYearlyDataConsistency,
@@ -155,9 +158,13 @@ async function apiFetch<T>(
  * 2. Falls nicht im Cache: API-Call
  * 3. Bei Fehler: Mock-Daten (nur im Development)
  */
-export async function getDashboard(): Promise<DashboardData> {
+export async function getDashboard(options?: { forceRefresh?: boolean }): Promise<DashboardData> {
   const cacheKey = 'getDashboard';
-  
+
+  if (options?.forceRefresh) {
+    clearCache(cacheKey);
+  }
+
   // Prüfe Cache
   const cached = getCache<DashboardData>(cacheKey);
   if (cached) {
@@ -172,7 +179,7 @@ export async function getDashboard(): Promise<DashboardData> {
     if (DEBUG_API) {
       console.log('[API] Using mock data for dashboard');
     }
-    setCache(cacheKey, mockDashboard);
+    setCache(cacheKey, mockDashboard, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     return mockDashboard;
   }
 
@@ -183,7 +190,7 @@ export async function getDashboard(): Promise<DashboardData> {
     );
     
     // Cache erfolgreiche Antwort
-    setCache(cacheKey, data);
+    setCache(cacheKey, data, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     
     if (DEBUG_API) {
       console.log('[API] Successfully fetched and cached dashboard data');
@@ -194,7 +201,7 @@ export async function getDashboard(): Promise<DashboardData> {
     console.warn('[API] Failed to fetch dashboard, using fallback');
     // Im Production: Verwende Fallback-Dashboard
     const fallback = mockDashboard;
-    setCache(cacheKey, fallback); // Cache auch Fallback
+    setCache(cacheKey, fallback, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     return fallback;
   }
 }
@@ -207,9 +214,13 @@ export async function getDashboard(): Promise<DashboardData> {
  * - Aktuelles Jahr (2025+) kommt von der API (falls verfügbar)
  * - Gesamtsumme wird NICHT dynamisch berechnet, sondern aus TOTAL_DONATIONS genommen
  */
-export async function getUebergabeSummen(): Promise<UebergabeSummen> {
+export async function getUebergabeSummen(options?: { forceRefresh?: boolean }): Promise<UebergabeSummen> {
   const cacheKey = 'getUebergabeSummen';
-  
+
+  if (options?.forceRefresh) {
+    clearCache(cacheKey);
+  }
+
   // Prüfe Cache
   const cached = getCache<UebergabeSummen>(cacheKey);
   if (cached) {
@@ -225,7 +236,7 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
       console.log('[API] Using mock data for Übergabe-Summen');
     }
     const mockData = await createMockUebergabeSummen();
-    setCache(cacheKey, mockData);
+    setCache(cacheKey, mockData, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     return mockData;
   }
 
@@ -259,7 +270,7 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
     result.gesamt = TOTAL_DONATIONS;
 
     // Cache erfolgreiche Antwort
-    setCache(cacheKey, result);
+    setCache(cacheKey, result, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     
     if (DEBUG_API) {
       console.log('[API] Successfully fetched and cached Übergabe-Summen');
@@ -272,7 +283,7 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
     
     // Fallback: Historische Daten + Fallback für aktuelles Jahr
     const fallback = await createMockUebergabeSummen();
-    setCache(cacheKey, fallback);
+    setCache(cacheKey, fallback, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     return fallback;
   }
 }
@@ -286,9 +297,13 @@ export async function getUebergabeSummen(): Promise<UebergabeSummen> {
  * 3. Kombiniere historische Daten + aktuelles Jahr
  * 4. Bei Fehler: Fallback
  */
-export async function getAllYearlyData(): Promise<AllYearlyData> {
+export async function getAllYearlyData(options?: { forceRefresh?: boolean }): Promise<AllYearlyData> {
   const cacheKey = 'getAllYearlyData';
-  
+
+  if (options?.forceRefresh) {
+    clearCache(cacheKey);
+  }
+
   // Prüfe Cache
   const cached = getCache<AllYearlyData>(cacheKey);
   if (cached) {
@@ -304,7 +319,7 @@ export async function getAllYearlyData(): Promise<AllYearlyData> {
       console.log('[API] Using mock data for yearly donations');
     }
     const mockData = await createMockAllYearlyData();
-    setCache(cacheKey, mockData);
+    setCache(cacheKey, mockData, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     return mockData;
   }
 
@@ -330,7 +345,7 @@ export async function getAllYearlyData(): Promise<AllYearlyData> {
     result.totalDonations = result.donations.reduce((sum, d) => sum + d.amount, 0);
 
     // Cache erfolgreiche Antwort
-    setCache(cacheKey, result);
+    setCache(cacheKey, result, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     
     // Konsistenz-Prüfung im Debug-Modus
     if (DEBUG_API) {
@@ -348,7 +363,7 @@ export async function getAllYearlyData(): Promise<AllYearlyData> {
     
     // Fallback: Historische Daten + Fallback für aktuelles Jahr
     const fallback = await createMockAllYearlyData();
-    setCache(cacheKey, fallback); // Cache auch Fallback
+    setCache(cacheKey, fallback, undefined, BUCHHALTUNG_CACHE_TTL_MS);
     return fallback;
   }
 }
@@ -356,9 +371,13 @@ export async function getAllYearlyData(): Promise<AllYearlyData> {
 /**
  * Jahresabschluss für ein bestimmtes Jahr abrufen
  */
-export async function getJahresabschluss(year: number): Promise<Jahresabschluss> {
+export async function getJahresabschluss(year: number, options?: { forceRefresh?: boolean }): Promise<Jahresabschluss> {
   const cacheKey = 'getJahresabschluss';
-  
+
+  if (options?.forceRefresh) {
+    clearCache(cacheKey, year);
+  }
+
   // Prüfe Cache
   const cached = getCache<Jahresabschluss>(cacheKey, year);
   if (cached) {
@@ -397,7 +416,7 @@ export async function getJahresabschluss(year: number): Promise<Jahresabschluss>
       erstellt: new Date().toISOString()
     };
     
-    setCache(cacheKey, mockData, year);
+    setCache(cacheKey, mockData, year, BUCHHALTUNG_CACHE_TTL_MS);
     return mockData;
   }
 
@@ -408,7 +427,7 @@ export async function getJahresabschluss(year: number): Promise<Jahresabschluss>
     );
     
     // Cache erfolgreiche Antwort
-    setCache(cacheKey, data, year);
+    setCache(cacheKey, data, year, BUCHHALTUNG_CACHE_TTL_MS);
     
     if (DEBUG_API) {
       console.log('[API] Successfully fetched and cached Jahresabschluss');
@@ -441,7 +460,7 @@ export async function getJahresabschluss(year: number): Promise<Jahresabschluss>
       erstellt: new Date().toISOString()
     };
     
-    setCache(cacheKey, fallback, year);
+    setCache(cacheKey, fallback, year, BUCHHALTUNG_CACHE_TTL_MS);
     return fallback;
   }
 }

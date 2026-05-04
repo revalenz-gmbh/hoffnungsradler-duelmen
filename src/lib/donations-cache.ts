@@ -41,8 +41,9 @@ function isLocalStorageAvailable(): boolean {
 
 /**
  * Speichert Daten im Cache
+ * @param ttlMs Optional: eigene Gültigkeit in ms (Standard: 5 Min.). Für Buchhaltungs-API kurz halten.
  */
-export function setCache<T>(action: string, data: T, year?: number): void {
+export function setCache<T>(action: string, data: T, year?: number, ttlMs?: number): void {
   if (!isLocalStorageAvailable()) {
     return;
   }
@@ -52,7 +53,7 @@ export function setCache<T>(action: string, data: T, year?: number): void {
     const entry: CacheEntry<T> = {
       data,
       timestamp: Date.now(),
-      ttl: CACHE_TTL_MS,
+      ttl: ttlMs !== undefined && ttlMs >= 0 ? ttlMs : CACHE_TTL_MS,
     };
     localStorage.setItem(key, JSON.stringify(entry));
   } catch (error) {

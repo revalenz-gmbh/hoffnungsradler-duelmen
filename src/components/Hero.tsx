@@ -1,11 +1,12 @@
 import { totalDonations, donationYear } from "../data/donations";
 import { CURRENT_SEASON, getVerfuegbarerBetrag } from "../data/current-season";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getDashboard, getUebergabeSummen } from "../lib/buchhaltung-api";
+import { getDashboard, getUebergabeSummen, invalidateDonationsCache } from "../lib/buchhaltung-api";
+import { useRefetchWhenTabVisible } from "@/hooks/use-refetch-when-tab-visible";
 
 const Hero = () => {
   // Spendendaten - Primär aus current-season.ts, optional API-Update
@@ -23,39 +24,35 @@ const Hero = () => {
   // Banner-Steuerung
   const showCancellationBanner = false; // Auf true setzen, um den Banner anzuzeigen
 
-  // Optional: Versuche API-Daten zu laden (als Ergänzung zu current-season.ts)
-  // Die primären Daten kommen aus current-season.ts, API ist nur ein optionales Update
-  useEffect(() => {
-    const fetchDonationData = async () => {
-      try {
-        // Versuche Dashboard-Daten zu laden (aktuelles Jahr)
-        const dashboard = await getDashboard();
+  // API-Daten (Google Sheet): nach Tab-Rückkehr und mit kurzem Browser-Cache neu laden
+  const fetchDonationData = useCallback(async () => {
+    invalidateDonationsCache();
+    try {
+      const dashboard = await getDashboard();
 
-        // Nur übernehmen wenn API-Daten neuer/höher sind als manuelle Daten
-        // Dies verhindert, dass veraltete API-Daten die manuellen Werte überschreiben
-        if (dashboard?.saldo !== undefined && dashboard.saldo > 0) {
-          const apiVerfuegbar = Math.max(0, dashboard.saldo - CURRENT_SEASON.stilleReserve);
-          // Nur aktualisieren wenn API-Wert sich vom manuellen unterscheidet
-          if (apiVerfuegbar !== getVerfuegbarerBetrag()) {
-            console.log('[Hero] API-Update: Saldo von API abweichend', { api: apiVerfuegbar, manuell: getVerfuegbarerBetrag() });
-            // Optional: Hier könnte man die API-Daten verwenden
-            // setCurrentDonations(apiVerfuegbar);
-          }
+      if (dashboard?.saldo !== undefined && dashboard.saldo > 0) {
+        const apiVerfuegbar = Math.max(0, dashboard.saldo - CURRENT_SEASON.stilleReserve);
+        if (apiVerfuegbar !== getVerfuegbarerBetrag()) {
+          console.log('[Hero] API-Update: Saldo von API abweichend', { api: apiVerfuegbar, manuell: getVerfuegbarerBetrag() });
+          // Optional: Live-Kontostand aus Dashboard anzeigen
+          // setCurrentDonations(apiVerfuegbar);
         }
-
-        // Lade Gesamtsumme aller übergebenen Spenden (historisch + aktuelles Jahr)
-        const uebergabe = await getUebergabeSummen();
-        if (uebergabe?.gesamt) {
-          setTotalDonationsValue(uebergabe.gesamt);
-        }
-      } catch (error) {
-        // API-Fehler sind OK - wir haben bereits Daten aus current-season.ts
-        console.log('[Hero] API nicht verfügbar, verwende manuelle Daten aus current-season.ts');
       }
-    };
 
-    fetchDonationData();
+      const uebergabe = await getUebergabeSummen();
+      if (uebergabe?.gesamt) {
+        setTotalDonationsValue(uebergabe.gesamt);
+      }
+    } catch (error) {
+      console.log('[Hero] API nicht verfügbar, verwende manuelle Daten aus current-season.ts');
+    }
   }, []);
+
+  useEffect(() => {
+    void fetchDonationData();
+  }, [fetchDonationData]);
+
+  useRefetchWhenTabVisible(fetchDonationData);
 
   useEffect(() => {
     // Animation für aktuelle Spendensumme

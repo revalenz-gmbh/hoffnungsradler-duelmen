@@ -9,9 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
-import { getUebergabeSummen } from "../lib/buchhaltung-api";
+import { useCallback, useEffect, useState } from "react";
+import { getUebergabeSummen, invalidateDonationsCache } from "../lib/buchhaltung-api";
 import type { UebergabeSummen } from "../lib/buchhaltung-api";
+import { useRefetchWhenTabVisible } from "@/hooks/use-refetch-when-tab-visible";
 import { TOTAL_DONATIONS, HISTORICAL_DONATIONS_MAP } from "@/data/donations";
 import SEOHead from "@/components/SEOHead";
 import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
@@ -50,20 +51,24 @@ const Spenden = () => {
   const [donationsData, setDonationsData] = useState<UebergabeSummen | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getUebergabeSummen();
-        setDonationsData(data);
-      } catch (error) {
-        console.error("Fehler beim Laden der Spendendaten:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    invalidateDonationsCache();
+    try {
+      const data = await getUebergabeSummen();
+      setDonationsData(data);
+    } catch (error) {
+      console.error("Fehler beim Laden der Spendendaten:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void fetchData();
+  }, [fetchData]);
+
+  useRefetchWhenTabVisible(fetchData);
 
   // Konvertiere API-Daten + historische Daten in Tabellen-Format
   // Unterstützt mehrere Spendenübergaben pro Jahr (z.B. 2025)
