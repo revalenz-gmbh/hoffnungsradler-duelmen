@@ -14,6 +14,18 @@ import { z } from 'zod';
 const sheetIntNonneg = z.coerce.number().int().nonnegative();
 const sheetNumNonneg = z.coerce.number().nonnegative();
 
+/** Toleranter Parser für Quittungen-Felder: #NAME? oder andere Fehler werden zu 0 */
+const sheetIntOrError = z.preprocess(
+  (val) => {
+    if (typeof val === 'string' && (val.startsWith('#') || val === '' || val === '-')) {
+      return 0;
+    }
+    const num = Number(val);
+    return Number.isNaN(num) ? 0 : num;
+  },
+  z.number().int().nonnegative()
+);
+
 const DashboardEinnahmenSchema = z.object({
   konto: z.object({
     anzahl: sheetIntNonneg,
@@ -44,12 +56,12 @@ const DashboardAusgabenSchema = z.object({
 
 const DashboardQuittungenSchema = z.object({
   konto: z.object({
-    ausgestellt: sheetIntNonneg,
-    offen: sheetIntNonneg,
+    ausgestellt: sheetIntOrError,  // Toleriert #NAME? Fehler aus Sheets
+    offen: sheetIntOrError,
   }),
   bargeld: z.object({
-    ausgestellt: sheetIntNonneg,
-    offen: sheetIntNonneg,
+    ausgestellt: sheetIntOrError,
+    offen: sheetIntOrError,
   }),
 });
 
