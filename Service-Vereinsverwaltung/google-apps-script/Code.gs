@@ -441,45 +441,67 @@ function ensureDashboardWebsitePufferCells_(sheet) {
     return;
   }
 
-  sheet.getRange('D4').setValue('Basisabsicherung €/Jahr (frei eintragbar):').setFontWeight('bold');
+  try {
+    sheet.getRange('D4').setValue('Basisabsicherung €/Jahr (frei eintragbar):').setFontWeight('bold');
 
-  var e4 = sheet.getRange('E4');
-  var e4Val = e4.getValue();
-  var e4Leer = e4Val === '' || e4Val === null;
-  if (e4Leer) {
-    var altG3 = sheet.getRange('G3').getValue();
-    var altNum = parseFloat(altG3);
-    if (!isNaN(altNum) && altNum >= 0) {
-      e4.setValue(altNum);
-      sheet.getRange('G3').clearContent();
-    } else {
-      e4.setValue(300);
+    var e4 = sheet.getRange('E4');
+    if (!e4 || typeof e4.getValue !== 'function') {
+      Logger.log('WARNUNG: E4 Range konnte nicht erstellt werden');
+      return;
     }
+    
+    var e4Val = e4.getValue();
+    var e4Leer = e4Val === '' || e4Val === null;
+    if (e4Leer) {
+      var altG3 = sheet.getRange('G3').getValue();
+      var altNum = parseFloat(altG3);
+      if (!isNaN(altNum) && altNum >= 0) {
+        e4.setValue(altNum);
+        sheet.getRange('G3').clearContent();
+      } else {
+        e4.setValue(300);
+      }
+    }
+    e4.setNumberFormat('#,##0.00 €');
+    
+    // clearDataValidation kann fehlschlagen wenn das Sheet geschützt ist
+    if (typeof e4.clearDataValidation === 'function') {
+      e4.clearDataValidation();
+    }
+    
+    e4.setBackground('#fffde7');
+    e4.setNote(
+      'Hier den jährlichen Puffer in Euro eintragen (z. B. 300 für Versicherung + Website). ' +
+        'Beliebige Zahl. Wird für die Website von Endbestand C23 abgezogen (siehe G4).'
+    );
+  } catch (err) {
+    Logger.log('Fehler in ensureDashboardWebsitePufferCells_ (E4): ' + err.message);
   }
-  e4.setNumberFormat('#,##0.00 €');
-  e4.clearDataValidation();
-  e4.setBackground('#fffde7');
-  e4.setNote(
-    'Hier den jährlichen Puffer in Euro eintragen (z. B. 300 für Versicherung + Website). ' +
-      'Beliebige Zahl. Wird für die Website von Endbestand C23 abgezogen (siehe G4).'
-  );
 
-  sheet.getRange('F4').setValue('Verfügbar für Touren / Web (C23 − E4):').setFontWeight('bold');
-  var g4 = sheet.getRange('G4');
-  var formel = g4.getFormula();
-  if (!formel || formel.indexOf('E4') === -1) {
-    g4.setFormula('=MAX(0;C23-E4)');
-  }
-  g4.setNumberFormat('#,##0.00 €');
-  g4.setBackground('#e8f5e9');
+  try {
+    sheet.getRange('F4').setValue('Verfügbar für Touren / Web (C23 − E4):').setFontWeight('bold');
+    var g4 = sheet.getRange('G4');
+    var formel = g4.getFormula();
+    if (!formel || formel.indexOf('E4') === -1) {
+      g4.setFormula('=MAX(0;C23-E4)');
+    }
+    g4.setNumberFormat('#,##0.00 €');
+    g4.setBackground('#e8f5e9');
 
-  // Frühere Skript-Version (Beschriftung in F3, Wert in G3)
-  var f3 = sheet.getRange('F3');
-  var f3t = String(f3.getValue() || '');
-  if (f3t.indexOf('Basisabsicherung') !== -1) {
-    f3.clearContent();
+    // Frühere Skript-Version (Beschriftung in F3, Wert in G3)
+    var f3 = sheet.getRange('F3');
+    var f3t = String(f3.getValue() || '');
+    if (f3t.indexOf('Basisabsicherung') !== -1) {
+      f3.clearContent();
+    }
+    
+    var g3 = sheet.getRange('G3');
+    if (g3 && typeof g3.clearDataValidation === 'function') {
+      g3.clearDataValidation();
+    }
+  } catch (err) {
+    Logger.log('Fehler in ensureDashboardWebsitePufferCells_ (G3/G4): ' + err.message);
   }
-  sheet.getRange('G3').clearDataValidation();
 }
 
 function getDashboardData() {
