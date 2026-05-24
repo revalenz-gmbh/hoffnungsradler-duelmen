@@ -29,33 +29,51 @@ const Hero = () => {
     invalidateDonationsCache();
     try {
       const dashboard = await getDashboard();
+      
+      // Debug-Log für Diagnose
+      console.log('[Hero] API Dashboard:', {
+        saldo: dashboard?.saldo,
+        basisAbsicherung: dashboard?.basisAbsicherung,
+        verfuegbarFuerWebsite: dashboard?.verfuegbarFuerWebsite
+      });
 
-      // Balken = Sheet C23 − E4: über API saldo (C23) und basisAbsicherung (E4), konsistent zum Spreadsheet
+      // Priorität 1: verfuegbarFuerWebsite (G4) direkt aus API - aber nur wenn > 0
+      const vf = dashboard?.verfuegbarFuerWebsite;
+      if (vf !== undefined && vf !== null && Number(vf) > 0) {
+        console.log('[Hero] Verwende verfuegbarFuerWebsite (G4):', vf);
+        setCurrentDonations(Number(vf));
+        return await loadGesamtsumme();
+      }
+
+      // Priorität 2: saldo (C23) minus basisAbsicherung (E4) - aber nur wenn saldo > 0
       const saldoN = Number(dashboard?.saldo);
       const basisN = Number(dashboard?.basisAbsicherung);
-      const ausC23minusE4 =
-        Number.isFinite(saldoN) && Number.isFinite(basisN) && basisN >= 0
-          ? Math.max(0, saldoN - basisN)
-          : null;
-      const vf = dashboard?.verfuegbarFuerWebsite;
-      const ausApiG4 =
-        vf !== undefined && vf !== null && Number.isFinite(Number(vf)) ? Number(vf) : null;
-      const fallbackVerf =
-        Number.isFinite(saldoN) ? Math.max(0, saldoN - CURRENT_SEASON.stilleReserve) : null;
-      const balkenBetrag =
-        ausC23minusE4 !== null ? ausC23minusE4 : ausApiG4 !== null ? ausApiG4 : fallbackVerf;
-      if (balkenBetrag !== null) {
-        setCurrentDonations(Math.max(0, balkenBetrag));
+      if (Number.isFinite(saldoN) && saldoN > 0 && Number.isFinite(basisN) && basisN >= 0) {
+        const berechnet = Math.max(0, saldoN - basisN);
+        console.log('[Hero] Verwende saldo - basisAbsicherung:', berechnet);
+        setCurrentDonations(berechnet);
+        return await loadGesamtsumme();
       }
 
-      const uebergabe = await getUebergabeSummen();
-      if (uebergabe?.gesamt) {
-        setTotalDonationsValue(uebergabe.gesamt);
-      }
+      // API gab keinen brauchbaren Wert - behalte Fallback aus current-season.ts
+      console.log('[Hero] API-Werte nicht brauchbar, behalte Fallback:', getVerfuegbarerBetrag());
+      await loadGesamtsumme();
     } catch (error) {
       console.log('[Hero] API nicht verfügbar, verwende manuelle Daten aus current-season.ts');
     }
   }, []);
+
+  // Hilfsfunktion für Gesamtsumme
+  const loadGesamtsumme = async () => {
+    try {
+      const uebergabe = await getUebergabeSummen();
+      if (uebergabe?.gesamt) {
+        setTotalDonationsValue(uebergabe.gesamt);
+      }
+    } catch {
+      // Fehler ignorieren, Fallback bleibt
+    }
+  };
 
   useEffect(() => {
     void fetchDonationData();
