@@ -11,6 +11,13 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "31.05.2026",
+      title: "Tour nach Gescher – 90 km bei Sonnenschein",
+      excerpt: `Beim Start am Sportzentrum Süd war auch Jupp dabei – ein schöner Auftakt für unsere Gescher-Tour. Wir hatten Glück mit dem Wetter, genossen einen Stopp bei der Eisdiele in Velen und mussten auf dem Rückweg wegen eines nach dem Gewitter am Freitag umgestürzten Baums auf dem Radweg eine Ausweichstrecke nehmen. Insgesamt kamen wir auf rund 90 km, die die Truppe gemeinsam in flottem Tempo bewältigt hat.`,
+      images: ["/photos/Gescher26_1.jpg"],
+      type: "internal"
+    },
+    {
       date: "26.05.2026",
       title: "Kanaltour – gemeinsam am Wasser unterwegs",
       excerpt: `Bei bestem Radfahrwetter sind die Hoffnungsradler gestern die Kanalstrecke entlang gefahren. Sonne, gute Laune und eine eingespielte Gruppe machten die Runde zu einem schönen gemeinsamen Erlebnis – vielen Dank an alle, die dabei waren!`,

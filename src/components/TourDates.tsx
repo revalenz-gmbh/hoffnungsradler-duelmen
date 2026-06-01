@@ -166,7 +166,7 @@ export const tours2026: TourDate[] = [
     date: "31.05.2026",
     day: "Sonntag",
     name: "Tour nach Gescher",
-    distance: "83 km",
+    distance: "ca. 90 km",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
