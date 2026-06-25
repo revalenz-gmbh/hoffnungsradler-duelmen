@@ -39,19 +39,28 @@ const TourBanner = () => {
     });
   };
 
+  const isCancelled = nextTour.cancelled;
+
   return (
-    <div className="fixed top-20 w-full z-40 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 md:py-4 shadow-xl">
+    <div className={`fixed top-20 w-full z-40 text-white py-2 md:py-4 shadow-xl bg-gradient-to-r ${
+      isCancelled ? 'from-red-600 to-red-700' : 'from-orange-500 to-orange-600'
+    }`}>
       <div className="container mx-auto px-4">
         {/* Mobile: Kompakte einfache Anzeige (klickbar) */}
         <Link to="/tour-termine" aria-label="Zu den Tour-Terminen" className="md:hidden flex items-center justify-center gap-3 active:opacity-80">
           <Calendar className="w-4 h-4" />
           <div className="text-center">
-            <span className="font-anton text-sm">{formatDate(nextTour.date)}: {nextTour.name}</span>
+            <span className="font-anton text-sm">
+              {isCancelled && 'Abgesagt: '}{formatDate(nextTour.date)}: {nextTour.name}
+            </span>
           </div>
         </Link>
 
         {/* Desktop: Kompakte Anzeige */}
         <div className="hidden md:flex items-center justify-center gap-6">
+          {isCancelled && (
+            <span className="font-anton text-base bg-white/20 px-3 py-1 rounded">Abgesagt</span>
+          )}
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
             <span className="font-anton text-base">{formatDate(nextTour.date)}</span>
@@ -59,12 +68,12 @@ const TourBanner = () => {
               <span className="text-sm text-white/80">({nextTour.day})</span>
             )}
           </div>
-          
+
           <div className="w-px h-4 bg-white/30"></div>
-          
+
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
-            <span className="font-anton text-base">{nextTour.name}</span>
+            <span className={`font-anton text-base ${isCancelled ? 'line-through' : ''}`}>{nextTour.name}</span>
             <span className="text-sm text-white/80">{nextTour.distance}</span>
           </div>
           

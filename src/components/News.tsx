@@ -11,6 +11,12 @@ const News = () => {
 
   const newsItems = [
     {
+      date: "25.06.2026",
+      title: "Münster-Tour am 28.06. abgesagt – Nachholtermin am 26.07.",
+      excerpt: `Leider müssen wir unsere für Sonntag, den 28.06.2026, geplante Münster-Tour absagen. Für das Wochenende sind sehr hohe Temperaturen vorhergesagt, sodass wir aus Rücksicht auf die Gesundheit aller Teilnehmenden auf die Tour verzichten. Gute Nachricht: Wir holen die Münster-Tour am Sonntag, den 26.07.2026, nach – Start wie gewohnt um 10:00 Uhr am Sportzentrum Süd. Bleibt gesund und kühl, wir freuen uns auf euch!`,
+      type: "internal"
+    },
+    {
       date: "31.05.2026",
       title: "Tour nach Gescher – 90 km bei Sonnenschein",
       excerpt: `Beim Start am Sportzentrum Süd war auch Jupp dabei – ein schöner Auftakt für unsere Gescher-Tour. Wir hatten Glück mit dem Wetter, genossen einen Stopp bei der Eisdiele in Velen und mussten auf dem Rückweg wegen eines nach dem Gewitter am Freitag umgestürzten Baums auf dem Radweg eine Ausweichstrecke nehmen. Insgesamt kamen wir auf rund 90 km, die die Truppe gemeinsam in flottem Tempo bewältigt hat.`,

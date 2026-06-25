@@ -184,6 +184,7 @@ export const tours2026: TourDate[] = [
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
     speed: "Guide: Martin",
+    cancelled: true,
     mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1t-AhPv3cG4L8I9NO6ZLLFNiKejtjGuI&usp=sharing",
     komootUrl: "https://www.komoot.com/de-de/tour/2981890670",
     gpxUrl: "https://drive.google.com/uc?export=download&id=1vWTO7j0ZI6rD7G8H0Z0MbjCfjCDe7eT0",
@@ -191,11 +192,15 @@ export const tours2026: TourDate[] = [
   {
     date: "26.07.2026",
     day: "Sonntag",
-    name: "Termin reserviert",
-    distance: "wird bekannt gegeben",
+    name: "Münster-Tour (Nachholtermin)",
+    distance: "ca. 81 km",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
+    speed: "Guide: Martin",
+    mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1t-AhPv3cG4L8I9NO6ZLLFNiKejtjGuI&usp=sharing",
+    komootUrl: "https://www.komoot.com/de-de/tour/2981890670",
+    gpxUrl: "https://drive.google.com/uc?export=download&id=1vWTO7j0ZI6rD7G8H0Z0MbjCfjCDe7eT0",
   },
   {
     date: "23.08.2026",
@@ -290,11 +295,11 @@ const TourDates = () => {
               </thead>
               <tbody>
                 {tourList.map((tour, index) => (
-                  <tr 
+                  <tr
                     key={index}
                     className={`border-t border-forest/10 ${
                       index % 2 === 0 ? 'bg-forest/5' : 'bg-white'
-                    }`}
+                    } ${tour.cancelled ? 'opacity-60' : ''}`}
                   >
                     <td className="px-4 py-3">
                       <div className="font-medium">{tour.date}</div>
@@ -307,7 +312,16 @@ const TourDates = () => {
                       {tour.name === "in Planung" ? (
                         <div className="text-gray-400 italic">in Planung</div>
                       ) : (
-                        <div>{tour.name}</div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className={tour.cancelled ? 'line-through text-gray-500' : ''}>
+                            {tour.name}
+                          </span>
+                          {tour.cancelled && (
+                            <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700 border border-red-200">
+                              Abgesagt
+                            </span>
+                          )}
+                        </div>
                       )}
                     </td>
                     <td className="px-4 py-3">
