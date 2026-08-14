@@ -4,12 +4,24 @@ import {
   DialogContent,
   DialogTrigger
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
+
+interface NewsItem {
+  date: string;
+  title: string;
+  type: "internal" | "press";
+  excerpt?: string;
+  content?: ReactNode;
+  images?: string[];
+  source?: string;
+  link?: string;
+  highlight?: boolean;
+}
 
 const News = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const newsItems = [
+  const newsItems: NewsItem[] = [
     {
       date: "25.06.2026",
       title: "Münster-Tour am 28.06. abgesagt – Nachholtermin am 26.07.",
@@ -159,7 +171,7 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                 key={index}
                 className={`bg-white rounded-lg shadow-sm overflow-hidden flex flex-col ${
                   item.type === "internal" ? "p-8" : "p-6"
-                } ${('highlight' in item && (item as any).highlight) ? 'border-l-4 border-amber-400' : ''}`}
+                } ${item.highlight ? 'border-l-4 border-amber-400' : ''}`}
               >
                 {/* Text Content */}
                 <div className="flex-grow">
@@ -167,7 +179,7 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                   <div className="text-sm text-gray-500 mb-2">
                     {item.date}
                     {item.source && ` | ${item.source}`}
-                    {('highlight' in item && (item as any).highlight) && (
+                    {item.highlight && (
                       <span className="ml-2 inline-flex items-center gap-1 text-amber-800 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full text-xs font-medium">
                         <Heart className="w-3 h-3" />
                         Spenden-Highlight
@@ -183,8 +195,8 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                   </h3>
 
                   {/* Content or Excerpt */}
-                  {('content' in item && (item as any).content) ? (
-                    (item as any).content
+                  {item.content ? (
+                    item.content
                   ) : item.excerpt ? (
                     <p className="text-gray-700 mb-4">
                       {item.excerpt}
@@ -195,7 +207,7 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                 {/* Image / Link Section */}
                 <div className="mt-4 space-y-4">
                   {/* Interne Beiträge: Galerie nur, wenn kein Inline-Content vorhanden */}
-                  {item.type === 'internal' && item.images && item.images.length > 0 && !('content' in item) && (
+                  {item.type === 'internal' && item.images && item.images.length > 0 && !item.content && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {item.images.map((img, i) => (
                         <DialogTrigger asChild key={i}>

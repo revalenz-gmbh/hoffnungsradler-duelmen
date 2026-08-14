@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 
+interface JsonLdSchema {
+  '@type'?: string | string[];
+  [key: string]: unknown;
+}
+
 interface SchemaScriptProps {
-  schema: object;
+  schema: JsonLdSchema;
 }
 
 /**
@@ -11,7 +16,7 @@ interface SchemaScriptProps {
 const SchemaScript = ({ schema }: SchemaScriptProps) => {
   useEffect(() => {
     // Erstelle ein eindeutiges ID basierend auf dem Schema-Typ
-    const schemaTypeRaw = (schema as any)['@type'] || 'schema';
+    const schemaTypeRaw = schema['@type'] || 'schema';
     // Handle @type as string or array
     const schemaType = Array.isArray(schemaTypeRaw)
       ? schemaTypeRaw[0]
