@@ -205,8 +205,8 @@ export const tours2026: TourDate[] = [
   {
     date: "23.08.2026",
     day: "Sonntag",
-    name: "Tour zum Schloss Legden",
-    distance: "ca. 83 km",
+    name: "Legden - Düstermühle",
+    distance: "ca. 81 km",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
