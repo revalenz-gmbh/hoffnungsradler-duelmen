@@ -205,11 +205,15 @@ export const tours2026: TourDate[] = [
   {
     date: "23.08.2026",
     day: "Sonntag",
-    name: "Termin reserviert",
-    distance: "wird bekannt gegeben",
+    name: "Tour zum Schloss Legden",
+    distance: "ca. 83 km",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
+    speed: "Guide: Martin",
+    komootUrl: "https://www.komoot.com/tour/3198197417",
+    mapUrl: "https://www.google.com/maps/d/u/0/edit?mid=1iPRW_PR8H-zHnS0_9136nYUCjCJd4M0&ll=51.93384070467501%2C7.200728013576669&z=11",
+    gpxUrl: "https://drive.google.com/file/d/1gLunvRLMTJXxTD3yG3JxitCNLMuumckY/view?usp=sharing",
   },
   {
     date: "27.09.2026",
