@@ -23,6 +23,13 @@ const News = () => {
 
   const newsItems: NewsItem[] = [
     {
+      date: "26.07.2026",
+      title: "Nachholtermin Münster-Tour – Stärkung in der Schillerstraße bei Guide Martin",
+      excerpt: `Beim Nachholtermin unserer Münster-Tour legten wir in der Schillerstraße bei unserem Guide Martin einen Stopp ein, um uns dort für den weiteren Weg zu stärken. Anschließend ging es weiter durch Münster, vorbei am Haus Rüschhaus, und über den Rückweg zurück nach Dülmen.`,
+      images: ["/photos/Muenster26_1.jpg"],
+      type: "internal"
+    },
+    {
       date: "25.06.2026",
       title: "Münster-Tour am 28.06. abgesagt – Nachholtermin am 26.07.",
       excerpt: `Leider müssen wir unsere für Sonntag, den 28.06.2026, geplante Münster-Tour absagen. Für das Wochenende sind sehr hohe Temperaturen vorhergesagt, sodass wir aus Rücksicht auf die Gesundheit aller Teilnehmenden auf die Tour verzichten. Gute Nachricht: Wir holen die Münster-Tour am Sonntag, den 26.07.2026, nach – Start wie gewohnt um 10:00 Uhr am Sportzentrum Süd. Bleibt gesund und kühl, wir freuen uns auf euch!`,
