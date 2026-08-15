@@ -353,44 +353,9 @@ function getNewsletterTemplate(newsletterData) {
   };
 }
 
-/**
- * Funktion zum Aufräumen ungültiger E-Mail-Adressen
- * Kann manuell aufgerufen werden, um ungültige Adressen zu identifizieren/deaktivieren
- */
-function cleanupInvalidEmails() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName('Newsletter-Abonnenten');
-  
-  if (!sheet) {
-    Browser.msgBox("Fehler", "Das Tabellenblatt 'Newsletter-Abonnenten' wurde nicht gefunden.", Browser.Buttons.OK);
-    return;
-  }
-  
-  const data = sheet.getDataRange().getValues();
-  let deactivatedCount = 0;
-  
-  // Stelle sicher, dass die Sendestatus-Spalte existiert
-  ensureStatusColumnExists(sheet, data);
-  
-  // Erste Zeile überspringen (Überschriften)
-  for (let i = 1; i < data.length; i++) {
-    const status = data[i][4];
-    const sendStatus = data[i][6] || "";
-    
-    // Prüfe, ob die E-Mail als ungültig markiert ist
-    if (status === 'aktiv' && sendStatus === 'ungültig') {
-      // Setze den Status auf 'inaktiv'
-      sheet.getRange(i + 1, 5).setValue('inaktiv');
-      deactivatedCount++;
-    }
-  }
-  
-  Browser.msgBox(
-    "Aufräumen abgeschlossen", 
-    `Es wurden ${deactivatedCount} ungültige E-Mail-Adressen auf 'inaktiv' gesetzt.`, 
-    Browser.Buttons.OK
-  );
-}
+// Hinweis: cleanupInvalidEmails() lebt jetzt ausschließlich in SendNewletterToAllSubscribers.gs
+// (war hier und dort wortgleich dupliziert; Apps Script teilt sich einen globalen Namensraum
+// über alle .gs-Dateien, sodass zwei gleichnamige Funktionen ladereihenfolge-abhängig waren).
 
 /**
  * Gibt den aktuellen Newsletter-Versand-Status zurück

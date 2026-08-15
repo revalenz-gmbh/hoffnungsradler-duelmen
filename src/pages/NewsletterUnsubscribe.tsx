@@ -46,8 +46,8 @@ const NewsletterUnsubscribe = () => {
       
       setIsComplete(true);
       toast({
-        title: "Erfolgreich abgemeldet",
-        description: "Du wurdest erfolgreich von unserem Newsletter abgemeldet."
+        title: "Abmeldung übermittelt",
+        description: "Deine Abmeldung wurde übermittelt und wird in Kürze verarbeitet."
       });
     } catch (error) {
       console.error("Fehler bei der Abmeldung:", error);
@@ -100,7 +100,9 @@ const NewsletterUnsubscribe = () => {
               ) : isComplete ? (
                 <div>
                   <p className="text-text mb-6">
-                    Du wurdest erfolgreich vom Tour-Newsletter abgemeldet.
+                    Deine Abmeldung vom Tour-Newsletter wurde übermittelt und wird in Kürze
+                    verarbeitet. Solltest du danach weiterhin E-Mails erhalten, melde dich
+                    bitte über unser <Link to="/kontakt" className="text-forest hover:underline">Kontaktformular</Link>.
                   </p>
                   <Link to="/" className="text-forest hover:underline">
                     Zurück zur Startseite
