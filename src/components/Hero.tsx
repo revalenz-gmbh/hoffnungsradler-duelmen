@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getDashboard, getUebergabeSummen, invalidateDonationsCache } from "../lib/buchhaltung-api";
+import { getDashboard, getUebergabeSummen, invalidateDonationsCache, type DashboardData } from "../lib/buchhaltung-api";
 import { useRefetchWhenTabVisible } from "@/hooks/use-refetch-when-tab-visible";
 
 const Hero = () => {
@@ -24,44 +24,62 @@ const Hero = () => {
   // Banner-Steuerung
   const showCancellationBanner = false; // Auf true setzen, um den Banner anzuzeigen
 
+  // Wertet ein Dashboard aus und setzt currentDonations, falls ein brauchbarer Wert dabei ist
+  const applyDashboardValue = useCallback((dashboard: DashboardData | null | undefined): boolean => {
+    // Debug-Log für Diagnose
+    console.log('[Hero] API Dashboard:', {
+      saldo: dashboard?.saldo,
+      basisAbsicherung: dashboard?.basisAbsicherung,
+      verfuegbarFuerWebsite: dashboard?.verfuegbarFuerWebsite
+    });
+
+    // Priorität 1: verfuegbarFuerWebsite (G4) direkt aus API - aber nur wenn > 0
+    const vf = dashboard?.verfuegbarFuerWebsite;
+    if (vf !== undefined && vf !== null && Number(vf) > 0) {
+      console.log('[Hero] Verwende verfuegbarFuerWebsite (G4):', vf);
+      setCurrentDonations(Number(vf));
+      return true;
+    }
+
+    // Priorität 2: saldo (C23) minus basisAbsicherung (E4) - aber nur wenn saldo > 0
+    const saldoN = Number(dashboard?.saldo);
+    const basisN = Number(dashboard?.basisAbsicherung);
+    if (Number.isFinite(saldoN) && saldoN > 0 && Number.isFinite(basisN) && basisN >= 0) {
+      const berechnet = Math.max(0, saldoN - basisN);
+      console.log('[Hero] Verwende saldo - basisAbsicherung:', berechnet);
+      setCurrentDonations(berechnet);
+      return true;
+    }
+
+    return false;
+  }, []);
+
   // API-Daten (Google Sheet): nach Tab-Rückkehr und mit kurzem Browser-Cache neu laden
   const fetchDonationData = useCallback(async () => {
-    invalidateDonationsCache();
-    try {
-      const dashboard = await getDashboard();
-      
-      // Debug-Log für Diagnose
-      console.log('[Hero] API Dashboard:', {
-        saldo: dashboard?.saldo,
-        basisAbsicherung: dashboard?.basisAbsicherung,
-        verfuegbarFuerWebsite: dashboard?.verfuegbarFuerWebsite
-      });
-
-      // Priorität 1: verfuegbarFuerWebsite (G4) direkt aus API - aber nur wenn > 0
-      const vf = dashboard?.verfuegbarFuerWebsite;
-      if (vf !== undefined && vf !== null && Number(vf) > 0) {
-        console.log('[Hero] Verwende verfuegbarFuerWebsite (G4):', vf);
-        setCurrentDonations(Number(vf));
-        return await loadGesamtsumme();
+    // Bis zu 2 Versuche: Die Google Apps Script Web-App kann nach einer Ruhephase
+    // einen langsamen Kaltstart haben und beim ersten Aufruf in den Proxy-Timeout
+    // laufen. Ein automatischer zweiter Versuch erspart das manuelle Neuladen der Seite.
+    let usable = false;
+    for (let attempt = 1; attempt <= 2 && !usable; attempt++) {
+      invalidateDonationsCache();
+      try {
+        const dashboard = await getDashboard();
+        usable = applyDashboardValue(dashboard);
+      } catch (error) {
+        console.log(`[Hero] API-Versuch ${attempt} fehlgeschlagen, evtl. Kaltstart der Web-App:`, error);
       }
 
-      // Priorität 2: saldo (C23) minus basisAbsicherung (E4) - aber nur wenn saldo > 0
-      const saldoN = Number(dashboard?.saldo);
-      const basisN = Number(dashboard?.basisAbsicherung);
-      if (Number.isFinite(saldoN) && saldoN > 0 && Number.isFinite(basisN) && basisN >= 0) {
-        const berechnet = Math.max(0, saldoN - basisN);
-        console.log('[Hero] Verwende saldo - basisAbsicherung:', berechnet);
-        setCurrentDonations(berechnet);
-        return await loadGesamtsumme();
+      if (!usable && attempt === 1) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
       }
-
-      // API gab keinen brauchbaren Wert - behalte Fallback aus current-season.ts
-      console.log('[Hero] API-Werte nicht brauchbar, behalte Fallback:', getVerfuegbarerBetrag());
-      await loadGesamtsumme();
-    } catch (error) {
-      console.log('[Hero] API nicht verfügbar, verwende manuelle Daten aus current-season.ts');
     }
-  }, []);
+
+    if (!usable) {
+      console.log('[Hero] API-Werte nach 2 Versuchen nicht brauchbar, behalte Fallback:', getVerfuegbarerBetrag());
+    }
+
+    await loadGesamtsumme();
+  }, [applyDashboardValue]);
 
   // Hilfsfunktion für Gesamtsumme
   const loadGesamtsumme = async () => {
