@@ -29,19 +29,9 @@ const Sponsoren = () => {
       website: "https://laumann-verlag.de/",
     },
     {
-      name: "A&R Münsterland",
-      logo: "/logos/373bd578-37cc-42bf-b984-e8359e6a41e8.png",
-      website: "http://www.schrotthandel-muensterland.de/",
-    },
-    {
       name: "Vette Repro & Bürobedarfscenter GmbH",
       logo: "/logos/Vette_Logo.gif",
       website: "http://www.repro-vette.de/",
-    },
-    {
-      name: "DÜMO Reisemobile",
-      logo: "/logos/40a11938-1150-4706-9454-5cbe35d8b8dd.png",
-      website: "https://www.duemo-duelmen.de/",
     },
   ];
 
