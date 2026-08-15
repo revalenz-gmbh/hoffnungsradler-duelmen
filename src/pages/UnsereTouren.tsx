@@ -134,7 +134,7 @@ const UnsereTouren: React.FC = () => {
               {Object.entries(toursByYear).map(([year, tours]) => (
                 <div key={year} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <h3 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">
-                    Touren aus den letzten Jahren
+                    Touren {year}
                   </h3>
                   <ul className="divide-y divide-gray-200">
                     {tours.map((tour) => (

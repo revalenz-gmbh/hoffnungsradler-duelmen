@@ -604,8 +604,15 @@ function recalculateAllDistances() {
     
     // Setze den Verarbeitungsstatus zurück, um eine Neuberechnung zu erzwingen
     const lastRow = sheet.getLastRow();
-    const statusRange = sheet.getRange(2, headers.indexOf('Letzte Verarbeitung') + 1, lastRow - 1, 1);
-    statusRange.clearContent();
+    if (lastRow > 1) {
+      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      const lastProcessedIndex = headers.indexOf('Letzte Verarbeitung');
+      if (lastProcessedIndex === -1) {
+        throw new Error('Spalte "Letzte Verarbeitung" wurde im Blatt "Tour Daten" nicht gefunden.');
+      }
+      const statusRange = sheet.getRange(2, lastProcessedIndex + 1, lastRow - 1, 1);
+      statusRange.clearContent();
+    }
 
     ui.alert('Status zurückgesetzt', 'Der Verarbeitungsstatus wurde zurückgesetzt. Starte jetzt die Neuberechnung...', ui.ButtonSet.OK);
 
