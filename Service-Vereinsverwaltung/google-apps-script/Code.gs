@@ -2495,156 +2495,12 @@ function countStornierteQuittungen(protokollSheet, year) {
   return count;
 }
 
-function sumByYear(sheet, year, dateCol, amountCol) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var sum = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var datum = data[i][dateCol - 1];
-    var betrag = data[i][amountCol - 1];
-    var rowYear = getBuchungstagJahr(datum);
-    var bNum = normalizeKontoBetrag(betrag);
-    if (rowYear !== null && !isNaN(bNum) && rowYear == year) {
-      sum += bNum;
-    }
-  }
-  
-  return sum;
-}
-
-/**
- * Summiert nur POSITIVE Beträge eines Jahres (für Einnahmen aus Kontobewegungen)
- */
-function sumPositiveByYear(sheet, year, dateCol, amountCol) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var sum = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var datum = data[i][dateCol - 1];
-    var betrag = normalizeKontoBetrag(data[i][amountCol - 1]);
-    var rowYear = getBuchungstagJahr(datum);
-    
-    if (rowYear !== null && !isNaN(betrag) && betrag > 0 && rowYear == year) {
-      sum += betrag;
-    }
-  }
-  
-  return sum;
-}
-
-/**
- * Summiert nur NEGATIVE Beträge eines Jahres (für Ausgaben aus Kontobewegungen)
- * Gibt den absoluten Betrag zurück (positiv)
- */
-function sumNegativeByYear(sheet, year, dateCol, amountCol) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var sum = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var datum = data[i][dateCol - 1];
-    var betrag = normalizeKontoBetrag(data[i][amountCol - 1]);
-    var rowYear = getBuchungstagJahr(datum);
-    
-    if (rowYear !== null && !isNaN(betrag) && betrag < 0 && rowYear == year) {
-      sum += Math.abs(betrag);
-    }
-  }
-  
-  return sum;
-}
-
-/**
- * Summiert nur BARGELD-Spenden für ein bestimmtes Jahr (nicht Sachspenden)
- * Spalte A = Datum, Spalte B = Betrag, Spalte C = Art
- */
-function sumBargeldByYear(sheet, year) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var sum = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var datum = data[i][0]; // Spalte A: Datum
-    var betrag = data[i][1]; // Spalte B: Betrag
-    var art = data[i][2];    // Spalte C: Art
-    
-    var rowYear = getBuchungstagJahr(datum);
-    var bNum = normalizeKontoBetrag(betrag);
-    if (rowYear !== null && !isNaN(bNum) && art === 'Bargeld' && rowYear == year) {
-      sum += bNum;
-    }
-  }
-  
-  return sum;
-}
-
-/**
- * Summiert nur Sachspenden für ein bestimmtes Jahr
- * Spalte A = Datum, Spalte B = Betrag, Spalte C = Art
- */
-function sumSachspendenByYear(sheet, year) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var sum = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var datum = data[i][0]; // Spalte A: Datum
-    var betrag = data[i][1]; // Spalte B: Betrag
-    var art = data[i][2];    // Spalte C: Art
-    
-    var rowYear = getBuchungstagJahr(datum);
-    var bNum = normalizeKontoBetrag(betrag);
-    if (rowYear !== null && !isNaN(bNum) && art === 'Sachspende' && rowYear == year) {
-      sum += bNum;
-    }
-  }
-  
-  return sum;
-}
-
-function sumByYearColumn(sheet, year, yearCol, amountCol) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var sum = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var jahrValue = data[i][yearCol - 1];
-    var betrag = data[i][amountCol - 1];
-    
-    if (jahrValue == year && betrag) {
-      sum += parseFloat(betrag) || 0;
-    }
-  }
-  
-  return sum;
-}
-
-function countReceiptsIssued(sheet, year, dateCol, receiptCol) {
-  if (!sheet) return 0;
-  
-  var data = sheet.getDataRange().getValues();
-  var count = 0;
-  
-  for (var i = 1; i < data.length; i++) {
-    var datum = data[i][dateCol - 1];
-    var quittung = data[i][receiptCol - 1];
-    
-    var rowYear = getBuchungstagJahr(datum);
-    if (rowYear !== null && rowYear == year && quittung === 'Ja') {
-      count++;
-    }
-  }
-  
-  return count;
-}
+// Hinweis: Eine ältere Generation von Jahresabschluss-Hilfsfunktionen
+// (sumByYear, sumPositiveByYear, sumNegativeByYear, sumBargeldByYear,
+// sumSachspendenByYear, sumByYearColumn, countReceiptsIssued) wurde hier
+// entfernt. Sie war durch die *_JAHR-Familie (EINNAHMEN_KONTO_JAHR,
+// AUSGABEN_KONTO_JAHR, BARGELDSPENDEN_JAHR, ...) abgelöst und wurde
+// nirgends mehr aufgerufen.
 
 function showJahresabschlussDialog() {
   var ui = SpreadsheetApp.getUi();
@@ -3048,338 +2904,16 @@ function openImportRulesSheet() {
   ss.setActiveSheet(sheet);
 }
 
-/**
- * Zeigt den Import-Dialog
- */
-function showImportDialog() {
-  var ui = SpreadsheetApp.getUi();
-  
-  var html = HtmlService.createHtmlOutput(getImportDialogHtml())
-    .setWidth(600)
-    .setHeight(500);
-  
-  ui.showModalDialog(html, '🔄 Kontoauszug importieren');
-}
-
-/**
- * HTML für Import-Dialog
- */
-function getImportDialogHtml() {
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <base target="_top">
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            margin: 0;
-          }
-          h2 {
-            color: #1a73e8;
-            margin-top: 0;
-          }
-          .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #1a73e8;
-            padding: 15px;
-            margin: 20px 0;
-          }
-          .step {
-            margin: 15px 0;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 5px;
-          }
-          .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: #1a73e8;
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-right: 10px;
-            font-weight: bold;
-          }
-          textarea {
-            width: 100%;
-            min-height: 200px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            box-sizing: border-box;
-          }
-          button {
-            background: #1a73e8;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-          }
-          button:hover {
-            background: #1557b0;
-          }
-          button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-          }
-          #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 4px;
-            display: none;
-          }
-          .success {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-          }
-          .error {
-            background: #ffebee;
-            border-left: 4px solid #f44336;
-          }
-        </style>
-      </head>
-      <body>
-        <h2>🔄 Kontoauszug importieren</h2>
-        
-        <div class="info-box">
-          <strong>📋 So funktioniert's:</strong><br>
-          Kopieren Sie den CSV-Inhalt aus Ihrem Sparkassen-Kontoauszug und fügen Sie ihn unten ein.
-          Das System erkennt automatisch das Format und ordnet die Buchungen zu.
-        </div>
-        
-        <div class="step">
-          <span class="step-number">1</span>
-          <strong>CSV-Datei öffnen</strong><br>
-          <small>Öffnen Sie die CSV-Datei von der Sparkasse mit einem Texteditor oder Excel</small>
-        </div>
-        
-        <div class="step">
-          <span class="step-number">2</span>
-          <strong>Inhalt kopieren</strong><br>
-          <small>Markieren Sie alles (Strg+A) und kopieren Sie es (Strg+C)</small>
-        </div>
-        
-        <div class="step">
-          <span class="step-number">3</span>
-          <strong>Hier einfügen</strong><br>
-          <textarea id="csvInput" placeholder="CSV-Inhalt hier einfügen..."></textarea>
-        </div>
-        
-        <button onclick="importCSV()" id="importBtn">
-          🚀 Import starten
-        </button>
-        
-        <div id="result"></div>
-        
-        <script>
-          function importCSV() {
-            var csv = document.getElementById('csvInput').value;
-            var btn = document.getElementById('importBtn');
-            var result = document.getElementById('result');
-            
-            if (!csv.trim()) {
-              result.className = 'error';
-              result.innerHTML = '<strong>❌ Fehler:</strong> Bitte CSV-Inhalt einfügen!';
-              result.style.display = 'block';
-              return;
-            }
-            
-            btn.disabled = true;
-            btn.innerHTML = '⏳ Importiere...';
-            result.style.display = 'none';
-            
-            google.script.run
-              .withSuccessHandler(function(response) {
-                btn.disabled = false;
-                btn.innerHTML = '🚀 Import starten';
-                result.className = 'success';
-                result.innerHTML = '<strong>✅ Erfolgreich!</strong><br>' + response;
-                result.style.display = 'block';
-              })
-              .withFailureHandler(function(error) {
-                btn.disabled = false;
-                btn.innerHTML = '🚀 Import starten';
-                result.className = 'error';
-                result.innerHTML = '<strong>❌ Fehler:</strong><br>' + error;
-                result.style.display = 'block';
-              })
-              .processCSVImport(csv);
-          }
-        </script>
-      </body>
-    </html>
-  `;
-}
-
-/**
- * Verarbeitet den CSV-Import
- */
-function processCSVImport(csvContent) {
-  try {
-    // Parse CSV
-    var rows = parseSparkassenCSV(csvContent);
-    
-    if (rows.length === 0) {
-      throw new Error('Keine gültigen Zeilen gefunden. Bitte prüfen Sie das CSV-Format.');
-    }
-    
-    // Kategorisiere jede Zeile
-    var categorizedRows = [];
-    var stats = {
-      total: rows.length,
-      imported: 0,
-      skipped: 0,
-      errors: 0
-    };
-    
-    for (var i = 0; i < rows.length; i++) {
-      try {
-        var row = rows[i];
-        var categorized = categorizeTransaction(row);
-        categorizedRows.push(categorized);
-        stats.imported++;
-      } catch (e) {
-        stats.errors++;
-        Logger.log('Fehler bei Zeile ' + i + ': ' + e.toString());
-      }
-    }
-    
-    // Importiere in Sheet
-    importToKontoSheet(categorizedRows);
-    
-    // Zusammenfassung
-    var summary = stats.imported + ' Buchungen importiert';
-    if (stats.errors > 0) {
-      summary += ', ' + stats.errors + ' Fehler';
-    }
-    
-    // Dashboard aktualisieren
-    updateDashboard();
-    
-    return summary;
-    
-  } catch (error) {
-    throw new Error('Import fehlgeschlagen: ' + error.toString());
-  }
-}
-
-/**
- * Parst Sparkassen-CSV
- * Unterstützt verschiedene Formate
- */
-function parseSparkassenCSV(csvContent) {
-  var lines = csvContent.split('\n');
-  var rows = [];
-  var delimiter = detectDelimiter(lines[0]);
-  
-  // Überspringe Kopfzeile
-  for (var i = 1; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (!line) continue;
-    
-    var fields = parseCSVLine(line, delimiter);
-    
-    if (fields.length < 5) continue; // Zu wenige Felder
-    
-    // Sparkassen-Standard-Format:
-    // Buchungstag, Valuta, Auftraggeber/Empfänger, Buchungstext, Verwendungszweck, Betrag, Währung
-    
-    var row = {
-      datum: parseDate(fields[0]),
-      betrag: parseBetrag(fields[5] || fields[4]), // Betrag kann an Position 5 oder 4 sein
-      absender: cleanString(fields[2]),
-      iban: extractIBAN(line),
-      verwendungszweck: cleanString(fields[4] || fields[3]),
-      rawLine: line
-    };
-    
-    // Nur positive Beträge (Eingänge)
-    if (row.betrag > 0) {
-      rows.push(row);
-    }
-  }
-  
-  return rows;
-}
-
-/**
- * Erkennt das Trennzeichen (;, Komma, Tab)
- */
-function detectDelimiter(line) {
-  var delimiters = [';', ',', '\t'];
-  var counts = delimiters.map(function(d) {
-    return (line.match(new RegExp('\\' + d, 'g')) || []).length;
-  });
-  var maxIndex = counts.indexOf(Math.max.apply(Math, counts));
-  return delimiters[maxIndex];
-}
-
-/**
- * Parst eine CSV-Zeile mit Berücksichtigung von Anführungszeichen
- */
-function parseCSVLine(line, delimiter) {
-  var fields = [];
-  var field = '';
-  var inQuotes = false;
-  
-  for (var i = 0; i < line.length; i++) {
-    var char = line[i];
-    
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === delimiter && !inQuotes) {
-      fields.push(field);
-      field = '';
-    } else {
-      field += char;
-    }
-  }
-  
-  fields.push(field); // Letztes Feld
-  
-  return fields;
-}
-
-/**
- * Parst Datum aus verschiedenen Formaten
- */
-function parseDate(dateStr) {
-  dateStr = dateStr.replace(/["']/g, '').trim();
-  
-  // Format: DD.MM.YYYY
-  var parts = dateStr.split('.');
-  if (parts.length === 3) {
-    return new Date(parts[2], parts[1] - 1, parts[0]);
-  }
-  
-  // Format: YYYY-MM-DD
-  parts = dateStr.split('-');
-  if (parts.length === 3) {
-    return new Date(parts[0], parts[1] - 1, parts[2]);
-  }
-  
-  return new Date(dateStr);
-}
-
-/**
- * Parst Betrag (50,00 -> 50.00)
- */
-function parseBetrag(betragStr) {
-  betragStr = betragStr.replace(/["']/g, '').trim();
-  betragStr = betragStr.replace('.', ''); // Tausender-Trennzeichen entfernen
-  betragStr = betragStr.replace(',', '.'); // Komma zu Punkt
-  betragStr = betragStr.replace(/[^\d.-]/g, ''); // Nur Zahlen, Punkt, Minus
-  return parseFloat(betragStr) || 0;
-}
+// Hinweis: Eine ältere, parallele CSV-Import-Pipeline (showImportDialog,
+// getImportDialogHtml, processCSVImport, parseSparkassenCSV, dazu lokale
+// Kopien von detectDelimiter/parseCSVLine, sowie parseDate/parseBetrag/
+// cleanString) wurde hier entfernt. Sie war über kein Menü mehr erreichbar
+// (das Menü verwendet showCSVImportDialog -> processCSVImportRobust ->
+// importRowsToKontoSheet) und enthielt zudem einen Bug: categorizeTransaction()
+// wurde ohne den betrag-Parameter und mit nicht zum Row-Objekt passenden
+// Property-Namen aufgerufen, sodass jede Kategorisierung leer geblieben wäre.
+// detectDelimiter/parseCSVLine leben jetzt nur noch einmal weiter unten
+// (werden auch von processCSVImportRobust genutzt).
 
 /**
  * Extrahiert IBAN aus Text
@@ -3390,13 +2924,6 @@ function extractIBAN(text) {
     return match[0].replace(/\s/g, '');
   }
   return '';
-}
-
-/**
- * Bereinigt String
- */
-function cleanString(str) {
-  return str.replace(/["']/g, '').trim();
 }
 
 /**
@@ -3631,79 +3158,6 @@ function findKnownDonor(name, iban) {
   }
   
   return null;
-}
-
-/**
- * Importiert kategorisierte Zeilen ins Konto-Sheet
- * Neue Struktur: CSV-Spalten direkt übernommen + zusätzliche Spalten
- */
-function importToKontoSheet(rows) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_KONTO);
-  
-  if (!sheet) {
-    createKontoSheet();
-    sheet = ss.getSheetByName(SHEET_KONTO);
-  }
-  
-  // Bereite Daten vor - Neue CSV-Struktur:
-  // Spalten 1-12: CSV-Format (Auftragskonto, Buchungstag, Valutadatum, Buchungstext, Verwendungszweck, Begünstigter, Kontonummer, BIC, Betrag, Waehrung, Info, Kategorie)
-  // Spalten 13-16: Zusätzlich (Quittung, Quittungsnummer, Mitgliedsnummer, Bemerkung)
-  var dataToInsert = rows.map(function(row) {
-    return [
-      '', // A: Auftragskonto (wird später ausgefüllt oder leer gelassen)
-      row.datum, // B: Buchungstag
-      row.datum, // C: Valutadatum (gleiche wie Buchungstag)
-      '', // D: Buchungstext (z.B. "SEPA-Überweisung")
-      row.verwendungszweck, // E: Verwendungszweck
-      row.absender, // F: Begünstigter
-      row.iban, // G: Kontonummer (enthält IBAN)
-      '', // H: BIC (SWIFT) - leer wenn nicht verfügbar
-      row.betrag, // I: Betrag
-      'EUR', // J: Waehrung
-      '', // K: Info
-      row.kategorie, // L: Kategorie
-      row.quittung, // M: Quittung ausgestellt
-      row.quittungNummer, // N: Quittungsnummer
-      row.mitgliedsnummer || '', // O: Mitgliedsnummer (automatisch zugeordnet!)
-      row.bemerkung // P: Bemerkung
-    ];
-  });
-  
-  // Füge am Ende ein
-  var lastRow = sheet.getLastRow();
-  var startRow = lastRow + 1;
-  sheet.getRange(startRow, 1, dataToInsert.length, 16).setValues(dataToInsert);
-  
-  // Formatiere Datum (Spalte B: Buchungstag)
-  sheet.getRange(startRow, 2, dataToInsert.length, 1).setNumberFormat('dd.mm.yyyy');
-  
-  // Formatiere Valutadatum (Spalte C)
-  sheet.getRange(startRow, 3, dataToInsert.length, 1).setNumberFormat('dd.mm.yyyy');
-  
-  // Formatiere Betrag (Spalte I)
-  sheet.getRange(startRow, 9, dataToInsert.length, 1).setNumberFormat('#,##0.00 €');
-  
-  // Dropdown für Kategorie (Spalte L) auf neue Zeilen anwenden
-  var kategorieRange = sheet.getRange(startRow, 12, dataToInsert.length, 1);
-  var kategorieRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Spende', 'Mitgliedsbeitrag', 'Förderung', 'Intern', 'Spendenübergabe', 'Sonstiges'], true)
-    .build();
-  kategorieRange.setDataValidation(kategorieRule);
-  
-  // Dropdown für Quittung (Spalte M) auf neue Zeilen anwenden
-  var quittungRange = sheet.getRange(startRow, 13, dataToInsert.length, 1);
-  var quittungRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['Ja', 'Nein'], true)
-    .build();
-  quittungRange.setDataValidation(quittungRule);
-  
-  // Dropdown für Währung (Spalte J) auf neue Zeilen anwenden
-  var waehrungRange = sheet.getRange(startRow, 10, dataToInsert.length, 1);
-  var waehrungRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(['EUR', 'USD', 'GBP'], true)
-    .build();
-  waehrungRange.setDataValidation(waehrungRule);
 }
 
 /**
@@ -5473,7 +4927,8 @@ function ANZAHL_SACHSPENDEN_JAHR(jahr) {
 
 /**
  * Custom Function: Summiert negative Beträge (Ausgaben) aus Kontobewegungen für ein bestimmtes Jahr
- * WICHTIG: Schließt Kategorie "Spendenübergabe" aus, da diese separat in "Übergebene Spenden" erfasst wird
+ * WICHTIG: Schließt Kategorie "Spendenübergabe" aus, da diese separat in "Übergebene Spenden" erfasst wird,
+ * und "Intern" aus (interne Umbuchungen, analog zu EINNAHMEN_KONTO_JAHR)
  * 
  * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Summe der Ausgaben (als positive Zahl)
@@ -5497,7 +4952,8 @@ function AUSGABEN_KONTO_JAHR(jahr) {
     var bNum = normalizeKontoBetrag(betrag);
     
     // Schließe "Spendenübergabe" aus (wird separat in "Übergebene Spenden" gezählt)
-    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie !== 'Spendenübergabe') {
+    // und "Intern" aus (interne Umbuchungen zählen wie auf der Einnahmen-Seite nicht als Ausgabe)
+    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie !== 'Spendenübergabe' && kategorie !== 'Intern') {
       if (rowYear == targetYear) {
         summe += Math.abs(bNum);
       }
@@ -5509,7 +4965,7 @@ function AUSGABEN_KONTO_JAHR(jahr) {
 
 /**
  * Custom Function: Zählt negative Beträge (Ausgaben) aus Kontobewegungen für ein bestimmtes Jahr
- * WICHTIG: Schließt Kategorie "Spendenübergabe" aus
+ * WICHTIG: Schließt Kategorie "Spendenübergabe" und "Intern" aus (analog zu AUSGABEN_KONTO_JAHR)
  * 
  * @param {number|Date|string} jahr - Das Jahr für die Filterung (Zahl, Datum oder String)
  * @return {number} Anzahl der Ausgaben
@@ -5533,7 +4989,8 @@ function ANZAHL_AUSGABEN_KONTO_JAHR(jahr) {
     var bNum = normalizeKontoBetrag(betrag);
     
     // Schließe "Spendenübergabe" aus (wird separat in "Übergebene Spenden" gezählt)
-    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie !== 'Spendenübergabe') {
+    // und "Intern" aus (interne Umbuchungen zählen wie auf der Einnahmen-Seite nicht als Ausgabe)
+    if (rowYear !== null && !isNaN(bNum) && bNum < 0 && kategorie !== 'Spendenübergabe' && kategorie !== 'Intern') {
       if (rowYear == targetYear) {
         anzahl++;
       }
