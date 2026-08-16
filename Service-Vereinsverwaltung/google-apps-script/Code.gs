@@ -479,7 +479,7 @@ function ensureDashboardWebsitePufferCells_(sheet) {
   }
 
   try {
-    sheet.getRange('F4').setValue('Verfügbar für Touren / Web (C23 − E4):').setFontWeight('bold');
+    sheet.getRange('F4').setValue('Verfügbar für Spendenübergabe / Web (C23 − E4):').setFontWeight('bold');
     var g4 = sheet.getRange('G4');
     var formel = g4.getFormula();
     if (!formel || formel.indexOf('E4') === -1) {
@@ -1254,6 +1254,27 @@ function normalizeName(name) {
 }
 
 /**
+ * Fügt die gesetzlich vorgeschriebenen Hinweise (gemäß amtlichem Muster für
+ * Zuwendungsbestätigungen) an ein Dokument an. Gemeinsam genutzt von
+ * generateReceiptPDF(), generateStorniertePDF() und generateSammelquittungPDF(),
+ * damit der Rechtstext nicht mehrfach kopiert wird und dabei auseinanderläuft.
+ * @param {GoogleAppsScript.Document.Body} body
+ */
+function appendZuwendungsbestaetigungHinweise_(body) {
+  body.appendParagraph('─────────────────────────────────────────────────────────────')
+    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(6);
+
+  body.appendParagraph('Hinweis:')
+    .setFontSize(6).setBold(false).setSpacingAfter(2);
+
+  body.appendParagraph('Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen steuerbegünstigten Zwecken verwendet werden, haftet für die entgangene Steuer (§ 10b Abs. 4 EStG, § 9 Abs. 3 KStG, § 9 Nr. 5 GewStG).')
+    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(4);
+
+  body.appendParagraph('Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt, wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der Feststellung der Einhaltung der satzungsmäßigen Voraussetzungen nach § 60a Abs. 1 AO (Datum: ' + VEREIN_FESTSTELLUNGSBESCHEID_DATUM + ') länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt (§ 63 Abs. 5 AO).')
+    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(0);
+}
+
+/**
  * Generiert Quittungs-PDF mit Logo
  */
 /**
@@ -1473,18 +1494,8 @@ function generateReceiptPDF(receiptNumber, spenderName, betrag, spendenDatum, qu
     .setFontSize(9).setSpacingAfter(20);
   
   // === HINWEISE (gemäß amtlichem Muster) ===
-  body.appendParagraph('─────────────────────────────────────────────────────────────')
-    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(6);
-  
-  body.appendParagraph('Hinweis:')
-    .setFontSize(6).setBold(false).setSpacingAfter(2);
-  
-  body.appendParagraph('Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen steuerbegünstigten Zwecken verwendet werden, haftet für die entgangene Steuer (§ 10b Abs. 4 EStG, § 9 Abs. 3 KStG, § 9 Nr. 5 GewStG).')
-    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(4);
-  
-  body.appendParagraph('Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt, wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der Feststellung der Einhaltung der satzungsmäßigen Voraussetzungen nach § 60a Abs. 1 AO (Datum: ' + VEREIN_FESTSTELLUNGSBESCHEID_DATUM + ') länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt (§ 63 Abs. 5 AO).')
-    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(0);
-  
+  appendZuwendungsbestaetigungHinweise_(body);
+
   // Speichere PDF und gib File-Objekt zurück (verwendet gemeinsame Hilfsfunktion)
   return savePDFToDrive(tempDoc, 'Spendenquittung_' + receiptNumber + '.pdf');
 }
@@ -3714,42 +3725,10 @@ function matchAllPaymentsToMembers() {
   }
   
   var kontoValues = kontoSheet.getDataRange().getValues();
-  var mitgliederValues = mitgliederSheet.getDataRange().getValues();
-  
-  // Erstelle Mitglieds-Index für schnelle Suche
-  var mitgliederIndex = {};
-  for (var i = 1; i < mitgliederValues.length; i++) {
-    var row = mitgliederValues[i];
-    var nr = row[0]; // Spalte A: Nr.
-    var name = row[1]; // Spalte B: Name
-    var iban = row[10]; // Spalte K: IBAN
-    
-    if (!nr && !name) continue;
-    
-    // Normalisiere Daten für Index
-    var normalizedIBAN = '';
-    if (iban) {
-      normalizedIBAN = iban.replace(/\s/g, '').toUpperCase();
-      if (normalizedIBAN) {
-        mitgliederIndex['iban:' + normalizedIBAN] = nr;
-      }
-    }
-    
-    if (name) {
-      var normalizedName = name.toLowerCase().trim();
-      mitgliederIndex['name:' + normalizedName] = nr;
-      
-      // Auch einzelne Name-Teile indexieren
-      var nameParts = normalizedName.split(/[\s,]+/);
-      if (nameParts.length >= 2) {
-        mitgliederIndex['name:' + nameParts[0]] = nr; // Vorname
-        mitgliederIndex['name:' + nameParts[nameParts.length - 1]] = nr; // Nachname
-      }
-    }
-    
-    mitgliederIndex['nr:' + nr] = nr;
-  }
-  
+  // Hinweis: Die eigentliche Zuordnung läuft über findMember(), das die
+  // "Mitglieder"-Tabelle selbst durchsucht (mit sichererer, mehrstufiger
+  // Match-Logik). Ein früherer, hier ungenutzter Index wurde entfernt.
+
   // Durchsuche alle Zahlungseingänge (überspringe Header)
   var matched = 0;
   var updated = 0;
@@ -6801,17 +6780,7 @@ function generateSammelquittungPDF(receiptNumber, spenderAdresse, gesamtbetrag, 
     .setFontSize(9).setSpacingAfter(20);
   
   // === HINWEISE (gemäß amtlichem Muster) ===
-  body.appendParagraph('─────────────────────────────────────────────────────────────')
-    .setFontSize(8).setAlignment(DocumentApp.HorizontalAlignment.CENTER).setSpacingAfter(6);
-  
-  body.appendParagraph('Hinweis:')
-    .setFontSize(6).setBold(false).setSpacingAfter(2);
-  
-  body.appendParagraph('Wer vorsätzlich oder grob fahrlässig eine unrichtige Zuwendungsbestätigung erstellt oder wer veranlasst, dass Zuwendungen nicht zu den in der Zuwendungsbestätigung angegebenen steuerbegünstigten Zwecken verwendet werden, haftet für die entgangene Steuer (§ 10b Abs. 4 EStG, § 9 Abs. 3 KStG, § 9 Nr. 5 GewStG).')
-    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(4);
-  
-  body.appendParagraph('Diese Bestätigung wird nicht als Nachweis für die steuerliche Berücksichtigung der Zuwendung anerkannt, wenn das Datum des Freistellungsbescheides länger als 5 Jahre bzw. das Datum der vorläufigen Bescheinigung länger als 3 Jahre seit Ausstellung der Bestätigung zurückliegt (§ 63 Abs. 5 AO).')
-    .setFontSize(5).setLineSpacing(1.1).setSpacingAfter(0);
+  appendZuwendungsbestaetigungHinweise_(body);
   
   // Speichere PDF und gib File-Objekt zurück (verwendet gemeinsame Hilfsfunktion)
   return savePDFToDrive(tempDoc, 'Sammelquittung_' + receiptNumber + '.pdf');
