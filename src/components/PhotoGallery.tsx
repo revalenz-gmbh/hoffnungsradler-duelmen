@@ -5,6 +5,14 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const PhotoGallery = () => {
   const images = [
     {
+      src: "/photos/Legden26_1.jpg",
+      alt: "2026: Tour nach Legden – Gruppenbild vor dem Start",
+    },
+    {
+      src: "/photos/Legden26_2.jpg",
+      alt: "2026: Tour nach Legden – Kaffee und Kuchen im Hof von Dorf Münsterland",
+    },
+    {
       src: "/photos/26mai_01.jpg",
       alt: "2026: Kanaltour – Gruppe der Hoffnungsradler",
     },

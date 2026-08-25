@@ -23,6 +23,41 @@ const News = () => {
 
   const newsItems: NewsItem[] = [
     {
+      date: "23.08.2026",
+      title: "Tour nach Legden – 20 Radler, Kaffee, Kuchen und volle Spendenkasse",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Bei bestem Sommerwetter haben sich am Sonntag 20 Radlerinnen und Radler auf den Weg zu unserer Tour nach Legden gemacht. Über rund 81 Kilometer ging es auf ruhigen Wegen durch das Münsterland – eine schöne Runde, die die Gruppe gemeinsam und in entspanntem Tempo bewältigt hat.
+          </p>
+          <DialogTrigger asChild>
+            <button onClick={() => setSelectedImage("/photos/Legden26_1.jpg")} className="block w-full">
+              <figure>
+                <img src="/photos/Legden26_1.jpg" alt="Gruppenbild der Hoffnungsradler vor dem Start zur Tour nach Legden" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <figcaption className="text-xs text-gray-500 mt-1">20 Radlerinnen und Radler vor dem Start in Dülmen</figcaption>
+              </figure>
+            </button>
+          </DialogTrigger>
+          <p className="text-gray-700">
+            Weil die Düstermühle als Gaststätte inzwischen geschlossen hat, sind wir im Dorf Münsterland eingekehrt – und wurden dort sehr gut bewirtet. Im Hof wartete bereits ein lang gedeckter Tisch mit Kaffee und Kuchen auf uns: der perfekte Rahmen für eine ausgiebige Pause, bevor es zurück nach Dülmen ging.
+          </p>
+          <DialogTrigger asChild>
+            <button onClick={() => setSelectedImage("/photos/Legden26_2.jpg")} className="block w-full">
+              <figure>
+                <img src="/photos/Legden26_2.jpg" alt="Kaffeepause der Hoffnungsradler an der langen Tafel im Hof von Dorf Münsterland in Legden" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <figcaption className="text-xs text-gray-500 mt-1">Kaffee und Kuchen an der langen Tafel im Hof von Dorf Münsterland</figcaption>
+              </figure>
+            </button>
+          </DialogTrigger>
+          <p className="text-gray-700">
+            Auch für den guten Zweck war der Tag ein Erfolg: Vor Ort konnten wir weitere Gäste davon überzeugen, für unsere Spendenaktion zu geben. Damit ist unsere Spendenkasse für die diesjährige Übergabe mittlerweile auf <strong>3.169 €</strong> angewachsen. Herzlichen Dank an alle, die mitgefahren sind und gespendet haben!
+          </p>
+        </div>
+      ),
+      type: "internal",
+      highlight: true
+    },
+    {
       date: "26.07.2026",
       title: "Nachholtermin Münster-Tour – Stärkung in der Schillerstraße bei Guide Martin",
       excerpt: `Beim Nachholtermin unserer Münster-Tour legten wir in der Schillerstraße bei unserem Guide Martin einen Stopp ein, um uns dort für den weiteren Weg zu stärken. Anschließend ging es weiter durch Münster, vorbei am Haus Rüschhaus, und über den Rückweg zurück nach Dülmen.`,
