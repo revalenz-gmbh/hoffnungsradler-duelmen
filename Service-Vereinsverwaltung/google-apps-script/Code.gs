@@ -504,106 +504,153 @@ function ensureDashboardWebsitePufferCells_(sheet) {
   }
 }
 
+/**
+ * Liefert die Dashboard-Zahlen fuer die Website.
+ *
+ * ⚠️ Rechnet BEWUSST selbst, statt die Dashboard-Zellen zu lesen.
+ *
+ * Das Dashboard fuellt B7..D17 ueber eigene Tabellenfunktionen wie
+ * EINNAHMEN_KONTO_JAHR(B3). Google Sheets merkt sich das Ergebnis einer eigenen
+ * Funktion anhand ihrer ARGUMENTE. Diese Funktionen bekommen nur das Jahr aus B3
+ * uebergeben, lesen die Kontobewegungen aber intern ueber SpreadsheetApp — fuer
+ * Sheets ist diese Abhaengigkeit unsichtbar. Nach einem Import aendert sich B3
+ * nicht, also wird nicht neu gerechnet und die Zelle behaelt den alten Wert.
+ * C23 (Endbestand) und G4 haengen daran und sind damit ebenfalls veraltet.
+ * LETZTES_DATUM_KONTO() hat sogar gar kein Argument und erneuert sich praktisch nie.
+ *
+ * Aus Skriptcode heraus aufgerufen greift dieser Zwischenspeicher NICHT — dieselben
+ * Funktionen liefern hier frische Werte. Deshalb werden sie unten direkt gerufen,
+ * statt ihre eingefrorenen Ergebnisse aus den Zellen zu lesen.
+ *
+ * Weiterhin AUS ZELLEN gelesen wird nur, was verlaesslich aktuell ist:
+ *   E3, E4          einfache Werte ohne Formel
+ *   B27..C28        eingebaute Formeln (ZÄHLENWENN ueber echte Bereiche) —
+ *                   die rechnet Sheets von selbst nach
+ *
+ * Der Kontostand ist ein gerechneter Wert (Anfangsbestand + Einnahmen − Ausgaben),
+ * weil der Sparkassen-Export keinen laufenden Saldo mitliefert. Sobald der
+ * FinTS-Zugang fuer das Vereinskonto steht, kann er von der Bank selbst kommen.
+ */
 function getDashboardData() {
   try {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     if (!ss) {
       throw new Error('Spreadsheet konnte nicht geöffnet werden.');
     }
-  
+
     var dashboardSheet = ss.getSheetByName(SHEET_DASHBOARD);
-  if (!dashboardSheet) {
+    if (!dashboardSheet) {
       throw new Error('Dashboard-Sheet existiert nicht. Bitte zuerst anlegen über: 📊 Buchhaltung → Alle Tabellen neu anlegen');
-  }
-  
+    }
+
     // Versuche Jahr zu lesen, falls leer: aktuelles Jahr verwenden
-  var currentYear = dashboardSheet.getRange('B3').getValue();
+    var currentYear = dashboardSheet.getRange('B3').getValue();
     if (!currentYear || currentYear === '') {
       currentYear = new Date().getFullYear();
     }
 
     ensureDashboardWebsitePufferCellsIfNeededForApi_(dashboardSheet);
 
-    var endbestandRaw = dashboardSheet.getRange('C23').getValue() || 0;
-    var endbestand = parseFloat(endbestandRaw);
-    if (isNaN(endbestand)) {
-      endbestand = 0;
-    }
-    var basisRaw = dashboardSheet.getRange('E4').getValue();
-    var basisAbsicherung = parseFloat(basisRaw);
-    if (isNaN(basisAbsicherung) || basisAbsicherung < 0) {
-      basisAbsicherung = 300;
-    }
-    var verfFormelwert = dashboardSheet.getRange('G4').getValue();
-    var verfuegbarFuerWebsite = parseFloat(verfFormelwert);
-    if (isNaN(verfuegbarFuerWebsite)) {
-      verfuegbarFuerWebsite = Math.max(0, endbestand - basisAbsicherung);
-    } else {
-      verfuegbarFuerWebsite = Math.max(0, verfuegbarFuerWebsite);
-    }
-  
-    // Lese Werte mit Fehlerbehandlung
     try {
-  return {
-    year: currentYear,
-    einnahmen: {
-      konto: {
-            anzahl: dashboardSheet.getRange('B7').getValue() || 0,
-            summe: dashboardSheet.getRange('C7').getValue() || 0,
-            letzter: dashboardSheet.getRange('D7').getValue() || '-'
-      },
-      bargeld: {
-            anzahl: dashboardSheet.getRange('B8').getValue() || 0,
-            summe: dashboardSheet.getRange('C8').getValue() || 0,
-            letzter: dashboardSheet.getRange('D8').getValue() || '-'
+      // --- frisch gerechnet, nicht aus den Zellen gelesen ---------------------
+      // Die Datumsfunktionen lesen jeweils ein ganzes Blatt; je einmal genuegt.
+      var letztesDatumKonto = LETZTES_DATUM_KONTO();
+      var letztesDatumBargeld = LETZTES_DATUM_BARGELD();
+
+      var einnahmenKonto = zahlOderNull_(EINNAHMEN_KONTO_JAHR(currentYear));
+      var einnahmenBargeld = zahlOderNull_(BARGELDSPENDEN_JAHR(currentYear));
+      var einnahmenGesamt = einnahmenKonto + einnahmenBargeld;
+
+      var ausgabenKonto = zahlOderNull_(AUSGABEN_KONTO_JAHR(currentYear));
+      var ausgabenBar = zahlOderNull_(BARAUSGABEN_JAHR(currentYear));
+      var ausgabenUebergeben = zahlOderNull_(UEBERGABE_JAHR(currentYear));
+      var ausgabenGesamt = ausgabenKonto + ausgabenBar + ausgabenUebergeben;
+
+      // Anfangsbestand: einfacher Wert in E3, keine Formel, also immer aktuell.
+      var anfangsbestand = zahlOderNull_(dashboardSheet.getRange('E3').getValue());
+      var endbestand = anfangsbestand + einnahmenGesamt - ausgabenGesamt;
+
+      var basisRaw = dashboardSheet.getRange('E4').getValue();
+      var basisAbsicherung = parseFloat(basisRaw);
+      if (isNaN(basisAbsicherung) || basisAbsicherung < 0) {
+        basisAbsicherung = 300;
+      }
+
+      // G4 wird NICHT gelesen: die Zelle haengt an C23 und ist damit ebenso alt.
+      var verfuegbarFuerWebsite = Math.max(0, endbestand - basisAbsicherung);
+
+      return {
+        year: currentYear,
+        einnahmen: {
+          konto: {
+            anzahl: zahlOderNull_(ANZAHL_EINNAHMEN_KONTO_JAHR(currentYear)),
+            summe: einnahmenKonto,
+            letzter: letztesDatumKonto || '-'
           },
-          gesamt: dashboardSheet.getRange('C9').getValue() || 0
+          bargeld: {
+            anzahl: zahlOderNull_(ANZAHL_BARGELDSPENDEN_JAHR(currentYear)),
+            summe: einnahmenBargeld,
+            letzter: letztesDatumBargeld || '-'
+          },
+          gesamt: einnahmenGesamt
         },
         sachspenden: {
-          anzahl: dashboardSheet.getRange('B11').getValue() || 0,
-          summe: dashboardSheet.getRange('C11').getValue() || 0,
-          letzter: dashboardSheet.getRange('D11').getValue() || '-'
-    },
-    ausgaben: {
-      allgemein: {
-            anzahl: dashboardSheet.getRange('B15').getValue() || 0,
-            summe: dashboardSheet.getRange('C15').getValue() || 0,
-            letzter: dashboardSheet.getRange('D15').getValue() || '-'
+          anzahl: zahlOderNull_(ANZAHL_SACHSPENDEN_JAHR(currentYear)),
+          summe: zahlOderNull_(SACHSPENDEN_JAHR(currentYear)),
+          letzter: letztesDatumBargeld || '-'
+        },
+        ausgaben: {
+          allgemein: {
+            anzahl: zahlOderNull_(ANZAHL_AUSGABEN_KONTO_JAHR(currentYear)),
+            summe: ausgabenKonto,
+            letzter: letztesDatumKonto || '-'
           },
-      barausgaben: {
-        anzahl: dashboardSheet.getRange('B16').getValue() || 0,
-        summe: dashboardSheet.getRange('C16').getValue() || 0,
-        letzter: dashboardSheet.getRange('D16').getValue() || '-'
-      },
-      uebergeben: {
-        anzahl: dashboardSheet.getRange('B17').getValue() || 0,
-        summe: dashboardSheet.getRange('C17').getValue() || 0,
-        letzter: dashboardSheet.getRange('D17').getValue() || '-'
-      },
-      gesamt: dashboardSheet.getRange('C18').getValue() || 0
+          barausgaben: {
+            anzahl: zahlOderNull_(ANZAHL_BARAUSGABEN_JAHR(currentYear)),
+            summe: ausgabenBar,
+            letzter: LETZTES_DATUM_BARAUSGABEN() || '-'
+          },
+          uebergeben: {
+            anzahl: zahlOderNull_(ANZAHL_UEBERGABE_JAHR(currentYear)),
+            summe: ausgabenUebergeben,
+            letzter: LETZTES_DATUM_UEBERGABE() || '-'
+          },
+          gesamt: ausgabenGesamt
         },
         saldo: endbestand,
         basisAbsicherung: basisAbsicherung,
         verfuegbarFuerWebsite: verfuegbarFuerWebsite,
-    quittungen: {
-      konto: {
+        quittungen: {
+          konto: {
             ausgestellt: dashboardSheet.getRange('B27').getValue() || 0,
             offen: dashboardSheet.getRange('C27').getValue() || 0
-      },
-      bargeld: {
+          },
+          bargeld: {
             ausgestellt: dashboardSheet.getRange('B28').getValue() || 0,
             offen: dashboardSheet.getRange('C28').getValue() || 0
           }
         }
       };
     } catch (readError) {
-      Logger.log('Fehler beim Lesen der Dashboard-Daten: ' + readError.toString());
-      throw new Error('Fehler beim Lesen der Dashboard-Daten. Bitte prüfen Sie, ob das Dashboard korrekt angelegt wurde.');
+      Logger.log('Fehler beim Berechnen der Dashboard-Daten: ' + readError.toString());
+      throw new Error('Fehler beim Berechnen der Dashboard-Daten. Bitte prüfen Sie, ob Dashboard und Kontobewegungen korrekt angelegt sind.');
     }
   } catch (error) {
     Logger.log('Fehler in getDashboardData(): ' + error.toString());
     throw error;
   }
+}
+
+/**
+ * Macht aus einem Zellwert oder Funktionsergebnis eine brauchbare Zahl.
+ *
+ * Leere Zellen, Text und NaN werden zu 0. Ohne das schleppt sich ein einzelner
+ * unbrauchbarer Wert als NaN durch die ganze Summe bis in den Kontostand — und
+ * die Website zeigte dann gar nichts statt einer erkennbar falschen Zahl.
+ */
+function zahlOderNull_(wert) {
+  var zahl = parseFloat(wert);
+  return isNaN(zahl) ? 0 : zahl;
 }
 
 // =============================================================================
