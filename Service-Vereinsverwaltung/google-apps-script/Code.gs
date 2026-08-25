@@ -4289,28 +4289,35 @@ function importRowsToKontoSheet(rows) {
     throw new Error('Tabelle "' + SHEET_KONTO + '" nicht gefunden. Bitte zuerst anlegen.');
   }
   
-  // Lade alle existierenden Buchungen für Duplikat-Prüfung
+  // Zaehle die bereits vorhandenen Buchungen je fachlichem Schluessel.
+  //
+  // Gezaehlt, nicht nur vermerkt: Zwei Spender koennen am selben Tag denselben Betrag
+  // mit demselben Zweck ueberweisen. Ein blosses "schon da" wuerde die zweite Spende
+  // beim naechsten Import stillschweigend verschlucken — der schlimmere Fehler, weil
+  // Geld fehlt und es niemandem auffaellt.
   var lastRow = sheet.getLastRow();
-  var existingKeys = {};
-  
+  var vorhandeneAnzahl = {};
+
   if (lastRow > 1) {
-    // Alle Datenzeilen inkl. letzter Zeile (vorher lastRow-1 → letzte Buchung fehlte in Duplikat-Map)
-    var existingData = sheet.getRange(2, 1, lastRow, 16).getValues();
-    
-    // Erstelle Objekt mit eindeutigen Identifikatoren bestehender Buchungen
+    // Ab Zeile 2 gibt es lastRow - 1 Datenzeilen. Ein hoeherer Wert liest ueber die
+    // Daten hinaus; eine fruehere Fassung stand hier auf lastRow.
+    var existingData = sheet.getRange(2, 1, lastRow - 1, 16).getValues();
+
     for (var i = 0; i < existingData.length; i++) {
       var row = existingData[i];
-      var buchungstag = row[1]; // Spalte B
-      var betrag = row[8]; // Spalte I
-      var beguenstigter = (row[5] || '').toString().trim(); // Spalte F
-      
-      // Erstelle eindeutigen Key: Datum + Betrag + Begünstigter
-      if (buchungstag && betrag !== null && betrag !== undefined && betrag !== '') {
-        var key = formatDateForKey(buchungstag) + '|' + parseFloat(betrag).toFixed(2) + '|' + beguenstigter.toLowerCase();
-        existingKeys[key] = true;
+      var buchungstag = row[1];   // Spalte B
+      var betrag = row[8];        // Spalte I
+      if (!buchungstag || betrag === null || betrag === undefined || betrag === '') {
+        continue;
       }
+      // Spalte E = Verwendungszweck, Spalte G = Kontonummer der Gegenseite
+      var key = buchungsSchluessel_(buchungstag, betrag, row[4], row[6]);
+      vorhandeneAnzahl[key] = (vorhandeneAnzahl[key] || 0) + 1;
     }
   }
+
+  // Wie oft ein Schluessel in DIESEM Import schon vorkam.
+  var imLaufGesehen = {};
   
   var importedCount = 0;
   var skippedCount = 0;
@@ -4332,12 +4339,13 @@ function importRowsToKontoSheet(rows) {
     var bic = row['BIC (SWIFT-Code)'] || row['BIC (SWIFT)'] || '';
     var waehrung = row['Waehrung'] || row['Währung'] || 'EUR';
     
-    // Prüfe auf Duplikat
+    // Dublette? Deckt sich diese Zeile mit einer, die schon im Blatt steht?
     if (buchungstag && betrag !== null && betrag !== undefined && betrag !== 0) {
-      var key = formatDateForKey(buchungstag) + '|' + betrag.toFixed(2) + '|' + beguenstigter.toLowerCase();
-      if (existingKeys[key]) {
+      var key = buchungsSchluessel_(buchungstag, betrag, row['Verwendungszweck'] || '', kontonummer);
+      imLaufGesehen[key] = (imLaufGesehen[key] || 0) + 1;
+      if (imLaufGesehen[key] <= (vorhandeneAnzahl[key] || 0)) {
         skippedCount++;
-        Logger.log('Duplikat übersprungen: ' + formatDateForKey(buchungstag) + ' | ' + betrag + ' | ' + beguenstigter);
+        Logger.log('Dublette uebersprungen: ' + formatDateForKey(buchungstag) + ' | ' + betrag + ' | ' + kontonummer);
         continue;
       }
     }
@@ -4445,6 +4453,36 @@ function importRowsToKontoSheet(rows) {
 /**
  * Formatiert ein Datum für den Duplikat-Key
  */
+/**
+ * Fachlicher Schluessel eines Kontoumsatzes fuer die Dublettenerkennung.
+ *
+ * Verfahren uebernommen aus dem Zahlungsabgleich
+ * (revalenz-gmbh/zahlungsabgleich-baustein, src/bank/transactionHash.js), damit beide
+ * Systeme denselben Umsatz gleich identifizieren.
+ *
+ * ⚠️ Der NAME des Zahlenden geht bewusst NICHT ein. Er wird von Export zu Export
+ * unterschiedlich geschrieben — Umlaute, Abkuerzungen, Gross- und Kleinschreibung —,
+ * derselbe Umsatz bekaeme dann zwei verschiedene Schluessel und wuerde doppelt
+ * importiert. Die Kontonummer der Gegenseite ist stabil.
+ *
+ * ⚠️ Der Verwendungszweck gehoert dazu: Ohne ihn sind zwei verschiedene Spenden am
+ * selben Tag ueber denselben Betrag vom selben Konto nicht unterscheidbar.
+ *
+ * Wie oft ein Schluessel vorkommen darf, entscheidet der Aufrufer durch Zaehlen —
+ * echte Mehrfachbuchungen sollen erhalten bleiben.
+ */
+function buchungsSchluessel_(buchungstag, betrag, zweck, gegenkonto) {
+  var summe = parseFloat(betrag);
+  var zweckRein = String(zweck === null || zweck === undefined ? '' : zweck)
+    .toUpperCase().replace(/[^A-Z0-9]/g, '');
+  var kontoRein = String(gegenkonto === null || gegenkonto === undefined ? '' : gegenkonto)
+    .toUpperCase().replace(/\s+/g, '');
+  return formatDateForKey(buchungstag) + '|' +
+         (isNaN(summe) ? 'NaN' : summe.toFixed(2)) + '|' +
+         zweckRein + '|' +
+         kontoRein;
+}
+
 function formatDateForKey(date) {
   if (!date) return '';
   if (date instanceof Date) {
