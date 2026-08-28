@@ -1,6 +1,5 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import { QRCodeSVG } from "qrcode.react";
 import {
   Table,
   TableBody,
@@ -134,26 +133,7 @@ const Spenden = () => {
     },
   ];
 
-  // Spendenkonto-Informationen
-  const bankAccount = {
-    bank: "Sparkasse Westmünsterland",
-    accountHolder: "Hoffnungsradler Dülmen e.V.",
-    iban: "DE76 4015 4530 0035 6376 51",
-    bic: "WELADE3WXXX"
-  };
 
-  // QR-Code-Daten für SEPA-Überweisung
-  const qrCodeData = `BCD
-001
-1
-SCT
-${bankAccount.bic}
-${bankAccount.accountHolder}
-${bankAccount.iban.replace(/\s/g, "")}
-EUR
-0
-Spende Hoffnungsradler
-`;
 
   return (
     <div className="min-h-screen bg-snow">
@@ -208,7 +188,7 @@ Spende Hoffnungsradler
                 Nur ueber diesen Weg kann eine Zahlung automatisch zugeordnet und eine
                 Zuwendungsbestaetigung ausgestellt werden -- der QR-Code weiter unten
                 traegt keine Referenz. */}
-            <div className="mb-8 bg-white rounded-lg shadow-lg border border-forest/10 p-8">
+            <div className="mb-16 bg-white rounded-lg shadow-lg border border-forest/10 p-8">
               <h2 className="font-anton text-3xl text-prussian mb-6">Mit Spendenquittung spenden</h2>
               <p className="text-text mb-6">
                 Wenn Sie eine Zuwendungsbestätigung für das Finanzamt möchten, nutzen Sie bitte
@@ -221,50 +201,6 @@ Spende Hoffnungsradler
               >
                 Zur Spendenseite
               </a>
-            </div>
-
-            {/* Spendenkonto Section */}
-            <div className="mb-16 bg-white rounded-lg shadow-lg border border-forest/10 p-8">
-              <h2 className="font-anton text-3xl text-prussian mb-6">Schnell spenden, ohne Quittung</h2>
-              <p className="text-text mb-6">
-                Sie können den QR-Code mit Ihrer Banking-App scannen oder die Kontodaten manuell
-                eingeben. Dieser Weg ist der schnellste — er enthält aber keine persönliche
-                Referenz, deshalb können wir eine Spende darüber nicht automatisch zuordnen und
-                keine Zuwendungsbestätigung ausstellen.
-              </p>
-              
-              <div className="flex flex-col md:flex-row gap-8 items-center">
-                <div className="bg-white p-4 rounded-lg border border-forest/20">
-                  <QRCodeSVG 
-                    value={qrCodeData} 
-                    size={200} 
-                    level="M"
-                    includeMargin={true}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-bold text-xl text-prussian mb-2">Kontoinhaber</h3>
-                    <p className="text-text">{bankAccount.accountHolder}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-bold text-xl text-prussian mb-2">Bank</h3>
-                    <p className="text-text">{bankAccount.bank}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-bold text-xl text-prussian mb-2">IBAN</h3>
-                    <p className="text-text font-mono">{bankAccount.iban}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-bold text-xl text-prussian mb-2">BIC</h3>
-                    <p className="text-text font-mono">{bankAccount.bic}</p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Organizations Section */}
