@@ -204,11 +204,33 @@ Spende Hoffnungsradler
               </p>
             </div>
 
+            {/* Spenden mit Quittung: fuehrt auf die Spendenseite mit eigener Referenz.
+                Nur ueber diesen Weg kann eine Zahlung automatisch zugeordnet und eine
+                Zuwendungsbestaetigung ausgestellt werden -- der QR-Code weiter unten
+                traegt keine Referenz. */}
+            <div className="mb-8 bg-white rounded-lg shadow-lg border border-forest/10 p-8">
+              <h2 className="font-anton text-3xl text-prussian mb-6">Mit Spendenquittung spenden</h2>
+              <p className="text-text mb-6">
+                Wenn Sie eine Zuwendungsbestätigung für das Finanzamt möchten, nutzen Sie bitte
+                unsere Spendenseite. Sie erhalten dort eine persönliche Referenz und einen
+                QR-Code, mit dem Ihre Überweisung automatisch zugeordnet wird.
+              </p>
+              <a
+                href="https://spenden.hoffnungs-radler-duelmen.de"
+                className="inline-block bg-prussian text-snow font-bold rounded-lg px-6 py-3 hover:opacity-90 transition-opacity"
+              >
+                Zur Spendenseite
+              </a>
+            </div>
+
             {/* Spendenkonto Section */}
             <div className="mb-16 bg-white rounded-lg shadow-lg border border-forest/10 p-8">
-              <h2 className="font-anton text-3xl text-prussian mb-6">Unser Spendenkonto</h2>
+              <h2 className="font-anton text-3xl text-prussian mb-6">Schnell spenden, ohne Quittung</h2>
               <p className="text-text mb-6">
-                Unterstützen Sie uns mit Ihrer Spende. Sie können den QR-Code mit Ihrer Banking-App scannen, um eine Überweisung zu tätigen, oder die Kontodaten manuell eingeben.
+                Sie können den QR-Code mit Ihrer Banking-App scannen oder die Kontodaten manuell
+                eingeben. Dieser Weg ist der schnellste — er enthält aber keine persönliche
+                Referenz, deshalb können wir eine Spende darüber nicht automatisch zuordnen und
+                keine Zuwendungsbestätigung ausstellen.
               </p>
               
               <div className="flex flex-col md:flex-row gap-8 items-center">
