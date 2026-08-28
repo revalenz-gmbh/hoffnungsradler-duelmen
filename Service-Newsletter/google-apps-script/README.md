@@ -120,6 +120,20 @@ Erweiterungen > Newsletter > Administration > Quota-Status (24h) anzeigen
 
 ## 📊 Newsletter-Erstellung
 
+### Newsletter-Spreadsheet (Referenz)
+- **Welches Dokument:** die `SHEET_ID` aus den Script Properties des Projekts
+  (Projekteinstellungen → Script-Properties). Sie steht bewusst **nicht** hier und
+  nicht in `settings.gs` — das Repo ist einsehbar, das Abonnentenblatt enthält
+  E-Mail-Adressen.
+- **Blatt:** `Newsletter_aktuell`
+- **Felder:**
+  - `B2` – Tour-Titel
+  - `B3` – Beschreibung (Fließtext für die E-Mail)
+  - `B4` – Datum und Uhrzeit
+  - `B5` – Treffpunkt
+
+Tour-Texte können aus `src/components/TourDates.tsx` und der Website abgeleitet werden; nach dem Eintragen: **Newsletter → Test-Newsletter senden** oder **Newsletter an alle senden**.
+
 ### 1. Neuen Newsletter erstellen
 ```
 1. Erweiterungen > Newsletter > Vorlage erstellen/öffnen
