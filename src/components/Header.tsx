@@ -12,10 +12,6 @@ const Header = () => {
     { name: "Sponsoren", path: "/sponsoren" },
     { name: "Spenden", path: "/spenden" },
     { name: "Presse", path: "/presse" },
-    {
-      name: "Bilder",
-      path: "http://bilder.xn--hoffnungs-radler-dlmen-9lc.de/",
-    },
     { name: "Kontakt", path: "/kontakt" },
   ];
 
