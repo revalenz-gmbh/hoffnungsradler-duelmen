@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Download, Map, Link2 } from "lucide-react";
+import { Download, Map, Link2, Mountain } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,8 +14,9 @@ import { useEffect, useState } from "react";
 // Einfache Struktur für aktuelle Touren
 interface TourVariant {
   label: string; // z.B. "48 km"
+  /** Höhenmeter der Variante, z. B. "ca. 430 hm" */
+  elevation?: string;
   gpxUrl?: string;
-  mapUrl?: string;
   komootUrl?: string;
 }
 
@@ -24,6 +25,8 @@ interface TourDate {
   day?: string;
   name: string;
   distance: string;
+  /** Höhenmeter, bei mehreren Varianten z. B. "ca. 430 / 810 / 1.110 hm" */
+  elevation?: string;
   time: string;
   location: string;
   address: string;
@@ -119,15 +122,15 @@ export const tours2025: TourDate[] = [
     day: "Sonntag",
     name: "Baumberger Alpin-Tour",
     distance: "48/78/106km",
+    elevation: "ca. 430 / 804 / 1.110 hm",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
     speed: "frei",
-    mapUrl: "https://www.google.com/maps/d/edit?mid=1oyrlz9R1EAoHARdRyp4icMReQLZEThQ&ll=51.89805594931107%2C7.311132499999986&z=11",
     variants: [
-      { label: "48 km", komootUrl: "https://www.komoot.com/de-de/tour/1877164999" },
-      { label: "78 km", komootUrl: "https://www.komoot.com/de-de/tour/1319782395" },
-      { label: "106 km", komootUrl: "https://www.komoot.com/de-de/tour/1861946972" }
+      { label: "48 km", elevation: "ca. 430 hm", gpxUrl: "https://drive.google.com/uc?export=download&id=1hL8i29g_qrrSh0SDjx6WVC8rAvYQpmkZ", komootUrl: "https://www.komoot.com/de-de/tour/1877164999?share_token=aGV4K3O2xCUTn3xliWAv3X2lWz5bqvUOYK1VTvUu2VIySKH1Mu&ref=wtd" },
+      { label: "78 km", elevation: "ca. 804 hm", gpxUrl: "https://drive.google.com/uc?export=download&id=1Ng0roWrLU1-14vaOhgHZjU51C45ySL4O", komootUrl: "https://www.komoot.com/de-de/tour/1319782395?share_token=aR4axmOGOFXBIn72YWKJQiDP3oVLjISVmXti7lXzeYw8HkjaJ3&ref=wtd" },
+      { label: "106 km", elevation: "ca. 1.110 hm", gpxUrl: "https://drive.google.com/uc?export=download&id=1E9ngRO40RK4UzQmMVSUPOS2MvgWjx3IW", komootUrl: "https://www.komoot.com/de-de/tour/1861946972?share_token=aPe3qoV9MbMVylwYZp2aQUW77unufTOuXcoDz1a66IHkVB1NB6&ref=wtd" }
     ]
   }
 ];
@@ -220,10 +223,16 @@ export const tours2026: TourDate[] = [
     day: "Sonntag",
     name: "Saisonabschluss / Baumberge-Alpin-Tour",
     distance: "48/78/106 km",
+    elevation: "ca. 430 / 804 / 1.110 hm",
     time: "10:00 Uhr",
     location: "Sportzentrum Süd",
     address: "Kapellenweg, Dülmen",
     speed: "frei",
+    variants: [
+      { label: "48 km", elevation: "ca. 430 hm", gpxUrl: "https://drive.google.com/uc?export=download&id=1hL8i29g_qrrSh0SDjx6WVC8rAvYQpmkZ", komootUrl: "https://www.komoot.com/de-de/tour/1877164999?share_token=aGV4K3O2xCUTn3xliWAv3X2lWz5bqvUOYK1VTvUu2VIySKH1Mu&ref=wtd" },
+      { label: "78 km", elevation: "ca. 804 hm", gpxUrl: "https://drive.google.com/uc?export=download&id=1Ng0roWrLU1-14vaOhgHZjU51C45ySL4O", komootUrl: "https://www.komoot.com/de-de/tour/1319782395?share_token=aR4axmOGOFXBIn72YWKJQiDP3oVLjISVmXti7lXzeYw8HkjaJ3&ref=wtd" },
+      { label: "106 km", elevation: "ca. 1.110 hm", gpxUrl: "https://drive.google.com/uc?export=download&id=1E9ngRO40RK4UzQmMVSUPOS2MvgWjx3IW", komootUrl: "https://www.komoot.com/de-de/tour/1861946972?share_token=aPe3qoV9MbMVylwYZp2aQUW77unufTOuXcoDz1a66IHkVB1NB6&ref=wtd" }
+    ]
   },
 ];
 
@@ -266,9 +275,9 @@ const TourDates = () => {
         }
 
         setTourList(prev => prev.map(td => {
-          if (td.date !== '28.09.2025') return td;
+          if (!isBaumberge(td.name)) return td;
           const desiredLabels = ['48 km', '78 km', '106 km'];
-          const existing = td.variants && td.variants.length ? td.variants : desiredLabels.map(l => ({ label: l }));
+          const existing: TourVariant[] = td.variants && td.variants.length ? td.variants : desiredLabels.map(l => ({ label: l }));
           const merged = existing.map(v => ({ ...v, gpxUrl: variantMap[v.label] || v.gpxUrl }));
           return { ...td, variants: merged };
         }));
@@ -334,6 +343,12 @@ const TourDates = () => {
                     </td>
                     <td className="px-4 py-3">
                       <div className="font-medium">{tour.distance}</div>
+                      {tour.elevation && (
+                        <div className="text-sm text-gray-600 flex items-center gap-1">
+                          <Mountain className="w-3.5 h-3.5 text-forest/70" aria-hidden="true" />
+                          <span>{tour.elevation}</span>
+                        </div>
+                      )}
                       <div className="text-sm text-gray-600">{tour.speed}</div>
                       {tour.bikeNote && (
                         <div className="text-sm text-forest/90 mt-1">{tour.bikeNote}</div>
@@ -344,27 +359,16 @@ const TourDates = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           {tour.variants.map((variant, vIdx) => (
                             <div key={vIdx} className="border border-forest/10 rounded-lg p-2">
-                              <div className="text-sm font-medium mb-2">{variant.label}</div>
-                              <div className="flex flex-wrap gap-2">
-                                {(variant.mapUrl || tour.mapUrl) ? (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-forest hover:text-forest hover:bg-forest/5"
-                                    asChild
-                                  >
-                                    <a 
-                                      href={variant.mapUrl || tour.mapUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      title="Route auf Google Maps ansehen"
-                                    >
-                                      <Map className="w-4 h-4" />
-                                    </a>
-                                  </Button>
-                                ) : (
-                                  <span className="text-xs text-gray-400">Map bald verfügbar</span>
+                              <div className="mb-2">
+                                <div className="text-sm font-medium">{variant.label}</div>
+                                {variant.elevation && (
+                                  <div className="text-xs text-gray-600 flex items-center gap-1">
+                                    <Mountain className="w-3 h-3 text-forest/70" aria-hidden="true" />
+                                    <span>{variant.elevation}</span>
+                                  </div>
                                 )}
+                              </div>
+                              <div className="flex flex-wrap gap-2">
                                 {variant.komootUrl ? (
                                   <Button
                                     variant="outline"
