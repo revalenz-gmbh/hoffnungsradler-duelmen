@@ -7,12 +7,15 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getDashboard, getUebergabeSummen, invalidateDonationsCache, type DashboardData } from "../lib/buchhaltung-api";
 import { useRefetchWhenTabVisible } from "@/hooks/use-refetch-when-tab-visible";
+import { ladeBankSpendenstand } from "../lib/spendenstand-bank";
 
 const Hero = () => {
   // Spendendaten - Primär aus current-season.ts, optional API-Update
   // getVerfuegbarerBetrag() = kontostand - stilleReserve
   const [currentDonations, setCurrentDonations] = useState(getVerfuegbarerBetrag());
   const [totalDonationsValue, setTotalDonationsValue] = useState(totalDonations);
+  // Abrufzeitpunkt, solange der angezeigte Wert aus dem Bankabruf stammt (sonst null = Google Sheet)
+  const [bankStand, setBankStand] = useState<Date | null>(null);
   
   // Spendenziel aus current-season.ts
   const donationGoal = CURRENT_SEASON.spendenziel;
@@ -56,6 +59,17 @@ const Hero = () => {
 
   // API-Daten (Google Sheet): nach Tab-Rückkehr und mit kurzem Browser-Cache neu laden
   const fetchDonationData = useCallback(async () => {
+    // Vorrang: Spendenstand aus dem täglichen Bankabruf. Fehlt er oder ist er zu alt,
+    // gilt weiter der Wert aus dem Google Sheet (siehe unten).
+    const bank = await ladeBankSpendenstand();
+    if (bank) {
+      setCurrentDonations(bank.betrag);
+      setBankStand(bank.abruf);
+      await loadGesamtsumme();
+      return;
+    }
+    setBankStand(null);
+
     // Bis zu 2 Versuche: Die Google Apps Script Web-App kann nach einer Ruhephase
     // einen langsamen Kaltstart haben und beim ersten Aufruf in den Proxy-Timeout
     // laufen. Ein automatischer zweiter Versuch erspart das manuelle Neuladen der Seite.
@@ -210,6 +224,11 @@ const Hero = () => {
             <div className="mt-4 text-white/90 text-lg md:text-xl font-inter drop-shadow text-center">
               Insgesamt übergeben: <span className="font-bold">{animatedTotal.toLocaleString("de-DE")} €</span>
             </div>
+            {bankStand && (
+              <div className="mt-1 text-white/70 text-sm font-inter text-center drop-shadow">
+                Stand: {bankStand.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
+              </div>
+            )}
           </div>
         </div>
       </div>
