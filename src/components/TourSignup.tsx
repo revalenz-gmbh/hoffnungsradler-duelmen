@@ -1,56 +1,46 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Mail } from "lucide-react";
-import emailjs from '@emailjs/browser';
 import { useToast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
 
 const TourSignup = () => {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // EmailJS initialisieren
-  useEffect(() => {
-    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    try {
-      // Eindeutige ID für den Abonnenten generieren
-      const subscriberId = uuidv4();
-      const unsubscribeUrl = `${window.location.origin}/newsletter/abmelden?id=${subscriberId}&email=${encodeURIComponent(email)}`;
-      
-      // Admin-Benachrichtigung über neue Anmeldung senden
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_NEWSLETTER_TEMPLATE_ID,
-        {
-          subscriber_email: email,
-          subscriber_id: subscriberId,
-          subscription_date: new Date().toLocaleDateString('de-DE'),
-          subscription_type: 'tour-newsletter',
-          source: window.location.href,
-          unsubscribe_link: unsubscribeUrl
-        }
-      );
 
+    try {
+      // Gleicher Ursprung dank der Weiterleitung in vercel.json. Ein direkter Aufruf
+      // der Spenden-Subdomain waere fremder Ursprung, und der Proxy setzt keine
+      // CORS-Header -- die Anmeldung scheiterte dann still am Preflight.
+      const antwort = await fetch("/api/anmelden", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const json = await antwort.json().catch(() => null);
+
+      if (!json || !json.success) {
+        throw new Error((json && json.message) || "Unbekannter Fehler");
+      }
+
+      // Die Antwort ist bewusst immer dieselbe -- auch wenn die Adresse schon
+      // eingetragen ist. Alles andere verriete, wer bereits Abonnent ist.
       toast({
-        title: "Anmeldung erfolgreich",
-        description: "Vielen Dank für deine Anmeldung zum Tour-Newsletter! Eine Bestätigung wird in Kürze an deine E-Mail-Adresse gesendet.",
+        title: "Fast geschafft!",
+        description: "Wir haben dir eine E-Mail geschickt. Bitte klicke den Bestätigungslink darin — erst danach bekommst du den Newsletter."
       });
 
-      // Formular zurücksetzen
       setEmail("");
     } catch (error) {
       console.error("Fehler bei der Newsletter-Anmeldung:", error);
       toast({
         variant: "destructive",
         title: "Fehler",
-        description: "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+        description: "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuche es später erneut."
       });
     } finally {
       setLoading(false);
