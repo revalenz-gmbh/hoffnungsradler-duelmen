@@ -23,6 +23,62 @@ const News = () => {
 
   const newsItems: NewsItem[] = [
     {
+      date: "27.09.2026",
+      title: "Baumberge Alpin-Tour – 30 Fahrer, Traumwetter und 465 € Spenden",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Zum Saisonabschluss hätte das Wetter nicht besser sein können: Bei strahlendem Sonnenschein haben sich 30 Radlerinnen und Radler am Sportzentrum Süd versammelt, um die Herausforderungen der Baumberge Alpin-Tour anzunehmen – wahlweise über 48, 78 oder 106 Kilometer.
+          </p>
+          <DialogTrigger asChild>
+            <button onClick={() => setSelectedImage("/photos/BA26_start.jpg")} className="block w-full">
+              <figure>
+                <img src="/photos/BA26_start.jpg" alt="Gruppenbild der 30 Teilnehmenden der Baumberge Alpin-Tour vor dem Start am Sportzentrum Süd" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <figcaption className="text-xs text-gray-500 mt-1">30 Radlerinnen und Radler vor dem Start am Sportzentrum Süd</figcaption>
+              </figure>
+            </button>
+          </DialogTrigger>
+          <p className="text-gray-700">
+            Gemeinsam rollte die Gruppe sich zunächst ein, bevor es in die Baumberge ging und die Anstiege warteten.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <DialogTrigger asChild>
+              <button onClick={() => setSelectedImage("/photos/BA26_einrollen.jpg")} className="block w-full">
+                <figure>
+                  <img src="/photos/BA26_einrollen.jpg" alt="Die Gruppe der Hoffnungsradler rollt sich auf der Landstraße ein" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <figcaption className="text-xs text-gray-500 mt-1">Einrollen auf den ersten Kilometern</figcaption>
+                </figure>
+              </button>
+            </DialogTrigger>
+            <DialogTrigger asChild>
+              <button onClick={() => setSelectedImage("/photos/BA26_anstieg.jpg")} className="block w-full">
+                <figure>
+                  <img src="/photos/BA26_anstieg.jpg" alt="Die Hoffnungsradler im Anstieg auf einer Nebenstraße in den Baumbergen" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <figcaption className="text-xs text-gray-500 mt-1">Im Anstieg bei bestem Licht</figcaption>
+                </figure>
+              </button>
+            </DialogTrigger>
+          </div>
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            poster="/photos/BA26_video_poster.jpg"
+            className="w-full rounded-lg shadow-sm"
+            aria-label="Video von der Baumberge Alpin-Tour 2026"
+          >
+            <source src="/video/BA26_alpin_tour.mp4" type="video/mp4" />
+            Ihr Browser kann das Video leider nicht abspielen.
+          </video>
+          <p className="text-gray-700">
+            Auch für den guten Zweck hat sich der Tag gelohnt: Es wurden <strong>465 €</strong> an Spenden gesammelt. Herzlichen Dank an alle, die mitgefahren sind und gespendet haben – und an alle, die den Tag möglich gemacht haben!
+          </p>
+        </div>
+      ),
+      type: "internal",
+      highlight: true
+    },
+    {
       date: "23.08.2026",
       title: "Tour nach Legden – 20 Radler, Kaffee, Kuchen und volle Spendenkasse",
       content: (
