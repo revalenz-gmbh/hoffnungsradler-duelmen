@@ -1,17 +1,7 @@
 {
   "rewrites": [
-    {
-      "source": "/api/anmelden",
-      "destination": "https://spenden.hoffnungs-radler-duelmen.de/api/anmelden"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "functions": {
     "api/buchhaltung.ts": {
@@ -19,4 +9,4 @@
       "maxDuration": 60
     }
   }
-}
+} 
