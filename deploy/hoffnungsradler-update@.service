@@ -1,0 +1,10 @@
+[Unit]
+Description=Hoffnungsradler Website (%i) aktualisieren, falls neuer Commit
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Skript liegt außerhalb der Releases, damit ein fehlerhafter Commit es nicht kaputtmachen kann
+ExecStart=/usr/local/sbin/hoffnungsradler-aktualisieren %i
+TimeoutStartSec=15min

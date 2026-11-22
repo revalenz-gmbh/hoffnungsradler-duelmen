@@ -1,0 +1,29 @@
+[Unit]
+Description=Hoffnungsradler Website (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hoffnungsradler
+Group=hoffnungsradler
+EnvironmentFile=/etc/hoffnungsradler/%i.env
+WorkingDirectory=/opt/hoffnungsradler/%i/current
+ExecStart=/usr/bin/node server/server.mjs
+Restart=on-failure
+RestartSec=3
+
+# Absicherung: Der Dienst liest nur, schreibt nirgends hin
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
