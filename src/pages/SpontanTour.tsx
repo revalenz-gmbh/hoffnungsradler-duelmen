@@ -1,5 +1,4 @@
-import { ArrowLeft, Sun, Cloud, CloudRain, Wind } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Sun, Cloud, CloudRain, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -211,19 +210,6 @@ const SpontanTour = () => {
 
   return (
     <div className="min-h-screen bg-snow">
-      <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
-        <div className="container mx-auto px-4">
-          <nav className="flex items-center h-20">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-prussian hover:text-prussian/80 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Zurück
-            </Link>
-          </nav>
-        </div>
-      </header>
 
       <main className="pt-32 pb-20">
         <div className="container mx-auto px-4">
