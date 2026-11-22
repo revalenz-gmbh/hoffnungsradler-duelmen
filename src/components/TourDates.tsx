@@ -249,7 +249,7 @@ const TourDates = () => {
   useEffect(() => {
     const loadVariantLinks = async () => {
       try {
-        const res = await fetch('https://script.google.com/macros/s/AKfycbyu5QQ6_cSw4lCfVyqNyIxfYH1aKsYvft6NnDzrZDP5vxcRZZH3xgkuVadRN1iEunkA/exec');
+        const res = await fetch('/api/touren');
         if (!res.ok) return;
         const data: ArchiveTour[] = await res.json();
 
