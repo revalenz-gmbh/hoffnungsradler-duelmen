@@ -7,7 +7,7 @@
  * mit einem Fehler - die Seite fällt dann auf den Wert aus dem Google Sheet zurück.
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from './_vercel-types.js';
 
 const QUELLE = process.env.SPENDENSTAND_URL || '';
 const TIMEOUT_MS = 8000;
