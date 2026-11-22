@@ -60,10 +60,23 @@ als_benutzer npm run build
 
 # Rauchtest auf einem freien Port, bevor umgeschaltet wird
 TESTPORT=$((PORT + 100))
+# Antwortet auf dem Testport schon etwas, ist es ein Rest eines früheren Laufs. Der Test
+# fragte dann diesen alten Server und bestünde, egal ob der neue Stand läuft.
+if curl -fsS "http://127.0.0.1:${TESTPORT}/healthz" >/dev/null 2>&1; then
+  log "FEHLER: Testport ${TESTPORT} ist schon belegt, bleibe auf ${AKTUELL:0:7}"
+  exit 1
+fi
 log "Rauchtest auf Port ${TESTPORT} …"
-als_benutzer env PORT="$TESTPORT" HOST=127.0.0.1 node server/server.mjs >/dev/null 2>&1 &
+# 9>&-: Der Testserver darf die Sperre nicht erben, sonst blockiert ein Rest jeden weiteren Lauf.
+als_benutzer env PORT="$TESTPORT" HOST=127.0.0.1 node server/server.mjs >/dev/null 2>&1 9>&- &
 TESTPID=$!
-trap 'kill $TESTPID 2>/dev/null || true' EXIT
+# runuser reicht SIGTERM nicht an node weiter: erst das Kind beenden, dann runuser.
+stoppe_test() {
+  pkill -TERM -P "$TESTPID" 2>/dev/null || true
+  kill "$TESTPID" 2>/dev/null || true
+  wait "$TESTPID" 2>/dev/null || true
+}
+trap stoppe_test EXIT
 ok=0
 for _ in $(seq 1 20); do
   if curl -fsS "http://127.0.0.1:${TESTPORT}/healthz" >/dev/null 2>&1 \
@@ -72,7 +85,7 @@ for _ in $(seq 1 20); do
   fi
   sleep 0.5
 done
-kill $TESTPID 2>/dev/null || true
+stoppe_test
 trap - EXIT
 if [[ $ok != 1 ]]; then
   log "FEHLER: Rauchtest fehlgeschlagen, bleibe auf ${AKTUELL:0:7}"
