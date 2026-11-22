@@ -11,7 +11,7 @@
  * - Bessere Fehlerbehandlung
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from './_vercel-types.js';
 
 // Google Apps Script URL aus Umgebungsvariable
 const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || '';
