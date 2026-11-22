@@ -45,14 +45,14 @@ export interface DashboardValues {
  * Alternativ: src/data/current-season.ts für zentrale Pflege nutzen.
  */
 export const FALLBACK_DASHBOARD: DashboardValues = {
-  einnahmenKonto: 1317.30,
+  einnahmenKonto: 3985.04,
   einnahmenBargeld: 0,
-  einnahmenGesamt: 1317.30,
+  einnahmenGesamt: 3985.04,
   ausgabenKonto: 0,
   ausgabenBargeld: 0,
   ausgabenUebergeben: 0,  // Noch keine Übergaben in 2026
   ausgabenGesamt: 0,
-  saldo: 1317.30,  // Aktueller Kontostand 2026
+  saldo: 3985.04,  // Aktueller Kontostand 2026
   jahr: 2026,
-  lastUpdated: '2026-04-21',
+  lastUpdated: '2026-11-22',
 };
