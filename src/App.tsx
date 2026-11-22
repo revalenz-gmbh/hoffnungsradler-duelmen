@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from './components/Header';
 import TourBanner from './components/TourBanner';
+import Footer from './components/Footer';
 import Index from "./pages/Index";
 
 // Nicht-kritische Seiten erst beim Aufruf laden, um das initiale Bundle kleinzuhalten
@@ -51,6 +52,7 @@ const App = () => (
             </Routes>
           </Suspense>
         </main>
+        <Footer />
       </Router>
     </TooltipProvider>
   </QueryClientProvider>

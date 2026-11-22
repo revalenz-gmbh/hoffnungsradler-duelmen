@@ -31,7 +31,7 @@ const LocalBusinessSchema = () => {
       "description": "Touren finden hauptsächlich sonntags statt"
     },
     "priceRange": "Kostenlos (Spenden erwünscht)",
-    "description": "Die Hoffnungsradler Dülmen e.V. organisieren Rennradtouren im Münsterland und sammeln Spenden für krebskranke Kinder. Über 90.000 Euro wurden bereits gesammelt.",
+    "description": "Die Hoffnungsradler Dülmen e.V. organisieren Rennradtouren im Münsterland und sammeln Spenden für krebskranke Kinder. Über 100.000 Euro wurden bereits gesammelt.",
     "hasMap": "https://www.google.com/maps/place/Dülmen",
     "keywords": "Rennrad, Charity, Spenden, krebskranke Kinder, Münsterland, Dülmen, Radtouren"
   };
