@@ -193,13 +193,20 @@ const Datenschutz = () => {
             <p className="mb-4">
               Auch Schriftarten, Bilder und Programmdateien der Website liefern wir von unserem eigenen Server aus.
               Beim Aufruf der Seite entsteht dadurch keine Verbindung zu Schriftarten-Diensten wie Google Fonts.
-              Den aktuellen Spendenstand und die Spendensummen ruft unser Server selbst ab und gibt sie an Ihren
-              Browser weiter; dabei werden keine Daten über Sie übermittelt.
+              Den aktuellen Spendenstand, die Spendensummen und die Liste unserer Touren ruft unser Server selbst ab
+              (aus unserer Vereinsverwaltung bei Google, Abschnitt 8) und gibt sie an Ihren Browser weiter; dabei
+              werden keine Daten über Sie übermittelt.
             </p>
             <p className="mb-4">
-              Eine Ausnahme ist die Liste unserer Touren (auf der Startseite sowie unter „Tour-Termine" und „Unsere
-              Touren"): Sie lädt Ihr Browser direkt aus unserer Tourverwaltung bei Google (Google Apps Script,
-              Abschnitt 8). Dabei erhält Google Ihre IP-Adresse und die üblichen technischen Angaben Ihres Browsers.
+              Eine Ausnahme ist die interaktive Kartenansicht unseres Tourenarchivs (Archivübersicht). Die
+              Kartenbilder dort stammen von OpenStreetMap; beim Anzeigen der Karte lädt Ihr Browser sie von den
+              Servern der OpenStreetMap Foundation, St John's Innovation Centre, Cowley Road, Cambridge, CB4 0WS,
+              Vereinigtes Königreich. Dabei erhält die OpenStreetMap Foundation Ihre IP-Adresse und die üblichen
+              technischen Angaben Ihres Browsers. Rechtsgrundlage ist unser berechtigtes Interesse an einer
+              anschaulichen Darstellung unserer Touren (Art. 6 Abs. 1 lit. f DSGVO). Für das Vereinigte Königreich
+              liegt ein Angemessenheitsbeschluss der EU-Kommission vor.
+            </p>
+            <p className="mb-4">
               Darüber hinaus entsteht eine Verbindung zu Dritten nur, wenn Sie ein Formular absenden (Abschnitt 3)
               oder einem Link zu einem anderen Angebot folgen, etwa zu Karten oder Tourdaten bei Google Maps, Google
               Drive oder Komoot.
