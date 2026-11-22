@@ -1,4 +1,3 @@
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import News from "@/components/News";
@@ -22,7 +21,6 @@ const Index = () => {
       <OrganizationSchema />
       <LocalBusinessSchema />
       
-      <Header />
       <Hero />
       <About />
       <News />
