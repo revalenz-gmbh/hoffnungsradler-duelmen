@@ -33,7 +33,7 @@ const News = () => {
           <DialogTrigger asChild>
             <button onClick={() => setSelectedImage("/photos/BA26_start.jpg")} className="block w-full">
               <figure>
-                <img src="/photos/BA26_start.jpg" alt="Gruppenbild der 30 Teilnehmenden der Baumberge Alpin-Tour vor dem Start am Sportzentrum Süd" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <img loading="lazy" decoding="async" src="/photos/BA26_start.jpg" alt="Gruppenbild der 30 Teilnehmenden der Baumberge Alpin-Tour vor dem Start am Sportzentrum Süd" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                 <figcaption className="text-xs text-gray-500 mt-1">30 Radlerinnen und Radler vor dem Start am Sportzentrum Süd</figcaption>
               </figure>
             </button>
@@ -45,7 +45,7 @@ const News = () => {
             <DialogTrigger asChild>
               <button onClick={() => setSelectedImage("/photos/BA26_einrollen.jpg")} className="block w-full">
                 <figure>
-                  <img src="/photos/BA26_einrollen.jpg" alt="Die Gruppe der Hoffnungsradler rollt sich auf der Landstraße ein" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <img loading="lazy" decoding="async" src="/photos/BA26_einrollen.jpg" alt="Die Gruppe der Hoffnungsradler rollt sich auf der Landstraße ein" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                   <figcaption className="text-xs text-gray-500 mt-1">Einrollen auf den ersten Kilometern</figcaption>
                 </figure>
               </button>
@@ -53,7 +53,7 @@ const News = () => {
             <DialogTrigger asChild>
               <button onClick={() => setSelectedImage("/photos/BA26_anstieg.jpg")} className="block w-full">
                 <figure>
-                  <img src="/photos/BA26_anstieg.jpg" alt="Die Hoffnungsradler im Anstieg auf einer Nebenstraße in den Baumbergen" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <img loading="lazy" decoding="async" src="/photos/BA26_anstieg.jpg" alt="Die Hoffnungsradler im Anstieg auf einer Nebenstraße in den Baumbergen" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                   <figcaption className="text-xs text-gray-500 mt-1">Im Anstieg bei bestem Licht</figcaption>
                 </figure>
               </button>
@@ -89,7 +89,7 @@ const News = () => {
           <DialogTrigger asChild>
             <button onClick={() => setSelectedImage("/photos/Legden26_1.jpg")} className="block w-full">
               <figure>
-                <img src="/photos/Legden26_1.jpg" alt="Gruppenbild der Hoffnungsradler vor dem Start zur Tour nach Legden" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <img loading="lazy" decoding="async" src="/photos/Legden26_1.jpg" alt="Gruppenbild der Hoffnungsradler vor dem Start zur Tour nach Legden" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                 <figcaption className="text-xs text-gray-500 mt-1">20 Radlerinnen und Radler vor dem Start in Dülmen</figcaption>
               </figure>
             </button>
@@ -100,7 +100,7 @@ const News = () => {
           <DialogTrigger asChild>
             <button onClick={() => setSelectedImage("/photos/Legden26_2.jpg")} className="block w-full">
               <figure>
-                <img src="/photos/Legden26_2.jpg" alt="Kaffeepause der Hoffnungsradler an der langen Tafel im Hof von Dorf Münsterland in Legden" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <img loading="lazy" decoding="async" src="/photos/Legden26_2.jpg" alt="Kaffeepause der Hoffnungsradler an der langen Tafel im Hof von Dorf Münsterland in Legden" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                 <figcaption className="text-xs text-gray-500 mt-1">Kaffee und Kuchen an der langen Tafel im Hof von Dorf Münsterland</figcaption>
               </figure>
             </button>
@@ -164,7 +164,7 @@ const News = () => {
             <DialogTrigger asChild>
               <button onClick={() => setSelectedImage("/photos/Datteln2025-1.jpg")} className="block w-full">
                 <figure>
-                  <img src="/photos/Datteln2025-1.jpg" alt="Spendenübergabe in Datteln" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <img loading="lazy" decoding="async" src="/photos/Datteln2025-1.jpg" alt="Spendenübergabe in Datteln" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                   <figcaption className="text-xs text-gray-500 mt-1">Gregor Horstmann, Roswitha Rabe (Elterninitiative Datteln) und Josef Friedag</figcaption>
                 </figure>
               </button>
@@ -172,7 +172,7 @@ const News = () => {
             <DialogTrigger asChild>
               <button onClick={() => setSelectedImage("/photos/Muenster2025-2.jpg")} className="block w-full">
                 <figure>
-                  <img src="/photos/Muenster2025-2.jpg" alt="Spendenübergabe in Münster" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                  <img loading="lazy" decoding="async" src="/photos/Muenster2025-2.jpg" alt="Spendenübergabe in Münster" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                   <figcaption className="text-xs text-gray-500 mt-1">Gregor Horstmann, Anette Blomberg (Kinderkrebshilfe) und Martin Stolz</figcaption>
                 </figure>
               </button>
@@ -200,7 +200,7 @@ const News = () => {
           <DialogTrigger asChild>
             <button onClick={() => setSelectedImage("/photos/Alpin25b.jpg")} className="block w-full">
               <figure>
-                <img src="/photos/Alpin25b.jpg" alt="Start im Nebel" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <img loading="lazy" decoding="async" src="/photos/Alpin25b.jpg" alt="Start im Nebel" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                 <figcaption className="text-xs text-gray-500 mt-1">Start im Nebel – später Sonne in den Baumbergen</figcaption>
               </figure>
             </button>
@@ -211,7 +211,7 @@ const News = () => {
           <DialogTrigger asChild>
             <button onClick={() => setSelectedImage("/photos/Alpin25D.jpg")} className="block w-full">
               <figure>
-                <img src="/photos/Alpin25D.jpg" alt="Verpflegungsstation bei km 30" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
+                <img loading="lazy" decoding="async" src="/photos/Alpin25D.jpg" alt="Verpflegungsstation bei km 30" className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity" />
                 <figcaption className="text-xs text-gray-500 mt-1">Verpflegungsstation bei km 30 in der Sonne</figcaption>
               </figure>
             </button>
@@ -310,7 +310,7 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
                       {item.images.map((img, i) => (
                         <DialogTrigger asChild key={i}>
                           <button onClick={() => setSelectedImage(img)} className="block w-full">
-                            <img
+                            <img loading="lazy" decoding="async"
                               src={img}
                               alt={`News vom ${item.date} – Bild ${i + 1}`}
                               className="w-full rounded-lg shadow-sm hover:opacity-90 transition-opacity"
@@ -355,7 +355,7 @@ Bis zur Rast bei der Bäckerei Späker in Weseke leistete 'Große Scheibe Lette'
       {/* Dialog Content for Image */}   
       <DialogContent className="max-w-4xl w-[95vw] p-0">
         {selectedImage && (
-          <img 
+          <img loading="lazy" decoding="async" 
             src={selectedImage} 
             alt="Zeitungsartikel oder News Bild" 
             className="w-full h-auto max-h-[90vh] object-contain rounded-lg"

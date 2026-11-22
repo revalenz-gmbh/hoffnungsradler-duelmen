@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getDashboard, getUebergabeSummen, invalidateDonationsCache, type DashboardData } from "../lib/buchhaltung-api";
+// Buchhaltungs-API (inkl. Zod-Validierung) erst bei Bedarf nachladen, damit sie die erste Anzeige nicht bremst
+import type { DashboardData } from "../lib/buchhaltung-api";
+const ladeBuchhaltungApi = () => import("../lib/buchhaltung-api");
 import { useRefetchWhenTabVisible } from "@/hooks/use-refetch-when-tab-visible";
 import { ladeBankSpendenstand } from "../lib/spendenstand-bank";
 
@@ -73,6 +75,7 @@ const Hero = () => {
     // Bis zu 2 Versuche: Die Google Apps Script Web-App kann nach einer Ruhephase
     // einen langsamen Kaltstart haben und beim ersten Aufruf in den Proxy-Timeout
     // laufen. Ein automatischer zweiter Versuch erspart das manuelle Neuladen der Seite.
+    const { getDashboard, invalidateDonationsCache } = await ladeBuchhaltungApi();
     let usable = false;
     for (let attempt = 1; attempt <= 2 && !usable; attempt++) {
       invalidateDonationsCache();
@@ -98,6 +101,7 @@ const Hero = () => {
   // Hilfsfunktion für Gesamtsumme
   const loadGesamtsumme = async () => {
     try {
+      const { getUebergabeSummen } = await ladeBuchhaltungApi();
       const uebergabe = await getUebergabeSummen();
       if (uebergabe?.gesamt) {
         setTotalDonationsValue(uebergabe.gesamt);
@@ -158,7 +162,9 @@ const Hero = () => {
       )}
       <div className="relative h-screen flex flex-col justify-center items-center">
         <img
-          src="/photos/Hoffnungsradler Titelphoto.png"
+          src="/photos/titelbild.jpg"
+          fetchPriority="high"
+          decoding="async"
           alt="Hoffnungsradler Dülmen Rennradgruppe - Gemeinsam Radfahren für krebskranke Kinder im Münsterland"
           className="w-full h-full object-cover absolute inset-0 z-0"
         />

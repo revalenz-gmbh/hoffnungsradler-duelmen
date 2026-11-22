@@ -134,7 +134,7 @@ const Presse = () => {
 
       <DialogContent className="max-w-4xl w-[95vw] p-0">
         {selectedImage && (
-          <img 
+          <img loading="lazy" decoding="async" 
             src={selectedImage} 
             alt="Zeitungsartikel" 
             className="w-full h-auto max-h-[90vh] object-contain rounded-lg"

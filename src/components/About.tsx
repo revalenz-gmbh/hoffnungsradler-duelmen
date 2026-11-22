@@ -13,7 +13,7 @@ const About = () => {
           <div className="md:hidden flex items-center justify-center gap-4 mb-6">
             <h2 className="font-anton text-4xl text-prussian">Über Uns</h2>
             <div className="bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
-              <img
+              <img loading="lazy" decoding="async"
                 src="/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                 alt="Hoffnungsradler Logo"
                 className="w-20 h-auto"
@@ -75,7 +75,7 @@ const About = () => {
               {/* Desktop: Show all content with logo floated right */}
               <div className="hidden md:block">
                 <div className="float-right ml-8 mb-8 bg-white rounded-lg p-2 shadow-md transform hover:rotate-3 transition-transform">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src="/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                     alt="Hoffnungsradler Logo"
                     className="w-24 h-auto"
