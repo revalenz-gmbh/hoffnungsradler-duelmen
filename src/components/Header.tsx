@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, Bike } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Offenes Handy-Menü mit der Escape-Taste schließen
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMenuOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isMenuOpen]);
 
   const menuItems = [
     { name: "Über uns", path: "/ueber-uns" },
@@ -18,50 +28,58 @@ const Header = () => {
   return (
     <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
       <div className="container mx-auto px-4">
-        <nav className="flex items-center justify-between h-20">
+        <nav aria-label="Hauptmenü" className="flex items-center justify-between h-20">
           <Link
             to="/"
             className="font-anton text-2xl text-forestDark flex items-center gap-2"
           >
-            <Bike className="w-6 h-6" />
+            <Bike className="w-6 h-6" aria-hidden="true" />
             Hoffnungsradler Dülmen
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-8">
             {menuItems.map((item) => (
-              <Link
+              <NavLink
                 key={item.name}
                 to={item.path}
-                className="font-inter text-forestDark hover:text-forest transition-colors"
+                className={({ isActive }) =>
+                  `font-inter text-forestDark hover:text-forest transition-colors underline-offset-4 hover:underline ${isActive ? "underline font-semibold" : ""}`
+                }
               >
                 {item.name}
-              </Link>
+              </NavLink>
             ))}
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-text"
+            type="button"
+            className="md:hidden text-text -mr-2 p-2.5 rounded-md hover:bg-black/5"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Menü schließen" : "Menü öffnen"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
           </button>
         </nav>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 w-full bg-snow/95 backdrop-blur-lg border-t border-gray-200 animate-fade-in">
+          <div id="mobile-menu" className="md:hidden absolute top-20 left-0 w-full bg-snow/95 backdrop-blur-lg border-t border-gray-200 animate-fade-in">
             <div className="container px-4 py-4">
               {menuItems.map((item) => (
-                <Link
+                <NavLink
                   key={item.name}
                   to={item.path}
-                  className="block py-3 font-inter text-text hover:text-prussian transition-colors"
+                  className={({ isActive }) =>
+                    `block py-3 font-inter text-text hover:text-prussian transition-colors ${isActive ? "font-semibold text-prussian" : ""}`
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </Link>
+                </NavLink>
               ))}
             </div>
           </div>
