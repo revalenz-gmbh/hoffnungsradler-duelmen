@@ -90,7 +90,7 @@ const PhotoGallery = () => {
                 <Dialog>
                   <DialogTrigger>
                     <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg border border-forest/10 cursor-pointer">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={images[currentIndex].src}
                         alt={images[currentIndex].alt}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -99,7 +99,7 @@ const PhotoGallery = () => {
                     </div>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl w-[95vw]">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={images[currentIndex].src}
                       alt={images[currentIndex].alt}
                       className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
@@ -116,7 +116,7 @@ const PhotoGallery = () => {
                 <Dialog>
                   <DialogTrigger>
                     <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg border border-forest/10 cursor-pointer">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={images[getSecondImageIndex()].src}
                         alt={images[getSecondImageIndex()].alt}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -125,7 +125,7 @@ const PhotoGallery = () => {
                     </div>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl w-[95vw]">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={images[getSecondImageIndex()].src}
                       alt={images[getSecondImageIndex()].alt}
                       className="w-full h-auto max-h-[85vh] object-contain rounded-lg"

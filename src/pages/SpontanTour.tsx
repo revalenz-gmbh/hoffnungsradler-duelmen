@@ -239,7 +239,7 @@ const SpontanTour = () => {
               ) : weather ? (
                 <div className="space-y-6">
                   <div className="flex items-center gap-8">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
                       alt="Wetter Icon"
                       className="w-16 h-16"

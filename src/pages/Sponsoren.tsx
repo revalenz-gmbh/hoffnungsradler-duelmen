@@ -70,7 +70,7 @@ const Sponsoren = () => {
             {/* Title Section */}
             <div className="flex flex-col items-center mb-12">
               <div className="w-48 h-48 mb-8 bg-forest/5 rounded-full p-4 rotate-3 transition-transform hover:rotate-6">
-                <img
+                <img loading="lazy" decoding="async"
                   src="/logos/aa82fed0-d01b-4922-b10c-c9a4b9dedb38.png"
                   alt="Hoffnungsradler Logo"
                   className="w-full h-full object-contain"
@@ -96,7 +96,7 @@ const Sponsoren = () => {
                   className="group"
                 >
                   <div className="bg-white rounded-lg p-6 h-48 flex items-center justify-center shadow-lg border border-forest/10 transition-all duration-300 hover:shadow-xl">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={sponsor.logo}
                       alt={`${sponsor.name} Logo`}
                       className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"

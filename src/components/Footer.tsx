@@ -108,7 +108,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition-opacity"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src="/logos/b0799038-8c76-42b1-b74b-96c4ea20285e.png"
                   alt="DJK Logo"
                   className="h-28 w-auto"
@@ -120,7 +120,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition-opacity"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src="/logos/a05f6440-d361-4236-ace4-32d06e932465.png"
                   alt="DJK Adler Buldern Logo"
                   className="h-28 w-28 object-cover rounded-full bg-white"
@@ -132,7 +132,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="hover:opacity-80 transition-opacity"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src="/logos/DJK-Rödder.avif"
                   alt="DJK Rödder Logo"
                   className="h-28 w-auto"

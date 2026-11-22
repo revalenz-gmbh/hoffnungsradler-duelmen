@@ -1,8 +1,5 @@
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from './components/Header';
 import TourBanner from './components/TourBanner';
@@ -23,13 +20,9 @@ const Presse = lazy(() => import("./pages/Presse"));
 const Kontakt = lazy(() => import("./pages/Kontakt"));
 const NewsletterUnsubscribe = lazy(() => import("./pages/NewsletterUnsubscribe"));
 
-const queryClient = new QueryClient();
-
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <>
       <Toaster />
-      <Sonner />
       <Router>
         <Header />
         <TourBanner />
@@ -54,8 +47,7 @@ const App = () => (
         </main>
         <Footer />
       </Router>
-    </TooltipProvider>
-  </QueryClientProvider>
+  </>
 );
 
 export default App;
