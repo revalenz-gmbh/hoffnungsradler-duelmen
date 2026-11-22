@@ -62,7 +62,7 @@ const UeberUns = () => {
                     durch Josef Friedag und Carlo Hüwe ins Leben gerufen worden.
                   </p>
                   <p>
-                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht
+                    Seit mittlerweile {new Date().getFullYear() - 2003} Jahren werden jährlich sieben bis acht
                     geführte Rennradtouren durch die münsterländische
                     Parklandschaft auf verkehrsarmen Wegen organisiert.
                   </p>
@@ -85,7 +85,7 @@ const UeberUns = () => {
                   </p>
                   <p className="text-forest font-semibold">
                     Insgesamt konnten durch die Dülmener Hoffnungsradler über
-                    90.000 Euro Spenden gesammelt werden!
+                    100.000 Euro Spenden gesammelt werden!
                   </p>
                 </div>
               </section>

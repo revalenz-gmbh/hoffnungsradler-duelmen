@@ -50,7 +50,7 @@ const About = () => {
                 {isExpanded && (
                   <div className="mt-2 space-y-4 animate-fade-in">
                     <p>
-                      Seit mittlerweile 21 Jahren werden jährlich sieben bis
+                      Seit mittlerweile {new Date().getFullYear() - 2003} Jahren werden jährlich sieben bis
                       acht geführte Rennradtouren durch die münsterländische
                       Parklandschaft auf verkehrsarmen Wegen organisiert.
                     </p>
@@ -88,7 +88,7 @@ const About = () => {
                   </p>
 
                   <p>
-                    Seit mittlerweile 21 Jahren werden jährlich sieben bis acht
+                    Seit mittlerweile {new Date().getFullYear() - 2003} Jahren werden jährlich sieben bis acht
                     geführte Rennradtouren durch die münsterländische
                     Parklandschaft auf verkehrsarmen Wegen organisiert.
                   </p>

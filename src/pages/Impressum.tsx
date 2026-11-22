@@ -7,14 +7,14 @@ const Impressum = () => {
     <div className="container mx-auto py-8 px-4">
       <SEOHead 
         title="Impressum"
-        description="Impressum der Hoffnungsradler Dülmen e.V. - Angaben gemäß § 5 TMG. Vereinsregistereintrag beim Amtsgericht Coesfeld."
+        description="Impressum der Hoffnungsradler Dülmen e.V. - Angaben gemäß § 5 DDG. Vereinsregistereintrag beim Amtsgericht Coesfeld."
         url="https://www.hoffnungs-radler-duelmen.de/impressum"
       />
       <Card>
         <CardContent className="pt-6">
           <h1 className="text-3xl font-bold mb-6">Impressum</h1>
           
-          <h2 className="text-xl font-semibold mt-4 mb-2">Angaben gemäß § 5 TMG</h2>
+          <h2 className="text-xl font-semibold mt-4 mb-2">Angaben gemäß § 5 DDG</h2>
           <p>Hoffnungsradler Dülmen e.V.</p>
           <p>Königsberger Str. 26</p>
           <p>48249 Dülmen</p>
@@ -24,6 +24,7 @@ const Impressum = () => {
           <p>Gregor Horstmann (2. Vorsitzender)</p>
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Kontakt</h2>
+          <p>Telefon: 0157 34895451</p>
           <p>E-Mail: hoffnungsradlerinfo@gmail.com</p>
 
           <h2 className="text-xl font-semibold mt-6 mb-2">Vereinsregistereintrag</h2>
@@ -33,7 +34,7 @@ const Impressum = () => {
           <h2 className="text-xl font-semibold mt-6 mb-2">Steuernummer</h2>
           <p>312/5838/1207</p>
 
-          <h2 className="text-xl font-semibold mt-6 mb-2">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+          <h2 className="text-xl font-semibold mt-6 mb-2">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
           <p>Martin Stolz</p>
           <p>Königsberger Str. 26</p>
           <p>48249 Dülmen</p>

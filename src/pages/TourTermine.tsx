@@ -1,76 +1,15 @@
-import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import TourDates from "@/components/TourDates";
 import SEOHead from "@/components/SEOHead";
 import BreadcrumbSchema from "@/components/schemas/BreadcrumbSchema";
 
-interface WeatherData {
-  temperature: number;
-  description: string;
-  windSpeed: number;
-  windDirection: string;
-  humidity: number;
-  icon: string;
-}
-
 const TourTermine = () => {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [weatherError, setWeatherError] = useState<string | null>(null);
-
-  // Funktion zur Umwandlung der Windrichtung in Himmelsrichtungen
-  const getWindDirection = (degrees: number): string => {
-    const directions = ['N', 'NO', 'O', 'SO', 'S', 'SW', 'W', 'NW'];
-    const index = Math.round(degrees / 45) % 8;
-    return directions[index];
-  };
-
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        setWeatherError(null);
-        const response = await fetch(
-          'https://api.openweathermap.org/data/2.5/weather?q=Duelmen,DE&units=metric&appid=cf09fcafa05f1cc9b5c7df1f97c753e1&lang=de'
-        );
-        
-        if (!response.ok) {
-          throw new Error(`HTTP-Fehler! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-
-        if (!data.main || !data.weather || !data.weather[0]) {
-          throw new Error('Unerwartetes Datenformat von der API');
-        }
-
-        setWeather({
-          temperature: Math.round(data.main.temp),
-          description: data.weather[0].description,
-          windSpeed: Math.round(data.wind.speed * 3.6),
-          windDirection: getWindDirection(data.wind.deg),
-          humidity: data.main.humidity,
-          icon: data.weather[0].icon
-        });
-      } catch (error) {
-        console.error("Fehler beim Laden der Wetterdaten:", error);
-        setWeatherError(
-          error instanceof Error 
-            ? `Fehler: ${error.message}` 
-            : "Wetterdaten konnten nicht geladen werden"
-        );
-      }
-    };
-
-    fetchWeather();
-    const interval = setInterval(fetchWeather, 900000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="min-h-screen bg-snow">
       <SEOHead 
         title="Tour-Termine 2026 - Aktuelle Rennradtouren"
-        description="Alle aktuellen Tour-Termine der Hoffnungsradler Dülmen 2026. Gemeinsame Rennradtouren im Münsterland für den guten Zweck. Inkl. Wetterdaten und GPX-Downloads."
+        description="Alle aktuellen Tour-Termine der Hoffnungsradler Dülmen 2026. Gemeinsame Rennradtouren im Münsterland für den guten Zweck. Inkl. GPX-Downloads."
         url="https://www.hoffnungs-radler-duelmen.de/tour-termine"
         keywords="Rennradtouren 2026, Tour-Termine Dülmen, Baumberge Alpin-Tour, Münsterland Radtouren, GPX Download"
       />
@@ -138,41 +77,6 @@ const TourTermine = () => {
                   </p>
                 </div>
               </section>
-
-              {/* Wetter Widget */}
-              <div className="mt-8 bg-white rounded-lg p-6 shadow-lg border border-forest/10">
-                <h2 className="font-anton text-2xl text-prussian mb-4">
-                  Aktuelles Wetter in Dülmen
-                </h2>
-                
-                {weatherError ? (
-                  <div className="text-red-600">{weatherError}</div>
-                ) : weather ? (
-                  <div className="flex items-center gap-8">
-                    <img
-                      src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-                      alt="Wetter Icon"
-                      className="w-16 h-16"
-                    />
-                    <div>
-                      <p className="text-3xl font-bold text-prussian">
-                        {weather.temperature}°C
-                      </p>
-                      <p className="text-gray-600 capitalize">{weather.description}</p>
-                    </div>
-                    <div className="ml-auto space-y-2">
-                      <p className="text-gray-600">
-                        Wind: {weather.windSpeed} km/h aus {weather.windDirection}
-                      </p>
-                      <p className="text-gray-600">
-                        Luftfeuchtigkeit: {weather.humidity}%
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-gray-600">Lade Wetterdaten...</div>
-                )}
-              </div>
 
               {/* Tour-Archiv Link */}
               <div className="mt-8 text-center">
