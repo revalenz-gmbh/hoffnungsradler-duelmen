@@ -76,7 +76,8 @@ const Datenschutz = () => {
               Beim Aufruf unserer Seiten werden automatisch Zugriffsdaten in Logfiles gespeichert: aufgerufene Seite,
               Datum und Uhrzeit, übertragene Datenmenge, Browsertyp und Betriebssystem sowie die IP-Adresse. Diese
               Daten dienen dem sicheren und störungsfreien Betrieb und werden nicht mit anderen Datenquellen
-              zusammengeführt. Rechtsgrundlage ist unser berechtigtes Interesse an der Sicherheit und Funktionsfähigkeit
+              zusammengeführt. Die Logfiles liegen auf unserem eigenen Server und werden nach 14 Tagen automatisch
+              gelöscht. Rechtsgrundlage ist unser berechtigtes Interesse an der Sicherheit und Funktionsfähigkeit
               unseres Angebots (Art. 6 Abs. 1 lit. f DSGVO).
             </p>
 
@@ -182,20 +183,26 @@ const Datenschutz = () => {
             </ul>
 
             <h2 className="text-xl font-semibold mt-6 mb-2">7. Hosting</h2>
-            <h3 className="text-lg font-semibold mt-4 mb-2">Website: Vercel</h3>
+            <h3 className="text-lg font-semibold mt-4 mb-2">Website: eigener Server</h3>
             <p className="mb-4">
-              Unsere Website www.hoffnungs-radler-duelmen.de wird bei Vercel Inc., 340 S Lemon Ave #4133, Walnut,
-              CA 91789, USA gehostet. Beim Aufruf werden Server-Logfiles erhoben (siehe Abschnitt 2). Rechtsgrundlage
-              ist unser berechtigtes Interesse an einer sicheren und effizienten Bereitstellung
-              (Art. 6 Abs. 1 lit. f DSGVO).
+              Unsere Website www.hoffnungs-radler-duelmen.de betreiben wir selbst auf einem eigenen Server in
+              Deutschland. Einen externen Hosting-Anbieter oder ein Content Delivery Network setzen wir dafür nicht
+              ein. Beim Aufruf werden Server-Logfiles erhoben (siehe Abschnitt 2). Rechtsgrundlage ist unser
+              berechtigtes Interesse an einer sicheren und effizienten Bereitstellung (Art. 6 Abs. 1 lit. f DSGVO).
             </p>
             <p className="mb-4">
-              Vercel verarbeitet dabei auch Daten in den USA und betreibt ein Content Delivery Network, über das
-              Anfragen an Server in verschiedenen Ländern geleitet werden können. Wir haben mit Vercel einen
-              Auftragsverarbeitungsvertrag nach Art. 28 DSGVO geschlossen; die Übermittlung in die USA erfolgt auf
-              Grundlage der Standardvertragsklauseln der EU-Kommission. Bitte beachten Sie, dass in den USA kein mit
-              der EU vergleichbares Datenschutzniveau garantiert werden kann und US-Behörden unter Umständen Zugriff
-              auf Daten erhalten können (z. B. nach dem CLOUD Act).
+              Auch Schriftarten, Bilder und Programmdateien der Website liefern wir von unserem eigenen Server aus.
+              Beim Aufruf der Seite entsteht dadurch keine Verbindung zu Schriftarten-Diensten wie Google Fonts.
+              Den aktuellen Spendenstand und die Spendensummen ruft unser Server selbst ab und gibt sie an Ihren
+              Browser weiter; dabei werden keine Daten über Sie übermittelt.
+            </p>
+            <p className="mb-4">
+              Eine Ausnahme ist die Liste unserer Touren (auf der Startseite sowie unter „Tour-Termine" und „Unsere
+              Touren"): Sie lädt Ihr Browser direkt aus unserer Tourverwaltung bei Google (Google Apps Script,
+              Abschnitt 8). Dabei erhält Google Ihre IP-Adresse und die üblichen technischen Angaben Ihres Browsers.
+              Darüber hinaus entsteht eine Verbindung zu Dritten nur, wenn Sie ein Formular absenden (Abschnitt 3)
+              oder einem Link zu einem anderen Angebot folgen, etwa zu Karten oder Tourdaten bei Google Maps, Google
+              Drive oder Komoot.
             </p>
             <h3 className="text-lg font-semibold mt-4 mb-2">Spendenseite: eigener Server</h3>
             <p className="mb-4">
@@ -240,11 +247,11 @@ const Datenschutz = () => {
               lange, wie es für den jeweiligen Zweck erforderlich ist oder gesetzliche Aufbewahrungsfristen es
               vorschreiben. Konkret: Anfragen über das Kontaktformular löschen wir, sobald sie abschließend bearbeitet
               sind; Newsletter-Daten mit Ihrer Abmeldung; nicht bezahlte Spendenzusagen nach Ablauf ihrer Frist;
-              Unterlagen zu Zuwendungsbestätigungen nach zehn Jahren.
+              Unterlagen zu Zuwendungsbestätigungen nach zehn Jahren; Server-Logfiles nach 14 Tagen.
             </p>
 
             <p className="mt-8 text-sm">
-              Stand: 29.08.2026
+              Stand: UMZUGSDATUM
             </p>
           </CardContent>
         </Card>
