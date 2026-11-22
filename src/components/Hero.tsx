@@ -208,24 +208,25 @@ const Hero = () => {
 
           </div>
           {/* Fortschrittsbalken und Gesamtsumme ganz unten */}
-          <div className="w-full max-w-xl mb-8 mt-auto">
+          {/* Eigene dunkle Fläche, damit die Schrift auf hellen Trikots im Foto lesbar bleibt */}
+          <div className="w-full max-w-xl mb-8 mt-auto bg-black/55 backdrop-blur-sm rounded-xl px-5 py-4 shadow-lg">
             <div className="flex justify-between mb-1">
-              <span className="text-white/90 font-semibold text-lg">{donationYear} – Spendenziel {donationGoal.toLocaleString("de-DE")} €</span>
-              <span className="text-white/80 text-md">{((progress * 100).toFixed(0))}%</span>
+              <span className="text-white font-semibold text-lg">{donationYear} – Spendenziel {donationGoal.toLocaleString("de-DE")} €</span>
+              <span className="text-white text-md">{((progress * 100).toFixed(0))}%</span>
             </div>
-            <div className="w-full h-8 bg-white/20 rounded-full overflow-hidden shadow-inner">
+            <div className="w-full h-8 bg-white/25 rounded-full overflow-hidden shadow-inner">
               <div
-                className="h-full bg-forest transition-all duration-700 flex items-center pl-4 text-white font-bold text-lg"
-                style={{ width: `${progress * 100}%`, minWidth: "2.5rem" }}
+                className="h-full bg-forest transition-all duration-700 flex items-center pl-4 pr-3 text-white font-bold text-lg whitespace-nowrap"
+                style={{ width: `${progress * 100}%`, minWidth: "fit-content" }}
               >
-                {animatedCurrent.toLocaleString("de-DE")} €
+                {animatedCurrent.toLocaleString("de-DE", { maximumFractionDigits: 0 })} €
               </div>
             </div>
-            <div className="mt-4 text-white/90 text-lg md:text-xl font-inter drop-shadow text-center">
+            <div className="mt-4 text-white text-lg md:text-xl font-inter text-center">
               Insgesamt übergeben: <span className="font-bold">{animatedTotal.toLocaleString("de-DE")} €</span>
             </div>
             {bankStand && (
-              <div className="mt-1 text-white/70 text-sm font-inter text-center drop-shadow">
+              <div className="mt-1 text-white/80 text-sm font-inter text-center">
                 Stand: {bankStand.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
               </div>
             )}
