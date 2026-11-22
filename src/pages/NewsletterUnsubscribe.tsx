@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import emailjs from '@emailjs/browser';
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 
 const NewsletterUnsubscribe = () => {
@@ -69,20 +68,6 @@ const NewsletterUnsubscribe = () => {
         url="https://www.hoffnungs-radler-duelmen.de/newsletter/abmelden"
       />
       
-      {/* Header mit Zurück-Navigation */}
-      <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
-        <div className="container mx-auto px-4">
-          <nav className="flex items-center h-20">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-prussian hover:text-prussian/80 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Zurück zur Startseite
-            </Link>
-          </nav>
-        </div>
-      </header>
 
       {/* Hauptinhalt */}
       <main className="pt-32 pb-20">

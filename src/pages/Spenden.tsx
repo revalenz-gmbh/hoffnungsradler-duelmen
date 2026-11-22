@@ -1,5 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -148,20 +146,6 @@ const Spenden = () => {
         { name: "Spenden", url: "https://www.hoffnungs-radler-duelmen.de/spenden" }
       ]} />
       
-      {/* Header with Back Navigation */}
-      <header className="fixed top-0 w-full z-50 bg-snow/80 backdrop-blur-lg shadow-sm">
-        <div className="container mx-auto px-4">
-          <nav className="flex items-center h-20">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-prussian hover:text-prussian/80 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Zurück
-            </Link>
-          </nav>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className="pt-32 pb-20">
