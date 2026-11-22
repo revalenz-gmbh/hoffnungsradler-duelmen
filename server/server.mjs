@@ -73,7 +73,9 @@ function sicherheitsHeader(res) {
 
 function protokoll(req, status, start) {
   const ms = Date.now() - start;
-  console.log(`${req.method} ${req.url} ${status} ${ms}ms`);
+  // Nur der Pfad, ohne Parameter: Der Newsletter-Abmeldelink trägt die E-Mail-Adresse in der Adresse
+  const pfad = (req.url || '/').split('?')[0];
+  console.log(`${req.method} ${pfad} ${status} ${ms}ms`);
 }
 
 /* ------------------------------------------------------------------ */

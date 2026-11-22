@@ -54,6 +54,12 @@ können das nicht), `git`, `curl`, `util-linux` (`flock`, `runuser`). Build brau
 
 Protokolle: `journalctl -u hoffnungsradler-update@live -u hoffnungsradler-web@live -f`
 
+**Speicherdauer der Logs: höchstens 14 Tage** – so steht es in der Datenschutzerklärung.
+Im Container `MaxRetentionSec=14day` in `/etc/systemd/journald.conf` setzen und
+`systemctl restart systemd-journald`. Dasselbe gilt für die Zugriffslogs des Reverse
+Proxys (dort stehen IP-Adressen): Rotation täglich, 14 Stück behalten, oder kürzer.
+Der Node-Server selbst protokolliert nur Methode, Pfad (ohne Parameter), Status und Dauer.
+
 ## 3. Reverse Proxy und TLS
 
 Die Website kommt hinter den vorhandenen Reverse Proxy, über den schon
@@ -108,7 +114,7 @@ Hosts-Eintrag gegen den neuen Server:
 
 ## 7. Was danach im Repo noch zu tun ist
 
-- **Datenschutzerklärung** (`src/pages/Datenschutz.tsx`, Abschnitt Hosting) nennt Vercel.
+- **Datenschutzerklärung** (`src/pages/Datenschutz.tsx`, Abschnitt Hosting) nennt Vercel. Der neue Text liegt im Branch `docs/datenschutz-eigenes-hosting` (Platzhalter `UMZUGSDATUM` beim Stand-Datum ersetzen).
   Muss **mit dem Umschalten** auf den eigenen Server geändert werden, nicht später.
 - `vercel.json` und der Vercel-Hinweis in `CLAUDE.md` können nach der Abschaltung weg.
 - Backups: Der Container ist reproduzierbar aus Git + `/etc/hoffnungsradler/*.env`.
