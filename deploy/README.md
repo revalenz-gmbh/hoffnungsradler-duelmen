@@ -90,8 +90,13 @@ Zweite Instanz `vorschau` mit gleichem Aufbau, z. B. für einen Branch `develop`
 
 ## 5. Prüfen vor dem Umschalten
 
-Mit `curl --resolve www.hoffnungs-radler-duelmen.de:443:<proxy-ip> …` oder einem
-Hosts-Eintrag gegen den neuen Server:
+**Auf der Vorschau-Instanz prüfen** (Branch `develop`). Dort liegt schon alles, was mit dem
+Umzug live gehen soll (u. a. `/api/touren`). `main` bekommt diese Stände erst beim
+Umschalten, weil Vercel `main` bis dahin weiter ausliefert und dort
+`TOUREN_APPS_SCRIPT_URL` bewusst nicht gesetzt ist. Die `live`-Instanz zeigt bis zum
+Umschalten also noch den älteren Stand; `/api/touren` gibt es dort erst danach.
+
+Gegen den neuen Server, z. B. mit `curl --resolve …:443:<proxy-ip>` oder einem Hosts-Eintrag:
 
 - [ ] `/` lädt, Startbild und Spendenbalken mit Zeile „Stand: …“ erscheinen
 - [ ] `/api/spendenstand` → 200 JSON; zweiter Aufruf mit Header `X-Cache: HIT`
@@ -106,12 +111,17 @@ Hosts-Eintrag gegen den neuen Server:
 
 ## 6. Umschalten und Rückweg
 
-1. DNS-TTL von `www` und Apex einen Tag vorher auf 300 s senken.
-2. DNS auf die öffentliche Adresse des Proxys umstellen. Zertifikat muss vorher ausgestellt
+1. DNS-TTL von `www` und Apex vorher auf 300 s senken (wenn möglich einen Tag vorher).
+2. **Code für den Umzug nach `main` bringen** (macht Martin bzw. Claude im Website-Repo):
+   `develop` nach `main` mergen, dann den Branch `docs/datenschutz-eigenes-hosting`
+   mit echtem Stand-Datum statt `UMZUGSDATUM`. Warten, bis die `live`-Instanz im Journal
+   „live: <commit>“ meldet, und `/api/touren` sowie `/datenschutz` auf `live` prüfen.
+   (Vercel baut `main` dabei auch; dort fehlt bis zum DNS-Wechsel nur das Tourarchiv.)
+3. DNS auf die öffentliche Adresse des Proxys umstellen. Zertifikat muss vorher ausgestellt
    sein (HTTP-01 klappt erst nach DNS-Wechsel → ggf. DNS-01 oder kurz akzeptieren).
-3. Vercel-Projekt **noch nicht löschen**. Rückweg = DNS zurück auf Vercel. Erst nach
+4. Vercel-Projekt **noch nicht löschen**. Rückweg = DNS zurück auf Vercel. Erst nach
    einigen Wochen stabilem Betrieb Auto-Deploy dort abschalten.
-4. Auf Vercel läuft außerdem der **Ticketservice** (eigenes Projekt). Den nicht anfassen.
+5. Auf Vercel läuft außerdem der **Ticketservice** (eigenes Projekt). Den nicht anfassen.
 
 ## 7. Was danach im Repo noch zu tun ist
 
