@@ -21,7 +21,7 @@ const UnsereTouren: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbyu5QQ6_cSw4lCfVyqNyIxfYH1aKsYvft6NnDzrZDP5vxcRZZH3xgkuVadRN1iEunkA/exec');
+        const response = await fetch('/api/touren');
         if (!response.ok) {
           throw new Error(`HTTP-Fehler! Status: ${response.status}`);
         }

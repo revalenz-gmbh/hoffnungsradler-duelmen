@@ -12,7 +12,7 @@ Bitte **nichts an Vercel ändern**, bis die neue Seite geprüft ist (siehe „Um
 
 | Datei | Zweck |
 |---|---|
-| `server/server.mjs` | Node-Server ohne Zusatzpakete. Liefert `dist/` aus (Brotli/Gzip, Cache-Header, Range für Videos, SPA-Fallback), bindet `api/spendenstand.ts` und `api/buchhaltung.ts` unverändert ein, bildet den Vercel-CDN-Cache nach (`s-maxage`, `stale-while-revalidate`), `/healthz` für Prüfungen. Start: `npm start`. |
+| `server/server.mjs` | Node-Server ohne Zusatzpakete. Liefert `dist/` aus (Brotli/Gzip, Cache-Header, Range für Videos, SPA-Fallback), bindet `api/spendenstand.ts`, `api/buchhaltung.ts` und `api/touren.ts` unverändert ein, bildet den Vercel-CDN-Cache nach (`s-maxage`, `stale-while-revalidate`), `/healthz` für Prüfungen. Start: `npm start`. |
 | `deploy/aktualisieren.sh` | Holt neuen Commit, `npm ci`, `npm run build`, Rauchtest auf Nebenport, schaltet per Symlink um, startet neu, prüft `/healthz`, rollt bei Fehler zurück, behält 3 Stände. Tut nichts ohne neuen Commit. |
 | `deploy/hoffnungsradler-web@.service` | systemd-Dienst je Instanz (`live`, `vorschau`). |
 | `deploy/hoffnungsradler-update@.service` + `.timer` | Prüft alle 2 Minuten auf neue Commits und ruft das Skript auf. |
@@ -69,7 +69,7 @@ Die Website kommt hinter den vorhandenen Reverse Proxy, über den schon
   `hoffnungs-radler-duelmen.de` (ohne www) → dauerhafte Weiterleitung (heute 308) auf `https://www.…`.
 - TLS am Proxy, dort auch `Strict-Transport-Security: max-age=31536000`.
 - `X-Forwarded-For` aus der echten Client-Adresse setzen (`$remote_addr`), nicht durchreichen.
-- **Proxy-Timeout mindestens 65 s** für `/api/buchhaltung`: Das Apps Script braucht beim
+- **Proxy-Timeout mindestens 65 s** für `/api/buchhaltung` und `/api/touren`: Das Apps Script braucht beim
   Kaltstart bis zu 55 s.
 - Im Proxy **nicht** zusätzlich cachen und nicht komprimieren, das erledigt der Node-Server
   (sonst doppelt komprimiert oder veralteter Spendenstand).
@@ -96,6 +96,7 @@ Hosts-Eintrag gegen den neuen Server:
 - [ ] `/` lädt, Startbild und Spendenbalken mit Zeile „Stand: …“ erscheinen
 - [ ] `/api/spendenstand` → 200 JSON; zweiter Aufruf mit Header `X-Cache: HIT`
 - [ ] `/api/buchhaltung?action=getDashboard` → 200 JSON (kann beim ersten Mal bis 55 s dauern)
+- [ ] `/api/touren` → 200 JSON-Liste; Seite `/unsere-touren` zeigt das Archiv mit GPX-Links
 - [ ] Unterseite direkt aufrufen, z. B. `/sponsoren`, `/newsletter/abmelden?id=x&email=y` → Seite (kein 404)
 - [ ] `/gibtsnicht` → React-Seite „nicht gefunden“; `/photos/gibtsnicht.jpg` → 404
 - [ ] `/sitemap.xml`, `/robots.txt`, `/Archivuebersicht.html` erreichbar

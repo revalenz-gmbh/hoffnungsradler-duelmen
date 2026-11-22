@@ -14,7 +14,8 @@
  *   PORT                  Port (Standard 3000)
  *   HOST                  Adresse (Standard 0.0.0.0)
  *   VORSCHAU=1            Vorschau-Instanz: Suchmaschinen per X-Robots-Tag aussperren
- *   SPENDENSTAND_URL, GOOGLE_APPS_SCRIPT_URL, BUCHHALTUNG_FETCH_TIMEOUT_MS  für api/
+ *   SPENDENSTAND_URL, GOOGLE_APPS_SCRIPT_URL, BUCHHALTUNG_FETCH_TIMEOUT_MS,
+ *   TOUREN_APPS_SCRIPT_URL                                                 für api/
  */
 
 import { createServer } from 'node:http';
@@ -35,7 +36,7 @@ const brotli = promisify(brotliCompress);
 const gzipAsync = promisify(gzip);
 
 // Nur diese Funktionen aus api/ sind erreichbar (Dateien mit _ sind keine Funktionen)
-const API_FUNKTIONEN = new Set(['spendenstand', 'buchhaltung']);
+const API_FUNKTIONEN = new Set(['spendenstand', 'buchhaltung', 'touren']);
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
